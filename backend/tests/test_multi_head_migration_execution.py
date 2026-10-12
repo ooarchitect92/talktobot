@@ -15,8 +15,10 @@ def test_default_compose_migration_override_upgrades_all_heads() -> None:
     end = content.index("\n  notification-consumer:\n", start)
     migrate_block = content[start:end]
 
-    assert 'command: ["alembic", "upgrade", "heads"]' in migrate_block
-    assert 'command: ["alembic", "upgrade", "head"]' not in migrate_block
+    command = yaml.safe_load("services:\n" + migrate_block)["services"]["migrate"]["command"]
+    assert command[:2] == ["sh", "-ec"]
+    assert command[2].split("&&")[0].strip().split() == ["alembic", "upgrade", "heads"]
+    assert "python -m northstar_api.workers.help_content_sync" in command[2]
 
 
 def test_kubernetes_migration_job_upgrades_all_heads() -> None:

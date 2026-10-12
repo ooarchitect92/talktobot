@@ -47,7 +47,15 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         await initialize_schema()
     async with SessionFactory() as session:
         await seed_from_environment(session, settings)
-        if help_settings.help_content_sync_on_startup and not settings.is_production:
+        if (
+            help_settings.help_content_sync_on_startup
+            and not settings.is_production
+            and (
+                settings.app_auto_create_schema
+                or not settings.is_postgres
+                or not settings.database_apply_runtime_role
+            )
+        ):
             await sync_help_content(session)
     logger.info("application_started", version=__version__, environment=settings.app_env)
     try:

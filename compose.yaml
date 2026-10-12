@@ -231,7 +231,7 @@ services:
   migrate:
     image: northstar/api:${IMAGE_TAG:-local}
     build: *api-build
-    command: ["alembic", "upgrade", "head"]
+    command: ["sh", "-ec", "alembic upgrade heads && python -m northstar_api.workers.help_content_sync"]
     environment:
       <<: *api-environment
       DATABASE_URL: ${MIGRATION_DATABASE_URL:-postgresql+asyncpg://northstar:replace-local-postgres-password@postgres:5432/northstar}

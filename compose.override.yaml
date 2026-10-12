@@ -32,7 +32,7 @@ services:
       CRM_PIPEDRIVE_CLIENT_SECRET: ${CRM_PIPEDRIVE_CLIENT_SECRET:-}
 
   migrate:
-    command: ["alembic", "upgrade", "heads"]
+    command: ["sh", "-ec", "alembic upgrade heads && python -m northstar_api.workers.help_content_sync"]
 
   notification-consumer:
     extends:
