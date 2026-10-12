@@ -11,7 +11,7 @@ const apiOrigin = process.env.API_ORIGIN || "http://127.0.0.1:8200";
 const publicOrigin = (
   process.env.WEBSITE_PUBLIC_URL || "http://localhost:3300"
 ).replace(/\/$/, "");
-const appOrigin = (process.env.WEBSITE_APP_URL || 'http://localhost:3200').replace(/\/$/, '');
+const appOrigin = (process.env.WEBSITE_APP_URL || 'http://localhost:3100').replace(/\/$/, '');
 const stagingWebsite = process.env.APP_ENV === 'staging';
 configureWebsiteOrigins(appOrigin, publicOrigin);
 const runtimeOrigins = JSON.stringify({ appUrl: appOrigin, siteUrl: publicOrigin }).replace(/</g, '\\u003c');

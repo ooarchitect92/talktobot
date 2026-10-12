@@ -36,7 +36,7 @@ function runtimeOrigins(): { appUrl?: string; siteUrl?: string } {
 const runtime = runtimeOrigins();
 export let APP_URL = (
   runtime.appUrl ||
-  import.meta.env.VITE_APP_URL || "http://localhost:3200"
+  import.meta.env.VITE_APP_URL || "http://localhost:3100"
 ).replace(/\/$/, "");
 export let SITE_URL = (
   runtime.siteUrl ||

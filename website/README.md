@@ -8,7 +8,7 @@ This dedicated folder contains the public website, blog reader, owner editor, as
 - Blog: http://localhost:3300/blog
 - Blog upload/editor: http://localhost:3300/admin
 - Owner console: http://localhost:3300/admin/console
-- Existing application/login: http://localhost:3200/login
+- Existing application/login: http://localhost:3100/login
 
 The local seed administrator can access the website editor in development. Production requires an explicit comma-separated `WEBSITE_EDITOR_EMAILS` allowlist. An ordinary tenant owner cannot publish global marketing content. API keys and impersonated sessions cannot edit it.
 
@@ -38,7 +38,7 @@ docker compose run --rm migrate
 docker compose up -d api website website-scheduler
 ```
 
-The existing launcher starts the new `website` service as part of the stack. Website URL variables in the root environment are `WEBSITE_PORT`, `WEBSITE_APP_URL`, and `WEBSITE_PUBLIC_URL`. The website points to the app at port 3200 by default because that is the verified local stack in this session; set `WEBSITE_APP_URL` when running a different app port or public domain.
+The existing launcher starts the new `website` service as part of the stack. Website URL variables in the root environment are `WEBSITE_PORT`, `WEBSITE_APP_URL`, and `WEBSITE_PUBLIC_URL`. The local stack serves the app on port 3100; set `WEBSITE_APP_URL` when running a different app port or public domain.
 
 ## What is included
 

@@ -739,6 +739,7 @@ services:
     image: northstar/website:local
     restart: unless-stopped
     environment:
+      WEBSITE_APP_URL: ${WEBSITE_APP_URL:-http://localhost:3100}
       WEBSITE_PUBLIC_URL: ${WEBSITE_PUBLIC_URL:-http://localhost:3300}
       WEBSITE_PROXY_SECRET: ${WEBSITE_PROXY_SECRET:-}
       WEBSITE_TRUSTED_PROXY_CIDRS: ${WEBSITE_TRUSTED_PROXY_CIDRS:-}

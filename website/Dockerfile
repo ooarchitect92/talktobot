@@ -3,7 +3,7 @@ WORKDIR /site
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-ARG VITE_APP_URL=http://localhost:3200
+ARG VITE_APP_URL=http://localhost:3100
 ARG VITE_SITE_URL=http://localhost:3300
 ENV VITE_APP_URL=$VITE_APP_URL VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run build
