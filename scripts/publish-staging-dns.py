@@ -28,13 +28,21 @@ def main():
         time.sleep(5)
     if not host:
         raise RuntimeError("Staging ALB address not ready")
-    matches = [lb for lb in aws("elbv2", "describe-load-balancers")["LoadBalancers"] if lb["DNSName"] == host]
-    if len(matches) != 1:
-        raise RuntimeError("Staging ingress load balancer not found")
-    lb = matches[0]
-    if (lb["VpcId"] != cluster["resourcesVpcConfig"]["vpcId"] or lb["Type"] != "application"
-            or lb["Scheme"] != "internet-facing" or lb["State"]["Code"] != "active"):
-        raise RuntimeError("Unexpected staging load balancer isolation")
+    for _ in range(60):
+        matches = [lb for lb in aws("elbv2", "describe-load-balancers")["LoadBalancers"] if lb["DNSName"] == host]
+        if len(matches) != 1:
+            raise RuntimeError("Staging ingress load balancer not found")
+        lb = matches[0]
+        if (lb["VpcId"] != cluster["resourcesVpcConfig"]["vpcId"] or lb["Type"] != "application"
+                or lb["Scheme"] != "internet-facing"):
+            raise RuntimeError("Unexpected staging load balancer isolation")
+        if lb["State"]["Code"] == "active":
+            break
+        if lb["State"]["Code"] != "provisioning":
+            raise RuntimeError("Staging load balancer failed provisioning")
+        time.sleep(5)
+    else:
+        raise RuntimeError("Staging load balancer did not become active")
     changes = [{"Action": "UPSERT", "ResourceRecordSet": {"Name": name, "Type": "A", "AliasTarget": {
         "HostedZoneId": lb["CanonicalHostedZoneId"], "DNSName": host, "EvaluateTargetHealth": True,
     }}} for name in HOSTS]
