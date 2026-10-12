@@ -9,6 +9,7 @@ patches:
   - path: staging-config.yaml
   - path: alb-service.yaml
   - path: alb-web.yaml
+  - path: staging-autoscaling.yaml
 
 # Deployment automation must replace both tags with the exact release SHA or
 # digest produced by .github/workflows/release.yml before applying this overlay.

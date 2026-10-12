@@ -8,3 +8,12 @@ resource "aws_eks_addon" "vpc_cni" {
   resolve_conflicts_on_update = "PRESERVE"
   configuration_values        = jsonencode({ enableNetworkPolicy = "true" })
 }
+
+resource "aws_eks_addon" "metrics_server" {
+  cluster_name                = aws_eks_cluster.staging.name
+  addon_name                  = "metrics-server"
+  addon_version               = "v0.9.0-eksbuild.11"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "PRESERVE"
+  depends_on                  = [aws_eks_node_group.staging]
+}

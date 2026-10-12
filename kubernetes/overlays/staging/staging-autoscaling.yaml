@@ -1,0 +1,11 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: northstar-api, namespace: northstar}
+spec:
+  maxReplicas: 4
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: northstar-web, namespace: northstar}
+spec:
+  maxReplicas: 4
