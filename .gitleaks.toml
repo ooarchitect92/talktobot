@@ -1,0 +1,32 @@
+title = "TalkToBot secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Non-secret chat idempotency fixture, limited to its test file"
+condition = "AND"
+paths = ['''(^|/)backend/tests/test_api\.py$''']
+regexTarget = "secret"
+regexes = ['''^refund-question-1$''']
+
+[[allowlists]]
+description = "Synthetic authenticator key-rotation fixtures, limited to their test file"
+condition = "AND"
+paths = ['''(^|/)backend/tests/test_mfa_required\.py$''']
+regexTarget = "match"
+regexes = ['''(first|second)-encryption-key-for-authenticator-tests-2026''']
+
+[[allowlists]]
+description = "Public Git blob checksums in the historical source-transfer verification workflow"
+condition = "AND"
+paths = ['''(^|/)\.github/workflows/apply-figma-review-once\.yml$''']
+regexTarget = "match"
+regexes = ['''(8c396df48b20ffe4226323cf2c43061728199fd5|a0e55b50be4786384ceb34a44d79fd0c5dce54af|da8e971282d5d18b3a3ee6976f9414844c6f1736)''']
+
+[[allowlists]]
+description = "Public RFC TOTP test vector, confined to the authenticator test"
+condition = "AND"
+paths = ['''(^|/)backend/tests/test_mfa_required\.py$''']
+regexTarget = "secret"
+regexes = ['''^GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ$''']

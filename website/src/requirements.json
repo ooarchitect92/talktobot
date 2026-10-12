@@ -1,0 +1,3431 @@
+[
+  {
+    "id": "CAP-001",
+    "capability": "Business brief, audience, outcomes, evidence and scope",
+    "classification": "F",
+    "chapters": "02, 42, 43",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Confirmed SaaS profile, domain, company/contact and honest enquiry outcome are recorded in docs/business-brief.md; pricing, personas and legal review remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-002",
+    "capability": "Sitemap, navigation, page/route families and customer journeys",
+    "classification": "F",
+    "chapters": "04, 50",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Public marketing, contact, pricing, article and collection routes; managed navigation and sitemap. Full customer-journey qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-003",
+    "capability": "Responsive design, semantic HTML, design tokens and accessible components",
+    "classification": "F",
+    "chapters": "05, 06, 44",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Responsive PDF-derived design, semantic forms, keyboard section reordering and reduced-motion styling. Formal accessibility qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-004",
+    "capability": "CMS, page/section builder, navigation, forms and media ownership",
+    "classification": "F",
+    "chapters": "07–09, 44",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Controlled section/page builder, navigation, form builder, brand settings and media library work locally. Delegated permissions and extension governance remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-005",
+    "capability": "Autosave, draft recovery, undo/redo and edit conflict resolution",
+    "classification": "F",
+    "chapters": "44",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Resource autosave, 24-hour recovery, undo/redo, duplicate drafts and download-before-reload conflict handling. Complete multi-operator evidence remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-006",
+    "capability": "Collection/schema builder with approved fields and templates",
+    "classification": "G",
+    "chapters": "44, 63",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Controlled informational schemas and entries, publication templates and breaking-schema rejection. Migration tooling and specialist templates remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-007",
+    "capability": "Editorial review, revisions, previews, scheduling and releases",
+    "classification": "F",
+    "chapters": "08, 44",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Blog/resource reviews, approvals, versions, private previews, UTC durable schedules and a review calendar. Two-person release approvals remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-008",
+    "capability": "Import/export, dry runs, manifests, partial failures and migration",
+    "classification": "F",
+    "chapters": "44, 62",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Atomic draft-only imports with dry-run/checksum and duplicate validation; checksummed content/history archives. Full database/media restore and legacy migration remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-009",
+    "capability": "Manual-only blog retention, no-expiry trash and controlled purge",
+    "classification": "F",
+    "chapters": "09, 38",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Reasoned manual trash/restore, no automatic expiry and no permanent purge endpoint. Approved legal purge/hold/restore-reconciliation workflows remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-010",
+    "capability": "Media rights, quarantine, derivatives, alt text and private downloads",
+    "classification": "F",
+    "chapters": "08, 09, 50",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Validated raster re-encoding, private previews, public-reference authorization, derivatives, rights/alt/AI provenance records. Original archival and quarantine lifecycle remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-011",
+    "capability": "Technical SEO status/rendering/canonical/index policy",
+    "classification": "F",
+    "chapters": "10, 50",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Complete server-rendered public HTML, status codes, canonical/OG metadata and index policies. Deployed infrastructure checks remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-012",
+    "capability": "Sitemaps, feeds, pagination, faceting and crawl trap controls",
+    "classification": "F",
+    "chapters": "10, 50",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Publication-aware paginated sitemap retrieval, RSS and load-more blog access. Feed-scale partitioning and complete URL-facet tests remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-013",
+    "capability": "Structured-data registry and truthful rich-result eligibility",
+    "classification": "F",
+    "chapters": "10, 50",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-014",
+    "capability": "Search-intent map, editorial calendar and internal linking",
+    "classification": "G",
+    "chapters": "11, 43, 49",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Declared editorial review dates, publication calendar and internal-link checks. Search-intent mapping and a broader content plan remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-015",
+    "capability": "Local profiles, real branch/service-area pages and reputation",
+    "classification": "B",
+    "chapters": "11, 49, 57",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-016",
+    "capability": "Image/video/news/job/AI search-surface policies",
+    "classification": "B",
+    "chapters": "49, 50, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-017",
+    "capability": "Locale routes, translations, hreflang and support readiness",
+    "classification": "B",
+    "chapters": "10, 26, 49, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-018",
+    "capability": "Search Console ownership, data extraction and search diagnostics",
+    "classification": "G",
+    "chapters": "10, 49, 55",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-019",
+    "capability": "Offer/claim registry, pricing consistency and campaign calendar",
+    "classification": "G",
+    "chapters": "43",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Private offer/claim records include audience, inclusions/exclusions, proof, terms, price and review date. Cross-channel enforcement remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-020",
+    "capability": "Creative library, asset rights, approved copy and social previews",
+    "classification": "G",
+    "chapters": "43, 51, 52",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Rights/provenance media metadata and draft previews. Full creative variant and claim approval lifecycle remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-021",
+    "capability": "Google Ads readiness, ownership, policies and destinations",
+    "classification": "G",
+    "chapters": "12, 51",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-022",
+    "capability": "Google Ads goals, enhanced/offline feedback and supported ingestion",
+    "classification": "G",
+    "chapters": "12, 16, 51",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-023",
+    "capability": "Google campaign strategy, keywords/negatives, bidding and experiments",
+    "classification": "G",
+    "chapters": "51",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-024",
+    "capability": "Automated ad text/URL features with review and exclusions",
+    "classification": "B",
+    "chapters": "51, 53",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-025",
+    "capability": "Meta account/assets, category review, creative and destinations",
+    "classification": "G",
+    "chapters": "13, 52",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-026",
+    "capability": "Meta Pixel/CAPI mapping, deduplication and sensitive-data controls",
+    "classification": "G",
+    "chapters": "13, 16, 52",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-027",
+    "capability": "Google/Meta native lead-form ingestion and honest provenance",
+    "classification": "B",
+    "chapters": "51, 52",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-028",
+    "capability": "Advertising audience eligibility, synchronization and removal",
+    "classification": "G",
+    "chapters": "46, 53",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-029",
+    "capability": "Campaign creation/budget/targeting API writes",
+    "classification": "B",
+    "chapters": "51–53, 63",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-030",
+    "capability": "UTM/click-ID campaign builder and attribution snapshots",
+    "classification": "G",
+    "chapters": "18, 35",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Approved nonpersonal UTM campaign-link builder and safe redirect preservation. Consent-aware click-ID attribution is not implemented.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-031",
+    "capability": "Frontend dataLayer/SDK, page/section/form/resource events",
+    "classification": "F",
+    "chapters": "14–16",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-032",
+    "capability": "Trusted conversion outbox, retries, correction and reconciliation",
+    "classification": "F",
+    "chapters": "16, 18",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-033",
+    "capability": "A/B/n assignment, exposure, statistical validity and promotion",
+    "classification": "G",
+    "chapters": "19, 34",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-034",
+    "capability": "Consent-aware heatmaps and session replay",
+    "classification": "B",
+    "chapters": "19, 56",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-035",
+    "capability": "Controlled IP/coarse location, trusted proxy handling",
+    "classification": "G",
+    "chapters": "36",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Gateway purpose-limited HMAC context verifies observed/trusted-proxy addresses for abuse limits; rejects spoofing, stale signatures and mismatched paths. Coarse-location collection is disabled.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-036",
+    "capability": "Explicit browser location task, accuracy/provenance and fallback",
+    "classification": "G",
+    "chapters": "36, 37",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-037",
+    "capability": "Contextual chatbot, explicit capture, knowledge safety and human handoff",
+    "classification": "G",
+    "chapters": "26, 37",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Illustrative on-page assistant and existing application help/knowledge links. A live public contextual chatbot and verified handoff are not implemented.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-038",
+    "capability": "Form builder, server validation, idempotency and accessible errors",
+    "classification": "F",
+    "chapters": "20",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Controlled form fields, server validation, consent, honeypot, rate limiting, private answers and durable UUID idempotency.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-039",
+    "capability": "CRM stages, routing, notes, qualification, merge/correction and escalation",
+    "classification": "G",
+    "chapters": "18, 20",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Private enquiry pipeline, explicit stage/assignment/notes/tags and local routing. CRM provider delivery, merge and escalation remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-040",
+    "capability": "Visual marketing automation, timers, dispatch gates and simulations",
+    "classification": "G",
+    "chapters": "45",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Human-reviewed local enquiry assignment/tag workflows and a non-writing simulation. Multi-step timers, messaging and dispatch gates remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-041",
+    "capability": "Explainable scoring, overrides and qualified-lead separation",
+    "classification": "G",
+    "chapters": "46",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-042",
+    "capability": "Segment builder and purpose-limited personalization",
+    "classification": "G",
+    "chapters": "46",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-043",
+    "capability": "Email sender authentication and deliverability monitoring",
+    "classification": "F when email used",
+    "chapters": "20, 47",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-044",
+    "capability": "Subscription preferences, one-click unsubscribe and suppression",
+    "classification": "F when marketing sends used",
+    "chapters": "47, 59",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-045",
+    "capability": "Unified inbox, agent assignments, channel identity and delivery states",
+    "classification": "G",
+    "chapters": "37, 48",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-046",
+    "capability": "WhatsApp/SMS/Telegram adapters and channel-specific permissions",
+    "classification": "B",
+    "chapters": "48",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-047",
+    "capability": "Call outcomes, dynamic-number attribution, recording/transcription",
+    "classification": "B",
+    "chapters": "48",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-048",
+    "capability": "QR, offline/partner campaigns and declared-source attribution",
+    "classification": "G",
+    "chapters": "35, 48",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "QR/partner campaign UTM labels can be generated. QR asset generation, offline conversion provenance and reconciliation remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-049",
+    "capability": "Feedback/surveys, calculators/quizzes and governed lead magnets",
+    "classification": "G",
+    "chapters": "56",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-050",
+    "capability": "Popups/announcements/sticky CTAs with accessibility and frequency controls",
+    "classification": "G",
+    "chapters": "05, 56",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-051",
+    "capability": "Reporting/warehouse, metrics, spend, freshness and reconciliation",
+    "classification": "G",
+    "chapters": "19, 55",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Real owner content/enquiry counts and content-quality reports. Marketing/spend warehouse and reconciliation remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-052",
+    "capability": "Scheduled reports and permission-safe exports",
+    "classification": "G",
+    "chapters": "55",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Authenticated redacted audit exports and contact-excluding content archives; contact inclusion requires an explicit selection. Scheduled report delivery remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-053",
+    "capability": "Incrementality, lift, marketing-mix and predictive-value analysis",
+    "classification": "B",
+    "chapters": "34, 55",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-054",
+    "capability": "Domain/registrar/DNS/TLS ownership, renewal and recovery",
+    "classification": "F",
+    "chapters": "28, 32, 57",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Requested domain is recorded as TalkToBot.io. Registrar ownership, production DNS/TLS, renewal and recovery remain unverified.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-055",
+    "capability": "Authentication, staff MFA, scoped roles, sessions and recovery",
+    "classification": "F",
+    "chapters": "24, 58",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Existing account auth, explicit editor allowlist, MFA/recovery challenge UI, logout/private-state clearing and session revalidation. Scoped staff roles and production MFA policy remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-056",
+    "capability": "Enterprise SSO/provisioning and organization roles",
+    "classification": "B",
+    "chapters": "58, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-057",
+    "capability": "API/tenant/object security, uploads, SSRF, CSRF and injection controls",
+    "classification": "F",
+    "chapters": "23, 24, 58",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Server authority, version checks, bounded raster uploads, controlled local links and safe text rendering. Formal penetration/abuse qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-058",
+    "capability": "Third-party scripts/tags/CSP, consent and performance governance",
+    "classification": "F",
+    "chapters": "15, 58",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Restrictive CSP and no optional external scripts. A consent-aware script registry and approved optional measurement are not implemented.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-059",
+    "capability": "Supply chain, SBOM, licensing, patching and CI secrets",
+    "classification": "F",
+    "chapters": "27, 58",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Separate lockfiles and strict builds. Production SBOM, license review and protected dependency/security release evidence remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-060",
+    "capability": "Abuse/fake leads, message/OTP budgets, referral/transaction fraud",
+    "classification": "F",
+    "chapters": "20, 58",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Consent/field checks, honeypots, per-client signed abuse context and server rate limits. Provider messaging/fraud budgets remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-061",
+    "capability": "Data inventory, purpose/consent policy engine, GPC where applicable",
+    "classification": "F",
+    "chapters": "17, 59",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Response consent is distinct from marketing enrollment; no optional trackers, replay or browser location collection. A full purpose/GPC policy engine remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-062",
+    "capability": "Rights requests, retention, holds, processor deletion and restore reconciliation",
+    "classification": "F",
+    "chapters": "17, 38, 59",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Named privacy email/contact path and private operator records. Verified rights cases, retention/holds, processor deletion and restore reconciliation are not implemented.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-063",
+    "capability": "Children/sensitive-business and jurisdiction activation review",
+    "classification": "F applicability decision",
+    "chapters": "02, 59, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-064",
+    "capability": "Protected comprehensive audit, actor attribution and integrity",
+    "classification": "F",
+    "chapters": "39",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Transactional attributable operations and retained revisions, role-protected append-only tables, redacted audit views. Independent integrity checkpoints remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-065",
+    "capability": "PostgreSQL constraints, migrations, pooling, indexes and analytical isolation",
+    "classification": "F",
+    "chapters": "22, 60, 63",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "SQLAlchemy models, uniqueness/FKs, PostgreSQL migration and constrained table grants. Production pooling/load/isolation qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-066",
+    "capability": "Object storage/CDN, private media, caching and invalidation",
+    "classification": "F",
+    "chapters": "06, 08, 28, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Private object-store derivatives, authenticated previews, no-store public-reference media and immediate unpublish revocation. CDN qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-067",
+    "capability": "REST/OpenAPI and versioned events",
+    "classification": "F",
+    "chapters": "23, 62, 63",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Existing versioned FastAPI/OpenAPI contracts expose website operations. Formal external event contract qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-068",
+    "capability": "GraphQL, SOAP, streaming and legacy/file adapters",
+    "classification": "B",
+    "chapters": "23, 62",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-069",
+    "capability": "Durable workers, timers, outbox, retries and idempotent external effects",
+    "classification": "F",
+    "chapters": "16, 21, 45, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Durable approved schedules restart safely and recheck actor/dependencies; enquiries are idempotent and local effects are atomic. External delivery outbox is not implemented.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-070",
+    "capability": "Native/Docker deployment; optional managed/Kubernetes profiles",
+    "classification": "F",
+    "chapters": "28, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Dedicated website native build/server plus Docker website/API/scheduler profile. Public cloud deployment remains pending.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-071",
+    "capability": "Terraform/state/secrets, protected releases and rollback",
+    "classification": "F capability",
+    "chapters": "28, 29, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-072",
+    "capability": "Monitoring/alerts, service objectives, incident response and status communication",
+    "classification": "F",
+    "chapters": "29, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Website process health, existing API readiness, worker error logs and operator content checks. Production SLO/alert/incident qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-073",
+    "capability": "Backups/PITR, recovery drills, deletion ledgers and independent copies",
+    "classification": "F",
+    "chapters": "29, 38, 60",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Checksummed content/history export separates image bytes and infrastructure backup needs. PITR, independent backups and restore drills remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-074",
+    "capability": "Feature flags, extension manifests, tenant/domain isolation",
+    "classification": "F for selected profile",
+    "chapters": "02, 62",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-075",
+    "capability": "Commerce/products/inventory/checkout/payments/returns/feeds",
+    "classification": "B",
+    "chapters": "25, 54, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-076",
+    "capability": "Bookings/events/webinars/waitlists and verified attendance",
+    "classification": "B",
+    "chapters": "25, 48, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-077",
+    "capability": "Courses/memberships/student/guardian workflows",
+    "classification": "B",
+    "chapters": "25, 59, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-078",
+    "capability": "SaaS/subscriptions/usage/entitlements and customer portal",
+    "classification": "B",
+    "chapters": "25, 54, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Subscriptions, usage/entitlements and the customer portal belong to the existing SaaS application; website links reuse that identity. Billing/provider qualification is separate.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-079",
+    "capability": "B2B quotes/organizations/partners/franchises",
+    "classification": "B",
+    "chapters": "61, 62",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Partner/white-label enquiries and private offer records support the SaaS profile. Quote/org/partner transaction workflows remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-080",
+    "capability": "Directories/marketplaces/sellers/payouts/disputes",
+    "classification": "B",
+    "chapters": "61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-081",
+    "capability": "Referrals/affiliates/loyalty/gift cards/credits",
+    "classification": "B",
+    "chapters": "54, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-082",
+    "capability": "News/media/RSS/paywalls/publisher advertising/sponsorship",
+    "classification": "B",
+    "chapters": "50, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-083",
+    "capability": "Community/comments/reviews/moderation/appeals",
+    "classification": "B",
+    "chapters": "09, 43, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-084",
+    "capability": "Careers/applications and private candidate records",
+    "classification": "B",
+    "chapters": "50, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-085",
+    "capability": "Donations/fundraising and recurring cancellation",
+    "classification": "B",
+    "chapters": "54, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-086",
+    "capability": "Healthcare/finance/legal/housing/travel/public-sector profiles",
+    "classification": "B",
+    "chapters": "59, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-087",
+    "capability": "PWA/offline/push/device permissions and accessible fallback",
+    "classification": "B",
+    "chapters": "26, 61",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-088",
+    "capability": "Search relevance and approved AI retrieval/index rebuild",
+    "classification": "B/G by profile",
+    "chapters": "26, 37, 62",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Local article search/category filters and informational collection routes. AI public search/relevance rebuild workflows remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-089",
+    "capability": "Owner handover, second-team portability and secure account transfer",
+    "classification": "F",
+    "chapters": "32, 62, 65",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Owner manual, retained source references, independent website folder and portable draft/archive formats. Second-team handover exercise remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-090",
+    "capability": "Master test evidence, launch gates, costs and living-standard review",
+    "classification": "F",
+    "chapters": "30, 42, 64, 65",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Focused backend/gateway/browser evidence and the 120-capability register are retained. Full launch, cost, restore and operating evidence remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-091",
+    "capability": "Current search-surface eligibility and settings register",
+    "classification": "G",
+    "chapters": "66",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-092",
+    "capability": "Generative-search reporting and source-grain limitations",
+    "classification": "G",
+    "chapters": "66",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-093",
+    "capability": "Preferred-source and regional discovery eligibility",
+    "classification": "B",
+    "chapters": "66",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-094",
+    "capability": "Other-engine change notification and IndexNow adapter",
+    "classification": "B",
+    "chapters": "66",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-095",
+    "capability": "AI-generated media/data provenance preservation",
+    "classification": "F when used",
+    "chapters": "66",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "AI generation provenance is stored separately from stripped image metadata. Full chain-of-custody qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-096",
+    "capability": "Agent-compatible and delegated-action interface controls",
+    "classification": "B",
+    "chapters": "66, 75",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-097",
+    "capability": "Google top/absolute-top visibility and economics",
+    "classification": "G",
+    "chapters": "67",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-098",
+    "capability": "Effective campaign goal/custom-goal resolution",
+    "classification": "G",
+    "chapters": "67, 69",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-099",
+    "capability": "Automated ad destination and claim expansion review",
+    "classification": "G",
+    "chapters": "67, 68",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-100",
+    "capability": "Cross-campaign budget authority and remote uncertainty",
+    "classification": "G",
+    "chapters": "67, 77",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-101",
+    "capability": "Meta creative concepts, rights, variants and approvals",
+    "classification": "G",
+    "chapters": "68",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-102",
+    "capability": "Native lead/messaging/web provenance separation",
+    "classification": "G",
+    "chapters": "68, 69",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-103",
+    "capability": "Provider ingestion and authentication migration register",
+    "classification": "G",
+    "chapters": "69",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-104",
+    "capability": "Post-SDK serialization data-policy enforcement",
+    "classification": "F when used",
+    "chapters": "69",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-105",
+    "capability": "Destination-specific normalization and late-event contracts",
+    "classification": "G",
+    "chapters": "69",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-106",
+    "capability": "CDN/streamed response status and canonical integrity",
+    "classification": "F",
+    "chapters": "70",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Full HTML SSR, same-origin metadata/status and real 404/503 handling. Production CDN/streamed status tests remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-107",
+    "capability": "robots and discovery infrastructure failure monitoring",
+    "classification": "F",
+    "chapters": "70",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "robots/sitemap routes and gateway upstream failures return honest status. External discovery-failure alerting remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-108",
+    "capability": "Complex URL/resource/migration dependency tests",
+    "classification": "F",
+    "chapters": "70",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Local route/redirect/dependency validation and publication snapshot tests. Complete multi-locale/migration acceptance packs remain open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-109",
+    "capability": "Cross-channel offers, proof and lifecycle consistency",
+    "classification": "G",
+    "chapters": "71",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-110",
+    "capability": "Acquisition contribution and mature-cohort decisions",
+    "classification": "G",
+    "chapters": "67, 71",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-111",
+    "capability": "Prerender/prefetch/activation measurement separation",
+    "classification": "F when used",
+    "chapters": "72",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-112",
+    "capability": "Back/forward restoration and sensitive-state refresh",
+    "classification": "F",
+    "chapters": "72",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Owner visibility/back-forward revalidation hides private UI while checking access. Full cross-tab/recovery qualification remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-113",
+    "capability": "Hidden-tab exposure and engagement timing",
+    "classification": "F",
+    "chapters": "72",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-114",
+    "capability": "Cross-tab consent and revoked queued context",
+    "classification": "F",
+    "chapters": "72",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-115",
+    "capability": "Scanner/synthetic/internal traffic classification",
+    "classification": "F",
+    "chapters": "72",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved measurement/delivery purpose",
+      "Consent/retention decisions",
+      "Provider selection where required"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-116",
+    "capability": "Second-operator CMS/accessibility completion",
+    "classification": "F",
+    "chapters": "73",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "Keyboard-operable builders, owner manual and recoverable drafts. Formal second-operator accessibility completion remains open.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-117",
+    "capability": "Key/account-loss and post-restore external-effect control",
+    "classification": "F",
+    "chapters": "74",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-118",
+    "capability": "Expanded specialist transaction completion packs",
+    "classification": "B",
+    "chapters": "75",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "outside selected SaaS marketing profile",
+    "implementation": "not implemented",
+    "activation": "not selected",
+    "verification": "full capability qualification not executed",
+    "rationale": "The user selected the AI SaaS website and owner console rather than commerce, booking, specialist industry and other conditional transaction portals. Requires a separate business activation brief.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-119",
+    "capability": "Paid-traffic preflight and 90-day operating evidence",
+    "classification": "G",
+    "chapters": "77",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable / activation decision pending",
+    "implementation": "not implemented",
+    "activation": "not activated in production",
+    "verification": "full capability qualification not executed",
+    "rationale": "Retained as an explicit implementation/release gap. A readiness panel or saved definition does not implement the chapter workflow.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence",
+      "Approved provider/account contracts",
+      "Advertising data/consent policy",
+      "Explicit spending/write authority"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  },
+  {
+    "id": "CAP-120",
+    "capability": "Final merge, five-dimensional status and release sign-off",
+    "classification": "F",
+    "chapters": "78, M–P",
+    "edition": "1.3",
+    "specification": "specified",
+    "applicability": "applicable",
+    "implementation": "partial",
+    "activation": "local implemented subset; production pending",
+    "verification": "focused local checks; full chapter qualification pending",
+    "rationale": "All source CAP rows are retained with five distinct dimensions and explicit gaps. Production release sign-off is not granted.",
+    "owner": "Northstar edtech website owner / engineering",
+    "dependencies": [
+      "Chapter-specific acceptance pack",
+      "Production release evidence"
+    ],
+    "ui_route": "/admin/console",
+    "tests": [
+      "backend/tests/test_website_cms.py",
+      "backend/tests/test_website_operations.py",
+      "backend/tests/test_website_request_context.py",
+      "website/tests/server.test.mjs",
+      "website/tests/proxy-context.test.mjs"
+    ],
+    "evidence": [
+      "website/docs/business-brief.md",
+      "website/docs/owner-console.md"
+    ],
+    "review_date": "2026-10-12"
+  }
+]

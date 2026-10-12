@@ -1,0 +1,23 @@
+/* Photographs extracted from the user-supplied landing-page PDF. */
+.industry-art.retail {
+  background-image:
+    linear-gradient(0deg, #111c15d9 0%, #111c1510 70%),
+    url("/images/retail.jpeg");
+  background-size: cover;
+  background-position: center 38%;
+}
+.industry-art.agency {
+  background-image:
+    linear-gradient(0deg, #111c15d9 0%, #111c1520 70%),
+    url("/images/agency.jpeg");
+  background-size: cover;
+  background-position: center 35%;
+}
+.industry-art.retail .industry-art-object,
+.industry-art.agency .industry-art-object {
+  visibility: hidden;
+}
+.industry-art.retail .industry-chat,
+.industry-art.agency .industry-chat {
+  margin-top: 60px;
+}

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: northstar-website, namespace: northstar}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: northstar-website}}
+  template:
+    metadata: {labels: {app: northstar-website, app.kubernetes.io/part-of: northstar}}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 1000, runAsGroup: 1000}
+      containers:
+        - name: website
+          image: northstar/website:replace-with-immutable-tag
+          envFrom: [{configMapRef: {name: northstar-config}}]
+          env:
+            - {name: PORT, value: "8080"}
+            - {name: API_ORIGIN, value: "http://api:8000"}
+            - name: WEBSITE_PROXY_SECRET
+              valueFrom: {secretKeyRef: {name: northstar-secrets, key: WEBSITE_PROXY_SECRET}}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 20}
+          resources: {requests: {cpu: 150m, memory: 128Mi}, limits: {cpu: "1", memory: 512Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: website, namespace: northstar}
+spec:
+  selector: {app: northstar-website}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: northstar-website, namespace: northstar}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {app: northstar-website}}

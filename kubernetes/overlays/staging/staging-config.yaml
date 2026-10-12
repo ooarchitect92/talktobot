@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: northstar-config
+  namespace: northstar
+data:
+  APP_ENV: staging
+  RATE_LIMIT_FAIL_OPEN: "false"
+  KAFKA_SECURITY_PROTOCOL: SASL_SSL
+  KAFKA_SASL_MECHANISM: SCRAM-SHA-512
+  S3_BUCKET: talktobot-staging-media-510439383733
+  APP_CORS_ORIGINS: '["https://staging.talktobot.io","https://app.staging.talktobot.io","https://api.staging.talktobot.io"]'
+  MFA_REQUIRED: "true"
+  PRODUCTION_VERIFIED_CAPABILITIES: '[]'
+  WEBSITE_PUBLIC_URL: https://staging.talktobot.io
+  WEBSITE_APP_URL: https://app.staging.talktobot.io
+  WEBSITE_TRUSTED_PROXY_CIDRS: ""
+  EMAIL_FROM_ADDRESS: tech@northstaracad.com
+  EMAIL_FROM_NAME: TalkToBot
+  EMAIL_VERIFICATION_FRONTEND_URL: https://app.staging.talktobot.io/verify-email
+  PASSWORD_RESET_FRONTEND_URL: https://app.staging.talktobot.io/reset-password
+  WORKSPACE_INVITATION_FRONTEND_URL: https://app.staging.talktobot.io/workspace-invitation
+  S3_ENDPOINT_URL: https://s3.ap-south-1.amazonaws.com
+  S3_PUBLIC_ENDPOINT_URL: https://s3.ap-south-1.amazonaws.com
+  KAFKA_BOOTSTRAP_SERVERS: b-1.talktobotstaging.zn1cpn.c4.kafka.ap-south-1.amazonaws.com:9096,b-2.talktobotstaging.zn1cpn.c4.kafka.ap-south-1.amazonaws.com:9096,b-3.talktobotstaging.zn1cpn.c4.kafka.ap-south-1.amazonaws.com:9096

@@ -1,0 +1,84 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny, namespace: northstar}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns, namespace: northstar}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: web-ingress, namespace: northstar}
+spec:
+  podSelector: {matchLabels: {app: northstar-web}}
+  policyTypes: [Ingress]
+  ingress:
+    - ports: [{protocol: TCP, port: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: web-to-api, namespace: northstar}
+spec:
+  podSelector: {matchLabels: {app: northstar-web}}
+  policyTypes: [Egress]
+  egress:
+    - to: [{podSelector: {matchLabels: {app: northstar-api}}}]
+      ports: [{protocol: TCP, port: 8000}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: api-ingress, namespace: northstar}
+spec:
+  podSelector: {matchLabels: {app: northstar-api}}
+  policyTypes: [Ingress]
+  ingress:
+    - from: [{podSelector: {matchLabels: {app: northstar-web}}}]
+      ports: [{protocol: TCP, port: 8000}]
+    - from: [{podSelector: {matchLabels: {app: northstar-website}}}]
+      ports: [{protocol: TCP, port: 8000}]
+    - from: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ingress-nginx}}}]
+      ports: [{protocol: TCP, port: 8000}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: application-egress, namespace: northstar}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app, operator: NotIn, values: [northstar-web, northstar-website]}
+  policyTypes: [Egress]
+  egress:
+    # EKS Pod Identity credentials are served by the node agent. Keep this
+    # exception separate from application HTTP egress and restrict its address.
+    - to: [{ipBlock: {cidr: 169.254.170.23/32}}]
+      ports: [{protocol: TCP, port: 80}]
+    - ports:
+        - {protocol: TCP, port: 443}
+        - {protocol: TCP, port: 5432}
+        - {protocol: TCP, port: 6379}
+        - {protocol: TCP, port: 5671}
+        - {protocol: TCP, port: 5672}
+        - {protocol: TCP, port: 9092}
+        - {protocol: TCP, port: 9093}
+        - {protocol: TCP, port: 9096}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: website-ingress, namespace: northstar}
+spec:
+  podSelector: {matchLabels: {app: northstar-website}}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: ingress-nginx}}}]
+      ports: [{protocol: TCP, port: 8080}]
+  egress:
+    - to: [{podSelector: {matchLabels: {app: northstar-api}}}]
+      ports: [{protocol: TCP, port: 8000}]

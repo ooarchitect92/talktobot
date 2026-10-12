@@ -1,0 +1,393 @@
+"""WhatsApp enrollment selection and last-moment reply authorization.
+
+This module never publishes documents or starts ingestion. A durable receipt
+makes a numeric menu reply safe to retry after a provider/network failure.
+"""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime, time
+from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from northstar_api.course_knowledge_dispatch import CourseStudyReceipt
+from northstar_api.course_knowledge_models import CourseEnrollmentAccess, CourseStudySelection
+from northstar_api.education_conversation_context import EducationConversationContext
+from northstar_api.education_student_identities import EducationStudentIdentity, StudentIdentityType
+from northstar_api.models import (
+    Agent,
+    BotWorkflow,
+    Message,
+    MessageRole,
+    WhatsAppConnection,
+    WhatsAppInboundMessage,
+)
+from northstar_api.modules.knowledge.grounding import blocked_topic, blocked_topic_refusal
+from northstar_api.modules.whatsapp.accounts import connection_client
+from northstar_api.modules.whatsapp.graph import split_whatsapp_text
+from northstar_api.services.bot_workflows import matching_system_action
+from northstar_api.services.course_knowledge_policy import KnowledgePolicyError, fingerprint
+from northstar_api.services.course_study_access import authorize_study_access
+from northstar_api.services.education_runtime_authorization import (
+    EducationAccessDecision,
+    EducationAccessReason,
+    EducationIdentityCandidate,
+    authorize_education_access,
+)
+from northstar_api.services.education_workflow_messages import education_workflow_message
+from northstar_api.services.student_identity import find_workspace_student_identity
+
+if TYPE_CHECKING:
+    from northstar_api.services.chat import PreparedChat
+
+DENIAL = "Your course access is not active for this WhatsApp number. Please contact your institute to verify your number and enrollment."
+
+
+async def _daily_menu_welcome(
+    session: AsyncSession, agent: Agent, identity: EducationStudentIdentity
+) -> str | None:
+    """Return the configured welcome only when it has not been sent today."""
+    workflow = await session.scalar(
+        select(BotWorkflow).where(
+            BotWorkflow.tenant_id == agent.tenant_id,
+            BotWorkflow.workspace_id == agent.workspace_id,
+            BotWorkflow.agent_id == agent.id,
+            BotWorkflow.status == "active",
+        )
+    )
+    if workflow is None:
+        return None
+    step = next(
+        (
+            item
+            for item in workflow.steps_json or []
+            if (
+                (item.get("config") or {}).get("systemAction") == "education_daily_welcome"
+                and item.get("enabled", True)
+            )
+        ),
+        None,
+    )
+    if step is None:
+        return None
+    zone = ZoneInfo(str(step.get("calendarTimezone") or "Asia/Kolkata"))
+    local_today = datetime.now(UTC).astimezone(zone).date()
+    start = datetime.combine(local_today, time.min, tzinfo=zone).astimezone(UTC)
+    menu_receipts = (
+        await session.scalars(
+            select(CourseStudyReceipt).where(
+                CourseStudyReceipt.tenant_id == agent.tenant_id,
+                CourseStudyReceipt.workspace_id == agent.workspace_id,
+                CourseStudyReceipt.agent_id == agent.id,
+                CourseStudyReceipt.identity_id == identity.id,
+                CourseStudyReceipt.created_at >= start,
+            )
+        )
+    ).all()
+    if any((item.prompt or "").startswith(str(step.get("message") or "")) for item in menu_receipts):
+        return None
+    replies = (
+        await session.scalars(
+            select(Message)
+            .join(
+                EducationConversationContext,
+                EducationConversationContext.conversation_id == Message.conversation_id,
+            )
+            .where(
+                EducationConversationContext.tenant_id == agent.tenant_id,
+                EducationConversationContext.workspace_id == agent.workspace_id,
+                EducationConversationContext.agent_id == agent.id,
+                EducationConversationContext.student_id == identity.student_id,
+                Message.role == MessageRole.ASSISTANT,
+                Message.created_at >= start,
+            )
+        )
+    ).all()
+    if any(
+        str((item.content_json or {}).get("workflowStepId") or "") == str(step.get("id")) for item in replies
+    ):
+        return None
+    return str(step.get("message") or "").strip() or None
+
+
+async def _verified_identity(
+    session: AsyncSession, agent: Agent, sender: str
+) -> EducationStudentIdentity | None:
+    if agent.workspace_id is None:
+        return None
+    return await find_workspace_student_identity(
+        session,
+        tenant_id=agent.tenant_id,
+        workspace_id=agent.workspace_id,
+        identity_type=StudentIdentityType.WHATSAPP,
+        identifier="+" + sender.lstrip("+"),
+        verified_only=True,
+    )
+
+
+async def _selection_epoch(
+    session: AsyncSession, agent: Agent, identity: EducationStudentIdentity | None
+) -> str:
+    from northstar_api.education import EducationCourse
+    from northstar_api.education_batches import EducationBatch
+    from northstar_api.education_enrollments import EducationEnrollment
+
+    if identity is None or agent.workspace_id is None:
+        return fingerprint({"identity": None})
+    rows = (
+        await session.execute(
+            select(
+                EducationEnrollment.id,
+                EducationEnrollment.updated_at,
+                EducationBatch.updated_at,
+                EducationCourse.updated_at,
+                CourseEnrollmentAccess.revision,
+                CourseEnrollmentAccess.active,
+                CourseEnrollmentAccess.selected_paper_id,
+            )
+            .join(EducationBatch, EducationBatch.id == EducationEnrollment.batch_id)
+            .join(EducationCourse, EducationCourse.id == EducationEnrollment.course_id)
+            .outerjoin(CourseEnrollmentAccess, CourseEnrollmentAccess.enrollment_id == EducationEnrollment.id)
+            .where(
+                EducationEnrollment.tenant_id == agent.tenant_id,
+                EducationEnrollment.workspace_id == agent.workspace_id,
+                EducationEnrollment.agent_id == agent.id,
+                EducationEnrollment.student_id == identity.student_id,
+            )
+            .order_by(EducationEnrollment.id)
+        )
+    ).all()
+    state = await session.scalar(
+        select(CourseStudySelection).where(
+            CourseStudySelection.tenant_id == agent.tenant_id,
+            CourseStudySelection.workspace_id == agent.workspace_id,
+            CourseStudySelection.agent_id == agent.id,
+            CourseStudySelection.identity_id == identity.id,
+        )
+    )
+    # Include the current workspace day so date-only access expiration invalidates
+    # menu labels even when no administrator modified the enrollment row.
+    from northstar_api.services.workspace_dates import workspace_today
+
+    day = await workspace_today(session, tenant_id=agent.tenant_id, workspace_id=agent.workspace_id)
+    return fingerprint(
+        {
+            "identity": str(identity.id),
+            "day": str(day),
+            "enrollments": [[str(value) for value in row] for row in rows],
+            "selection": str(state.enrollment_id) if state else None,
+            "menu": state.menu_ids if state else [],
+            "menu_open": state.menu_open if state else False,
+        }
+    )
+
+
+async def authorize_whatsapp_study(
+    session: AsyncSession, *, agent: Agent, receipt: WhatsAppInboundMessage, connection: WhatsAppConnection
+) -> tuple[EducationAccessDecision, bool]:
+    """Return (access decision, menu handled); caller owns the tutoring flow."""
+    prompt: str | None
+    if (
+        agent.workspace_id is None
+        or agent.workspace_id != receipt.workspace_id
+        or agent.tenant_id != receipt.tenant_id
+    ):
+        raise KnowledgePolicyError("The inbound message does not belong to this workspace and agent")
+    from northstar_api.services.outbox import enqueue_event
+
+    identity = EducationIdentityCandidate(
+        StudentIdentityType.WHATSAPP, "+" + receipt.sender_wa_id.lstrip("+")
+    )
+    cached = await session.scalar(
+        select(CourseStudyReceipt)
+        .where(
+            CourseStudyReceipt.receipt_id == receipt.id,
+            CourseStudyReceipt.tenant_id == agent.tenant_id,
+            CourseStudyReceipt.workspace_id == agent.workspace_id,
+            CourseStudyReceipt.agent_id == agent.id,
+        )
+        .with_for_update()
+    )
+    if cached:
+        # Never replay private enrollment labels after verification was revoked.
+        check = await authorize_education_access(
+            session,
+            tenant_id=agent.tenant_id,
+            workspace_id=agent.workspace_id,
+            agent=agent,
+            identity=identity,
+        )
+        verified = await _verified_identity(session, agent, receipt.sender_wa_id)
+        permitted = (
+            verified is not None
+            and verified.id == cached.identity_id
+            and (check.authorized or check.reason is EducationAccessReason.ENROLLMENT_AMBIGUOUS)
+        )
+        if not permitted:
+            cached.prompt = await education_workflow_message(
+                session,
+                tenant_id=agent.tenant_id,
+                workspace_id=agent.workspace_id,
+                agent_id=agent.id,
+                action="education_access_denied",
+                default=DENIAL,
+            )
+            # Do not send a new denial after a partial menu delivery; just stop.
+            if cached.sent_ids:
+                receipt.status = "rejected"
+                receipt.last_error = "Education identity or enrollment changed during menu delivery"
+                await session.commit()
+                return check, True
+        if permitted and cached.scope_fingerprint != await _selection_epoch(session, agent, verified):
+            cached.prompt = (
+                "Your course selection or access changed. Send 'courses' to refresh your current choices."
+            )
+            if cached.sent_ids:
+                receipt.status = "processed"
+                await session.commit()
+                return check, True
+        decision, prompt = check, cached.prompt
+    else:
+        menu_step = await matching_system_action(
+            session,
+            tenant_id=agent.tenant_id,
+            workspace_id=agent.workspace_id,
+            agent_id=agent.id,
+            message=receipt.message_text,
+            system_action="education_course_menu",
+        )
+        decision, prompt = await authorize_study_access(
+            session,
+            tenant_id=agent.tenant_id,
+            workspace_id=agent.workspace_id,
+            agent=agent,
+            identity=identity,
+            message=receipt.message_text,
+            course_menu_template=(str(menu_step.get("message") or "") if menu_step else None),
+        )
+        if decision.authorized and not prompt:
+            selection = await session.scalar(
+                select(CourseStudySelection)
+                .where(
+                    CourseStudySelection.tenant_id == agent.tenant_id,
+                    CourseStudySelection.workspace_id == agent.workspace_id,
+                    CourseStudySelection.agent_id == agent.id,
+                    CourseStudySelection.identity_id == decision.identity_id,
+                )
+                .with_for_update()
+            )
+            if selection and selection.pending_question:
+                receipt.message_text = selection.pending_question
+                selection.pending_question = None
+        enqueue_event(
+            session,
+            tenant_id=agent.tenant_id,
+            aggregate_type="agent",
+            aggregate_id=agent.id,
+            event_type="education.access.authorized.v1"
+            if decision.authorized
+            else "education.access.denied.v1",
+            payload={
+                **decision.event_payload(),
+                "provider": "whatsapp",
+                "receiptId": str(receipt.id),
+                "selectionRequired": bool(prompt),
+            },
+        )
+        if not prompt and decision.authorized:
+            return decision, False
+        prompt = prompt or await education_workflow_message(
+            session,
+            tenant_id=agent.tenant_id,
+            workspace_id=agent.workspace_id,
+            agent_id=agent.id,
+            action="education_access_denied",
+            default=DENIAL,
+        )
+        await session.flush()
+        verified = await _verified_identity(session, agent, receipt.sender_wa_id)
+        daily_welcome = await _daily_menu_welcome(session, agent, verified) if verified else None
+        if daily_welcome:
+            prompt = f"{daily_welcome}\n\n{prompt}"
+        selection_epoch = await _selection_epoch(session, agent, verified)
+        cached = CourseStudyReceipt(
+            tenant_id=agent.tenant_id,
+            workspace_id=agent.workspace_id,
+            agent_id=agent.id,
+            receipt_id=receipt.id,
+            identity_id=decision.identity_id,
+            prompt=prompt,
+            sent_ids=[],
+            scope_fingerprint=selection_epoch,
+        )
+        session.add(cached)
+    await session.refresh(agent, attribute_names=["security"])
+    if blocked_topic(prompt, (agent.security or {}).get("blockedTopics", [])):
+        prompt = blocked_topic_refusal()
+        cached.prompt = prompt
+        if cached.sent_ids:
+            receipt.status = "rejected"
+            receipt.last_error = "A never-answer boundary changed during menu delivery"
+            await session.commit()
+            return decision, True
+    await session.commit()  # Menu state/receipt must survive a failed provider send.
+    provider, token = await connection_client(session, connection)
+    chunks = split_whatsapp_text(prompt)
+    sent_ids = list(cached.sent_ids)
+    for chunk in chunks[len(sent_ids) :]:
+        message_id = await provider.send_text(
+            token, phone_number_id=connection.phone_number_id, to=receipt.sender_wa_id, text=chunk
+        )
+        sent_ids.append(message_id)
+        cached.sent_ids = list(sent_ids)
+        receipt.outbound_message_ids = list(sent_ids)
+        receipt.outbound_message_id = message_id
+        await session.commit()
+    denied = not decision.authorized and decision.reason is not EducationAccessReason.ENROLLMENT_AMBIGUOUS
+    receipt.status = "rejected" if denied else "processed"
+    receipt.processed_at = datetime.now(UTC)
+    receipt.last_error = "Education access: " + decision.reason.value if denied else None
+    await session.commit()
+    return decision, True
+
+
+async def validate_whatsapp_study_reply(
+    session: AsyncSession, *, agent: Agent, receipt: WhatsAppInboundMessage, prepared: PreparedChat
+) -> None:
+    from northstar_api.course_knowledge_models import CourseResponseContext
+    from northstar_api.education_enrollments import EducationEnrollment
+    from northstar_api.modules.knowledge.grounding import blocked_topic
+    from northstar_api.services.course_knowledge_chat import validate_course_reply
+
+    # Re-read editable boundaries at delivery time. A topic added while the
+    # model was answering must not leave through a queued WhatsApp send.
+    await session.refresh(agent, attribute_names=["security"])
+    if blocked_topic(receipt.message_text, (agent.security or {}).get("blockedTopics", [])):
+        raise KnowledgePolicyError("A never-answer boundary changed before delivery")
+    identity = await _verified_identity(session, agent, receipt.sender_wa_id)
+    context = await session.scalar(
+        select(CourseResponseContext).where(
+            CourseResponseContext.message_id == prepared.assistant_message_id,
+            CourseResponseContext.tenant_id == agent.tenant_id,
+            CourseResponseContext.workspace_id == agent.workspace_id,
+            CourseResponseContext.agent_id == agent.id,
+        )
+    )
+    if identity is None or context is None:
+        raise KnowledgePolicyError("Student verification is no longer valid")
+    enrollment = await session.scalar(
+        select(EducationEnrollment).where(
+            EducationEnrollment.id == context.enrollment_id,
+            EducationEnrollment.tenant_id == agent.tenant_id,
+            EducationEnrollment.workspace_id == agent.workspace_id,
+            EducationEnrollment.agent_id == agent.id,
+            EducationEnrollment.student_id == identity.student_id,
+            EducationEnrollment.status == "active",
+        )
+    )
+    if enrollment is None:
+        raise KnowledgePolicyError("The reply no longer belongs to an active enrollment for this number")
+    await validate_course_reply(session, prepared, agent)
