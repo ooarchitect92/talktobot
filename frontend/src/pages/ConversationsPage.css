@@ -228,3 +228,222 @@
   .inbox-page .conversation-actions .button { font-size: 12px; width: auto; padding: 0 12px; }
   .inbox-page .conversation-actions .button:first-of-type { display: none; }
 }
+
+/* Channel-native conversation skins.  These only affect the operator's
+   inbox presentation; message delivery and conversation data are unchanged. */
+.conversation-detail--telegram { --channel-accent: #2aabee; --channel-soft: #eaf6fc; --channel-thread: #e7f1f8; }
+.conversation-detail--slack { --channel-accent: #611f69; --channel-soft: #f7eef8; --channel-thread: #fff; }
+.conversation-detail--instagram { --channel-accent: #d62976; --channel-soft: #fff0f7; --channel-thread: #fdf7fb; }
+.conversation-detail--facebook_messenger { --channel-accent: #0084ff; --channel-soft: #edf6ff; --channel-thread: #f4f8fc; }
+.conversation-detail--widget { --channel-accent: #2563eb; --channel-soft: #eff6ff; --channel-thread: #f8fbff; }
+.conversation-detail--api { --channel-accent: #0f766e; --channel-soft: #edfdfa; --channel-thread: #f7fffd; }
+.conversation-detail--custom { --channel-accent: #64748b; --channel-soft: #f1f5f9; --channel-thread: #f8fafc; }
+
+.inbox-page .conversation-detail--telegram .conversation-detail__header,
+.inbox-page .conversation-detail--slack .conversation-detail__header,
+.inbox-page .conversation-detail--instagram .conversation-detail__header,
+.inbox-page .conversation-detail--facebook_messenger .conversation-detail__header,
+.inbox-page .conversation-detail--widget .conversation-detail__header,
+.inbox-page .conversation-detail--api .conversation-detail__header,
+.inbox-page .conversation-detail--custom .conversation-detail__header {
+  background: var(--channel-soft);
+  border-bottom-color: color-mix(in srgb, var(--channel-accent) 20%, #dbe4ee);
+}
+
+.inbox-page .conversation-detail--telegram .conversation-thread,
+.inbox-page .conversation-detail--slack .conversation-thread,
+.inbox-page .conversation-detail--instagram .conversation-thread,
+.inbox-page .conversation-detail--facebook_messenger .conversation-thread,
+.inbox-page .conversation-detail--widget .conversation-thread,
+.inbox-page .conversation-detail--api .conversation-thread,
+.inbox-page .conversation-detail--custom .conversation-thread {
+  padding: 20px clamp(16px, 5%, 64px) 24px;
+  background: var(--channel-thread);
+}
+
+.conversation-detail--telegram .conversation-thread {
+  background-color: #e7f1f8;
+  background-image: radial-gradient(#c5dce9 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.conversation-detail--instagram .conversation-thread {
+  background-image: linear-gradient(145deg, #fff6fa, #f7f3ff 52%, #fff9ee);
+}
+.conversation-detail--facebook_messenger .conversation-thread {
+  background-image: linear-gradient(180deg, #f7fbff, #edf6ff);
+}
+.conversation-detail--slack .conversation-thread { background-image: linear-gradient(90deg, #f7f7f8 1px, transparent 1px); background-size: 32px 32px; }
+.conversation-detail--api .conversation-thread { background-image: linear-gradient(#d7eee9 1px, transparent 1px), linear-gradient(90deg, #d7eee9 1px, transparent 1px); background-size: 24px 24px; }
+
+.conversation-detail--telegram .thread-notice,
+.conversation-detail--slack .thread-notice,
+.conversation-detail--instagram .thread-notice,
+.conversation-detail--facebook_messenger .thread-notice,
+.conversation-detail--widget .thread-notice,
+.conversation-detail--api .thread-notice,
+.conversation-detail--custom .thread-notice {
+  border-color: color-mix(in srgb, var(--channel-accent) 22%, #dbe4ee);
+  background: color-mix(in srgb, var(--channel-soft) 84%, #fff);
+}
+.conversation-detail--telegram .thread-notice svg,
+.conversation-detail--slack .thread-notice svg,
+.conversation-detail--instagram .thread-notice svg,
+.conversation-detail--facebook_messenger .thread-notice svg,
+.conversation-detail--widget .thread-notice svg,
+.conversation-detail--api .thread-notice svg,
+.conversation-detail--custom .thread-notice svg { color: var(--channel-accent); }
+
+.conversation-detail--telegram .inbox-message--user,
+.conversation-detail--facebook_messenger .inbox-message--user,
+.conversation-detail--instagram .inbox-message--user { justify-content: flex-end; }
+.conversation-detail--telegram .inbox-message--user .message-avatar,
+.conversation-detail--facebook_messenger .inbox-message--user .message-avatar,
+.conversation-detail--instagram .inbox-message--user .message-avatar { order: 2; }
+.conversation-detail--telegram .inbox-message--user > div,
+.conversation-detail--facebook_messenger .inbox-message--user > div,
+.conversation-detail--instagram .inbox-message--user > div { align-items: flex-end; }
+
+.conversation-detail--telegram .message-bubble { border-radius: 14px 14px 4px; background: #fff; box-shadow: 0 1px 2px #62879a33; }
+.conversation-detail--telegram .inbox-message--user .message-bubble { color: #fff; background: #2aabee; border-radius: 14px 14px 14px 4px; }
+.conversation-detail--facebook_messenger .message-bubble { border-radius: 18px; background: #e9edf1; }
+.conversation-detail--facebook_messenger .inbox-message--user .message-bubble { color: #fff; background: linear-gradient(135deg, #0099ff, #7b45ff); }
+.conversation-detail--instagram .message-bubble { border-radius: 18px; background: #eef0f3; }
+.conversation-detail--instagram .inbox-message--user .message-bubble { color: #fff; background: linear-gradient(135deg, #833ab4, #fd1d1d 55%, #fcb045); }
+.conversation-detail--slack .inbox-message { padding: 7px 8px; border-radius: 7px; }
+.conversation-detail--slack .inbox-message:hover { background: #f4f4f4; }
+.conversation-detail--slack .message-bubble { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.conversation-detail--slack .message-author { color: #1d1c1d; font-weight: 700; }
+.conversation-detail--widget .message-bubble { border-radius: 16px 16px 16px 4px; background: #fff; border: 1px solid #d9e8ff; }
+.conversation-detail--widget .inbox-message--user .message-bubble { color: #fff; background: #2563eb; border-color: #2563eb; border-radius: 16px 16px 4px; }
+.conversation-detail--api .message-bubble,
+.conversation-detail--custom .message-bubble { border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; }
+.conversation-detail--api .message-bubble { color: #134e4a; background: #ecfdf5; border: 1px solid #b7eadb; }
+.conversation-detail--api .inbox-message--user .message-bubble { color: #ecfeff; background: #115e59; border-color: #115e59; }
+
+.human-composer--telegram { background: #fff; border-top-color: #cddde8; }
+.human-composer--telegram .button { background: #2aabee; }
+.human-composer--slack { background: #fff; border-top-color: #ddd; }
+.human-composer--slack textarea { border-radius: 8px; border-color: #616061; }
+.human-composer--slack .button { background: #611f69; }
+.human-composer--instagram .button { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
+.human-composer--facebook_messenger .button { background: linear-gradient(135deg, #0099ff, #7b45ff); }
+.human-composer--widget .button { background: #2563eb; }
+.human-composer--api .button { background: #0f766e; }
+.human-composer--custom .button { background: #64748b; }
+.conversation-detail--telegram .conversation-new-messages,
+.conversation-detail--slack .conversation-new-messages,
+.conversation-detail--instagram .conversation-new-messages,
+.conversation-detail--facebook_messenger .conversation-new-messages,
+.conversation-detail--widget .conversation-new-messages,
+.conversation-detail--api .conversation-new-messages,
+.conversation-detail--custom .conversation-new-messages { color: var(--channel-accent); background: var(--channel-soft); }
+
+/* Telegram Web-inspired operator view. */
+.inbox-page .conversation-detail--telegram {
+  background: #a9d89e;
+  font-family: Inter, Arial, sans-serif;
+  grid-template-rows: 66px minmax(0, 1fr);
+}
+.inbox-page .conversation-detail--telegram .conversation-detail__header {
+  min-height: 46px;
+  margin: 8px 12px 4px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 23px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(55 91 57 / 16%);
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.conversation-detail--telegram .conversation-detail__header .mini-avatar--lg { width: 34px; height: 34px; flex: 0 0 34px; color: #fff; background: #ff9848; font-size: 12px; }
+.conversation-detail--telegram .conversation-detail__header > div:nth-child(3) { overflow: hidden; }
+.conversation-detail--telegram .conversation-detail__header h3 { overflow: hidden; color: #202020; font-size: 13px; line-height: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-detail--telegram .conversation-detail__header p { overflow: hidden; display: flex; align-items: center; gap: 4px; color: #71808a; font-size: 9px; line-height: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-detail--telegram .conversation-detail__header p .provider-logo { width: 12px; height: 12px; }
+.conversation-detail--telegram .conversation-actions { flex: 0 0 auto; flex-wrap: nowrap; gap: 5px; }
+.conversation-detail--telegram .conversation-actions .button { min-height: 28px; padding: 0 8px; border-radius: 14px; font-size: 10px; }
+.conversation-detail--telegram .education-conversation-label { padding: 6px 9px; font-size: 10px; white-space: nowrap; }
+.conversation-detail--telegram .education-conversation-label svg { width: 13px; height: 13px; }
+.conversation-detail--telegram .conversation-lead-status { display: none; }
+.inbox-page .conversation-detail--telegram .conversation-layout { margin-top: 0; }
+.inbox-page .conversation-detail--telegram .conversation-thread {
+  padding: 18px clamp(22px, 8%, 140px) 28px;
+  background-color: #a9d89e;
+  background-image:
+    radial-gradient(ellipse at 25% 18%, rgb(255 255 255 / 17%) 0 2px, transparent 3px),
+    radial-gradient(ellipse at 72% 68%, rgb(62 125 73 / 12%) 0 2px, transparent 3px),
+    linear-gradient(135deg, rgb(255 255 255 / 11%) 25%, transparent 25%) 0 0 / 44px 44px,
+    linear-gradient(315deg, rgb(62 125 73 / 8%) 25%, transparent 25%) 0 0 / 44px 44px;
+}
+.conversation-detail--telegram .thread-notice { display: none; }
+.conversation-detail--telegram .message-day { margin: 4px 0 16px; }
+.conversation-detail--telegram .message-day span { color: #5e7668; background: rgb(239 252 237 / 88%); box-shadow: none; }
+.telegram-messages { display: flex; flex-direction: column; gap: 7px; min-height: 100%; }
+.telegram-message { display: flex; flex-direction: column; align-items: flex-start; max-width: min(74%, 620px); }
+.telegram-message--sent { align-self: flex-end; align-items: flex-end; }
+.telegram-message__bubble { min-width: 76px; padding: 9px 12px 6px; border-radius: 15px 15px 15px 4px; color: #1d2529; background: #fff; box-shadow: 0 1px 2px rgb(52 83 55 / 20%); }
+.telegram-message--sent .telegram-message__bubble { color: #17311b; background: #efffdc; border-radius: 15px 15px 4px 15px; }
+.telegram-message__content { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.42; }
+.telegram-message__meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 3px; color: #8c989d; font-size: 10px; line-height: 1; }
+.telegram-message--sent .telegram-message__meta span { color: #53ad70; font-size: 11px; letter-spacing: -2px; }
+.telegram-message .citation-chip { margin-top: 4px; border-radius: 11px; }
+.conversation-detail--telegram .inbox-message { gap: 0; margin: 6px 0; }
+.conversation-detail--telegram .message-avatar { display: none; }
+.conversation-detail--telegram .message-author { display: none; }
+.conversation-detail--telegram .inbox-message > div { max-width: min(74%, 620px); }
+.mm-shell .conversation-detail--telegram .inbox-message--user { justify-content: flex-end; }
+.mm-shell .conversation-detail--telegram .inbox-message--user .message-avatar { order: 2; }
+.mm-shell .conversation-detail--telegram .inbox-message--user > div { align-items: flex-end; }
+.mm-shell .conversation-detail--telegram .inbox-message--assistant,
+.mm-shell .conversation-detail--telegram .inbox-message--agent { justify-content: flex-start; }
+.mm-shell .conversation-detail--telegram .inbox-message--assistant .message-avatar,
+.mm-shell .conversation-detail--telegram .inbox-message--agent .message-avatar { order: 0; }
+.mm-shell .conversation-detail--telegram .inbox-message--assistant > div,
+.mm-shell .conversation-detail--telegram .inbox-message--agent > div { align-items: flex-start; }
+.conversation-detail--telegram .message-bubble {
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 15px 15px 15px 4px;
+  color: #1d2529;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(52 83 55 / 20%);
+}
+.conversation-detail--telegram .inbox-message--user .message-bubble {
+  color: #17311b;
+  background: #efffdc;
+  border-radius: 15px 15px 4px 15px;
+}
+.conversation-detail--telegram .inbox-message--assistant .message-bubble,
+.conversation-detail--telegram .inbox-message--agent .message-bubble { color: #1d2529; background: #fff; border-radius: 15px 15px 15px 4px; }
+.conversation-detail--telegram .message-bubble::after {
+  display: block;
+  margin-top: 3px;
+  color: #8c989d;
+  font-size: 10px;
+  line-height: 1;
+  text-align: right;
+  content: attr(data-time);
+}
+.conversation-detail--telegram .citation-chip { border-radius: 11px; }
+.human-composer--telegram {
+  margin: 0 18px 16px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(55 91 57 / 16%);
+}
+.human-composer--telegram textarea { min-height: 34px; padding: 7px 10px; border: 0; border-radius: 18px; box-shadow: none; }
+.human-composer--telegram textarea:focus { border: 0; box-shadow: none; }
+.human-composer--telegram .button { min-width: 42px; border-radius: 50%; color: #fff; background: #3390ec; }
+.human-composer--telegram button:not(.button) { color: #71808a; }
+.conversation-detail--telegram .conversation-new-messages { margin: 0 18px; border-radius: 16px; }
+@media (max-width: 700px) {
+  .inbox-page .conversation-detail--telegram { grid-template-rows: 58px minmax(0, 1fr); }
+  .inbox-page .conversation-detail--telegram .conversation-detail__header { margin: 6px 8px 3px; border-radius: 20px; }
+  .conversation-detail--telegram .conversation-actions .button { display: none; }
+  .conversation-detail--telegram .education-conversation-label { display: none; }
+  .inbox-page .conversation-detail--telegram .conversation-thread { padding-inline: 14px; }
+  .telegram-message { max-width: 86%; }
+  .human-composer--telegram { margin: 0 8px 8px; }
+}
