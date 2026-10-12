@@ -10,10 +10,10 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: [staging.talktobot.io, app.staging.talktobot.io, api.staging.talktobot.io]
+    - hosts: [staging.talktobot.com, app.staging.talktobot.com, api.staging.talktobot.com]
       secretName: northstar-tls
   rules:
-    - host: app.staging.talktobot.io
+    - host: app.staging.talktobot.com
       http:
         paths:
           - path: /api/v1
@@ -24,14 +24,14 @@ spec:
             pathType: Prefix
             backend:
               service: {name: northstar-web, port: {name: http}}
-    - host: staging.talktobot.io
+    - host: staging.talktobot.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service: {name: website, port: {name: http}}
-    - host: api.staging.talktobot.io
+    - host: api.staging.talktobot.com
       http:
         paths:
           - path: /

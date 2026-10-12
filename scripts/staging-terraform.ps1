@@ -2,7 +2,7 @@ param(
     [Parameter(Mandatory)][ValidateSet('init', 'validate', 'plan', 'apply', 'output', 'state-list', 'unlock', 'recover-state')][string]$Action,
     [ValidateSet('northstar-iam', 'northstar-dev')][string]$Profile = 'northstar-iam',
     [ValidatePattern('^[0-9a-f-]{36}$')][string]$UnlockId,
-    [ValidateSet('aws_eks_node_group.staging', 'aws_mq_broker.staging', 'aws_route53_record.certificate', 'aws_eks_pod_identity_association.application', 'aws_cloudwatch_metric_alarm.database_storage', 'aws_cloudwatch_metric_alarm.database_cpu', 'aws_s3_bucket_server_side_encryption_configuration.media')][string[]]$Targets
+    [ValidateSet('aws_eks_node_group.staging', 'aws_mq_broker.staging', 'aws_route53_record.certificate', 'aws_route53_zone.staging_com', 'aws_acm_certificate.staging_com', 'aws_route53_record.certificate_com', 'aws_eks_pod_identity_association.application', 'aws_cloudwatch_metric_alarm.database_storage', 'aws_cloudwatch_metric_alarm.database_cpu', 'aws_s3_bucket_server_side_encryption_configuration.media')][string[]]$Targets
 )
 $ErrorActionPreference = 'Stop'
 $awsExecutable = 'C:\Program Files\Amazon\AWSCLIV2\aws.exe'
