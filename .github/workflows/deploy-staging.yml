@@ -118,11 +118,14 @@ jobs:
           python ../../../scripts/set-staging-ingress-access.py ingress.yaml --cidrs "$STAGING_ALLOWED_CIDRS"
           kubectl kustomize . | awk 'BEGIN {RS="---"; ORS="---\n"} !/kind: Namespace/ && NF {print}' > "$RUNNER_TEMP/northstar.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} /kind: Job/ {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/migration.yaml"
+          awk 'BEGIN {RS="---"; ORS="---\n"} /kind: (ConfigMap|ServiceAccount|NetworkPolicy)/ {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/prerequisites.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} !/kind: Job/ && NF {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/application.yaml"
           ! grep -q 'replace-with-' "$RUNNER_TEMP/northstar.yaml"
           ! grep -Eq 'image: .*:(latest|main|master)$' "$RUNNER_TEMP/northstar.yaml"
       - name: Server-side validation
         run: kubectl apply --server-side --dry-run=server -f "$RUNNER_TEMP/northstar.yaml"
+      - name: Apply migration configuration and network prerequisites
+        run: kubectl apply --server-side -f "$RUNNER_TEMP/prerequisites.yaml"
       - name: Synchronize private staging runtime and migration credentials
         run: python scripts/sync-staging-secrets.py --kubeconfig "$KUBECONFIG"
       - name: Verify staging prerequisites
