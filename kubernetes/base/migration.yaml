@@ -16,9 +16,9 @@ spec:
       containers:
         - name: migrate
           image: northstar/api:replace-with-immutable-tag
-          command: [alembic, upgrade, heads]
+          command: [sh, -ec, "alembic upgrade heads && python -m northstar_api.workers.help_content_sync"]
           envFrom: [{configMapRef: {name: northstar-config}}, {secretRef: {name: northstar-secrets}}]
-          env: [{name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-secrets, key: MIGRATION_DATABASE_URL}}}]
+          env: [{name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-migration-secrets, key: DATABASE_URL}}}]
           securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
           volumeMounts: [{name: tmp, mountPath: /tmp}]
       volumes: [{name: tmp, emptyDir: {}}]

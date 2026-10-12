@@ -3,20 +3,24 @@ kind: Kustomization
 resources:
   - ../../base
   - ingress.yaml
+  - alb-network-policy.yaml
+  - smtp-network-policy.yaml
 patches:
   - path: staging-config.yaml
+  - path: alb-service.yaml
+  - path: alb-web.yaml
 
 # Deployment automation must replace both tags with the exact release SHA or
 # digest produced by .github/workflows/release.yml before applying this overlay.
 images:
   - name: northstar/api
-    newName: ghcr.io/ooarchitect92/talktobot-api
+    newName: 510439383733.dkr.ecr.ap-south-1.amazonaws.com/talktobot-staging/api
     newTag: replace-with-release-sha
   - name: northstar/web
-    newName: ghcr.io/ooarchitect92/talktobot-web
+    newName: 510439383733.dkr.ecr.ap-south-1.amazonaws.com/talktobot-staging/web
     newTag: replace-with-release-sha
   - name: northstar/website
-    newName: ghcr.io/ooarchitect92/talktobot-website
+    newName: 510439383733.dkr.ecr.ap-south-1.amazonaws.com/talktobot-staging/website
     newTag: replace-with-release-sha
 
 # Provider qualification is absent: external delivery workers must remain stopped.

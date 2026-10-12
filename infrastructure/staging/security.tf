@@ -47,7 +47,7 @@ resource "aws_msk_scram_secret_association" "staging" {
 }
 
 resource "random_password" "application" {
-  for_each = toset(["jwt", "mfa", "crm", "website_proxy", "database_app"])
+  for_each = toset(["jwt", "mfa", "crm", "website_proxy", "database_app", "database_service"])
   length   = 48
   special  = false
 }
@@ -64,6 +64,12 @@ resource "aws_secretsmanager_secret_version" "application" {
     CRM_CREDENTIAL_ENCRYPTION_KEY = random_password.application["crm"].result
     WEBSITE_PROXY_SECRET          = random_password.application["website_proxy"].result
     DATABASE_APP_PASSWORD         = random_password.application["database_app"].result
+    DATABASE_URL                  = "postgresql+asyncpg://talktobot_runtime:${random_password.application["database_app"].result}@${aws_db_instance.staging.address}:5432/talktobot?ssl=verify-full"
+    DATABASE_SERVICE_PASSWORD     = random_password.application["database_service"].result
+    WORKER_DATABASE_URL           = "postgresql+asyncpg://northstar_service:${random_password.application["database_service"].result}@${aws_db_instance.staging.address}:5432/talktobot?ssl=verify-full"
+    RABBITMQ_URL                  = "${replace(aws_mq_broker.staging.instances[0].endpoints[0], "amqps://", "amqps://talktobot:${urlencode(random_password.rabbitmq.result)}@")}/"
+    KAFKA_SASL_USERNAME           = "talktobot"
+    KAFKA_SASL_PASSWORD           = random_password.kafka.result
     REDIS_AUTH_TOKEN              = random_password.redis.result
     REDIS_URL                     = "rediss://:${random_password.redis.result}@${aws_elasticache_replication_group.staging.primary_endpoint_address}:6379/0"
     RABBITMQ_PASSWORD             = random_password.rabbitmq.result
@@ -71,8 +77,15 @@ resource "aws_secretsmanager_secret_version" "application" {
 }
 
 resource "aws_iam_role" "workload" {
-  name               = "${local.name}-workload"
-  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{ Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" }, Action = ["sts:AssumeRole", "sts:TagSession"] }] })
+  name = "${local.name}-workload"
+  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" }, Action = ["sts:AssumeRole", "sts:TagSession"]
+    Condition = { StringEquals = {
+      "aws:RequestTag/eks-cluster-arn"            = aws_eks_cluster.staging.arn
+      "aws:RequestTag/kubernetes-namespace"       = "northstar"
+      "aws:RequestTag/kubernetes-service-account" = "northstar-workload"
+    } }
+  }] })
 }
 resource "aws_iam_role_policy" "workload" {
   role = aws_iam_role.workload.id

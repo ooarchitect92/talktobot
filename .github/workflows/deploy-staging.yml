@@ -10,7 +10,7 @@ on:
       health_url:
         description: Public HTTPS health URL checked after rollout
         required: true
-        default: https://staging.talktobot.io/healthz
+        default: https://staging.talktobot.com/healthz
         type: string
 
 permissions:
@@ -26,11 +26,12 @@ concurrency:
 jobs:
   deploy:
     name: Migrate and deploy immutable release
-    runs-on: [self-hosted, linux, x64, talktobot-staging]
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: staging
     env:
       AWS_REGION: ap-south-1
+      STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: {persist-credentials: false, ref: '${{ inputs.release_sha }}'}
@@ -46,6 +47,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_SHA: ${{ inputs.release_sha }}
         run: |
+          printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           for image in talktobot-api talktobot-web talktobot-website; do
             reference="ghcr.io/${GITHUB_REPOSITORY_OWNER}/${image}"
             digest=$(docker buildx imagetools inspect "${reference}:sha-${RELEASE_SHA}" | awk '$1 == "Digest:" {print $2; exit}')
@@ -78,6 +80,30 @@ jobs:
           aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION" --kubeconfig "$RUNNER_TEMP/kube/config"
           chmod 0600 "$RUNNER_TEMP/kube/config"
           echo "KUBECONFIG=$RUNNER_TEMP/kube/config" >> "$GITHUB_ENV"
+      - name: Install signed AWS Session Manager plugin
+        run: |
+          install -d -m 0700 "$RUNNER_TEMP/ssm-gpg"
+          export GNUPGHOME="$RUNNER_TEMP/ssm-gpg"
+          gpg --batch --import scripts/aws-session-manager-signing-key.asc
+          fingerprint=$(gpg --batch --with-colons --fingerprint 2C4D4AFF6F6757EE | awk -F: '$1 == "fpr" {print $10; exit}')
+          test "$fingerprint" = 7959637124CE093AD501D47A2C4D4AFF6F6757EE
+          base=https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit
+          curl --fail --silent --show-error "$base/session-manager-plugin.deb" -o "$RUNNER_TEMP/ssm.deb"
+          curl --fail --silent --show-error "$base/session-manager-plugin.deb.sig" -o "$RUNNER_TEMP/ssm.deb.sig"
+          gpg --batch --verify "$RUNNER_TEMP/ssm.deb.sig" "$RUNNER_TEMP/ssm.deb"
+          sudo dpkg -i "$RUNNER_TEMP/ssm.deb"
+      - name: Connect to private staging Kubernetes endpoint
+        run: python scripts/connect-staging-ci.py
+      - name: Verify private ECR copies retain the attested digests
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+          STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
+        run: |
+          for component in api web website; do
+            expected=$(awk -F= -v key="talktobot-${component}" '$1 == key {print $2}' "$RUNNER_TEMP/release-digests.env")
+            actual=$(aws ecr describe-images --repository-name "talktobot-staging/${component}" --image-ids "imageTag=sha-${RELEASE_SHA}" --query 'imageDetails[0].imageDigest' --output text)
+            test "$actual" = "$expected" || { echo 'ECR image differs from verified provenance' >&2; exit 1; }
+          done
       - name: Render the exact release
         working-directory: kubernetes/overlays/staging
         env:
@@ -89,6 +115,7 @@ jobs:
             kubectl kustomize . >/dev/null
             python ../../../scripts/pin-release-image.py kustomization.yaml "northstar/${component}" "$digest"
           done
+          python ../../../scripts/set-staging-ingress-access.py ingress.yaml --cidrs "$STAGING_ALLOWED_CIDRS"
           kubectl kustomize . | awk 'BEGIN {RS="---"; ORS="---\n"} !/kind: Namespace/ && NF {print}' > "$RUNNER_TEMP/northstar.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} /kind: Job/ {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/migration.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} !/kind: Job/ && NF {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/application.yaml"
@@ -96,8 +123,8 @@ jobs:
           ! grep -Eq 'image: .*:(latest|main|master)$' "$RUNNER_TEMP/northstar.yaml"
       - name: Server-side validation
         run: kubectl apply --server-side --dry-run=server -f "$RUNNER_TEMP/northstar.yaml"
-      - name: Synchronize AWS Redis credentials
-        run: python scripts/sync-staging-redis.py --kubeconfig "$KUBECONFIG"
+      - name: Synchronize private staging runtime and migration credentials
+        run: python scripts/sync-staging-secrets.py --kubeconfig "$KUBECONFIG"
       - name: Verify staging prerequisites
         run: |
           kubectl get secret northstar-secrets --namespace northstar
@@ -123,3 +150,9 @@ jobs:
         run: |
           kubectl get all --namespace northstar
           kubectl get events --namespace northstar --sort-by=.lastTimestamp | tail -100
+      - name: Close private tunnel
+        if: always()
+        run: |
+          if test -f "$RUNNER_TEMP/kube/tunnel.pid"; then
+            kill "$(cat "$RUNNER_TEMP/kube/tunnel.pid")" || true
+          fi

@@ -4,17 +4,17 @@ metadata:
   name: northstar-config
   namespace: northstar
 data:
-  APP_CORS_ORIGINS: '["https://talktobot.io","https://app.talktobot.io","https://api.talktobot.io"]'
+  APP_CORS_ORIGINS: '["https://talktobot.com","https://app.talktobot.com","https://api.talktobot.com"]'
   MFA_REQUIRED: "true"
   PRODUCTION_VERIFIED_CAPABILITIES: '[]'
-  WEBSITE_PUBLIC_URL: https://talktobot.io
-  WEBSITE_APP_URL: https://app.talktobot.io
+  WEBSITE_PUBLIC_URL: https://talktobot.com
+  WEBSITE_APP_URL: https://app.talktobot.com
   WEBSITE_TRUSTED_PROXY_CIDRS: ""
   EMAIL_FROM_ADDRESS: tech@northstaracad.com
   EMAIL_FROM_NAME: TalkToBot
-  EMAIL_VERIFICATION_FRONTEND_URL: https://app.talktobot.io/verify-email
-  PASSWORD_RESET_FRONTEND_URL: https://app.talktobot.io/reset-password
-  WORKSPACE_INVITATION_FRONTEND_URL: https://app.talktobot.io/workspace-invitation
+  EMAIL_VERIFICATION_FRONTEND_URL: https://app.talktobot.com/verify-email
+  PASSWORD_RESET_FRONTEND_URL: https://app.talktobot.com/reset-password
+  WORKSPACE_INVITATION_FRONTEND_URL: https://app.talktobot.com/workspace-invitation
   S3_ENDPOINT_URL: https://objects.example.com
   S3_PUBLIC_ENDPOINT_URL: https://objects.example.com
   KAFKA_BOOTSTRAP_SERVERS: kafka.example.com:9093

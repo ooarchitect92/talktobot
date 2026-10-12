@@ -536,7 +536,7 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
                   and inspect the audit trail.
                 </p>
                 <p>
-                  Production domain: <strong>talktobot.io</strong>. Local health
+                  Production domain: <strong>talktobot.com</strong>. Local health
                   is separate from production qualification.
                 </p>
                 <p>
@@ -1130,13 +1130,13 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
                         No customer names, emails, phone numbers or sensitive
                         audiences in campaign labels.
                       </p>
-                      <code className="console-url">{`https://talktobot.io${draft.data.destination}?utm_source=${encodeURIComponent(draft.data.source)}&utm_medium=${encodeURIComponent(draft.data.medium)}&utm_campaign=${encodeURIComponent(draft.data.campaign)}`}</code>
+                      <code className="console-url">{`https://talktobot.com${draft.data.destination}?utm_source=${encodeURIComponent(draft.data.source)}&utm_medium=${encodeURIComponent(draft.data.medium)}&utm_campaign=${encodeURIComponent(draft.data.campaign)}`}</code>
                       <button
                         className="button light small"
                         onClick={() =>
                           void run(async () => {
                             await navigator.clipboard.writeText(
-                              `https://talktobot.io${draft.data.destination}?utm_source=${encodeURIComponent(draft.data.source)}&utm_medium=${encodeURIComponent(draft.data.medium)}&utm_campaign=${encodeURIComponent(draft.data.campaign)}`,
+                              `https://talktobot.com${draft.data.destination}?utm_source=${encodeURIComponent(draft.data.source)}&utm_medium=${encodeURIComponent(draft.data.medium)}&utm_campaign=${encodeURIComponent(draft.data.campaign)}`,
                             );
                             setNotice("Campaign link copied.");
                           })
@@ -1795,7 +1795,7 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
             <div className="console-card">
               <h2>Activation checklist</h2>
               {[
-                "Domain ownership, DNS, HTTPS and account recovery for talktobot.io",
+                "Domain ownership, DNS, HTTPS and account recovery for talktobot.com",
                 "Northstar edtech / tech@northstaracad.com recorded; jurisdiction, approved policies and retention decisions remain pending",
                 "Transactional email provider and verified sender domain",
                 "CRM account and enquiry delivery mapping",

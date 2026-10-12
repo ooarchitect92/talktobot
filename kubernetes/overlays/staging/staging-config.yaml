@@ -9,12 +9,17 @@ data:
   KAFKA_SECURITY_PROTOCOL: SASL_SSL
   KAFKA_SASL_MECHANISM: SCRAM-SHA-512
   S3_BUCKET: talktobot-staging-media-510439383733
+  S3_REGION: ap-south-1
   APP_CORS_ORIGINS: '["https://staging.talktobot.com","https://app.staging.talktobot.com","https://api.staging.talktobot.com"]'
   MFA_REQUIRED: "true"
+  HELP_CONTENT_SYNC_ON_STARTUP: "false"
+  WEBSITE_EDITOR_EMAILS: "tech@northstaracad.com,ooarchitect92@gmail.com"
+  PGSSLROOTCERT: /etc/northstar/rds-ca-bundle.crt
   PRODUCTION_VERIFIED_CAPABILITIES: '[]'
   WEBSITE_PUBLIC_URL: https://staging.talktobot.com
   WEBSITE_APP_URL: https://app.staging.talktobot.com
-  WEBSITE_TRUSTED_PROXY_CIDRS: ""
+  WEBSITE_TRUSTED_PROXY_CIDRS: "10.80.0.0/24,10.80.1.0/24,10.80.2.0/24"
+  VISITOR_TRUSTED_PROXY_CIDRS: "10.80.0.0/24,10.80.1.0/24,10.80.2.0/24,10.80.11.0/24,10.80.12.0/24,10.80.13.0/24"
   EMAIL_FROM_ADDRESS: tech@northstaracad.com
   EMAIL_FROM_NAME: TalkToBot
   EMAIL_VERIFICATION_FRONTEND_URL: https://app.staging.talktobot.com/verify-email

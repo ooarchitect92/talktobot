@@ -74,6 +74,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     needs: [verify]
+    environment: staging
     strategy:
       fail-fast: false
       matrix:
@@ -97,8 +98,8 @@ jobs:
             dockerfile: website/Dockerfile
             image: ghcr.io/${{ github.repository_owner }}/talktobot-website
             build_args: |
-              VITE_APP_URL=https://app.talktobot.io
-              VITE_SITE_URL=https://talktobot.io
+              VITE_APP_URL=https://app.talktobot.com
+              VITE_SITE_URL=https://talktobot.com
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: {persist-credentials: false}
@@ -143,6 +144,34 @@ jobs:
           subject-name: ${{ matrix.image }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
+      - name: Mirror the verified image into private staging ECR
+        env:
+          ROLE_ARN: ${{ vars.AWS_ECR_PUBLISH_ROLE_ARN }}
+          SOURCE_IMAGE: ${{ matrix.image }}
+          SOURCE_DIGEST: ${{ steps.build.outputs.digest }}
+          COMPONENT: ${{ matrix.component }}
+          AWS_REGION: ap-south-1
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$ROLE_ARN" || { echo 'AWS_ECR_PUBLISH_ROLE_ARN is required' >&2; exit 1; }
+          oidc=$(curl --fail --silent --show-error -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r .value)
+          credentials=$(aws sts assume-role-with-web-identity --role-arn "$ROLE_ARN" --role-session-name "talktobot-images-${GITHUB_RUN_ID}" --web-identity-token "$oidc" --duration-seconds 3600)
+          for name in AccessKeyId SecretAccessKey SessionToken; do
+            value=$(printf '%s' "$credentials" | jq -r ".Credentials.${name}")
+            echo "::add-mask::$value"
+            case "$name" in AccessKeyId) export AWS_ACCESS_KEY_ID="$value" ;; SecretAccessKey) export AWS_SECRET_ACCESS_KEY="$value" ;; SessionToken) export AWS_SESSION_TOKEN="$value" ;; esac
+          done
+          test "$(aws sts get-caller-identity --query Account --output text)" = 510439383733
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends skopeo
+          export REGISTRY_AUTH_FILE="$RUNNER_TEMP/registry-auth.json"
+          trap 'rm -f "$REGISTRY_AUTH_FILE"' EXIT
+          printf '%s' "$GH_TOKEN" | skopeo login --authfile "$REGISTRY_AUTH_FILE" --username "$GITHUB_ACTOR" --password-stdin ghcr.io
+          registry=510439383733.dkr.ecr.ap-south-1.amazonaws.com
+          aws ecr get-login-password | skopeo login --authfile "$REGISTRY_AUTH_FILE" --username AWS --password-stdin "$registry"
+          skopeo copy --all --preserve-digests "docker://${SOURCE_IMAGE}@${SOURCE_DIGEST}" "docker://${registry}/talktobot-staging/${COMPONENT}:sha-${GITHUB_SHA}"
+          actual=$(aws ecr describe-images --repository-name "talktobot-staging/${COMPONENT}" --image-ids "imageTag=sha-${GITHUB_SHA}" --query 'imageDetails[0].imageDigest' --output text)
+          test "$actual" = "$SOURCE_DIGEST" || { echo 'ECR mirror digest mismatch' >&2; exit 1; }
 
   release-gate:
     name: Release gate

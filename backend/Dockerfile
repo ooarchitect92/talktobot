@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1.7
-FROM ghcr.io/astral-sh/uv:0.9.30-python3.12-bookworm-slim@sha256:e5b65587bce7de595f299855d7385fe7fca39b8a74baa261ba1b7147afa78e58 AS builder
+FROM ghcr.io/astral-sh/uv:0.9.30@sha256:538e0b39736e7feae937a65983e49d2ab75e1559d35041f9878b7b7e51de91e4 AS uv
+FROM python:3.12-alpine@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70f38ab5b91ad4ab4 AS builder
+COPY --from=uv /uv /uvx /usr/local/bin/
+RUN apk add --no-cache build-base zlib-dev
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 WORKDIR /app
@@ -11,26 +14,23 @@ COPY help_content ./help_content
 COPY alembic.ini ./
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev
 
-FROM python:3.12-slim-trixie@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 AS runtime
+FROM python:3.12-alpine@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70f38ab5b91ad4ab4 AS runtime
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     APP_HOST=0.0.0.0 \
     APP_PORT=8000
-RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --home-dir /app app
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
-    libreoffice-writer fontconfig fonts-dejavu-core fonts-noto-core fonts-noto-cjk \
-    tesseract-ocr tesseract-ocr-eng \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk upgrade --no-cache \
+    && apk add --no-cache libreoffice-writer fontconfig font-dejavu font-noto font-noto-cjk tesseract-ocr tesseract-ocr-data-eng \
+    && addgroup -S -g 10001 app \
+    && adduser -S -D -u 10001 -G app -h /app app
 WORKDIR /app
+COPY rds-ca-bundle.crt /etc/northstar/rds-ca-bundle.crt
 COPY --from=builder --chown=app:app /app/.venv /app/.venv
 COPY --from=builder --chown=app:app /app/src /app/src
 COPY --from=builder --chown=app:app /app/migrations /app/migrations
 COPY --from=builder --chown=app:app /app/help_content /app/help_content
 COPY --from=builder --chown=app:app /app/alembic.ini /app/alembic.ini
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-ARG INSTALL_PLAYWRIGHT=true
-RUN if [ "$INSTALL_PLAYWRIGHT" = "true" ]; then /app/.venv/bin/playwright install --with-deps chromium; fi
 USER app
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \

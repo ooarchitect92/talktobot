@@ -30,3 +30,6 @@ Operational owner and backup/on-call owner must be named before production promo
 Code quality failures still block qualification. Approval of this cost proposal permits infrastructure preparation only; it is not evidence that staging acceptance or production launch has passed.
 
 Availability reconciliation: AWS currently does not offer mq.t3.micro RabbitMQ in this region despite advertising its price. Staging uses the supported mq.m7g.medium at USD 0.0978/hour, with a smaller contingency allowance to retain the approved planning range. Primary operational contact: ooarchitect92@gmail.com. Backup owner and notification delivery confirmation remain pending.
+
+
+2026-10-12 staging implementation: three encrypted ECR repositories and one provider secret use the existing storage/secrets contingency allowance. The load balancer controller and network policy agent reuse the approved nodes. Hosted deployment jobs connect through a fixed-destination SSM port-forward document; no additional runner instance is provisioned. Any temporary database restore clone must have its duration/cost recorded within the approved staging allowance and be removed after evidence is collected. Production remains a separate cost review.

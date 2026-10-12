@@ -13,7 +13,7 @@ spec:
           image: northstar/api:replace-with-immutable-tag
           command: [python, -m, northstar_api.workers.job_dispatcher]
           envFrom: [{configMapRef: {name: northstar-config}}, {secretRef: {name: northstar-secrets}}]
-          env: [{name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-secrets, key: WORKER_DATABASE_URL}}}]
+          env: [{name: DATABASE_APPLY_RUNTIME_ROLE, value: "false"}, {name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-worker-secrets, key: DATABASE_URL}}}]
           resources: {requests: {cpu: 250m, memory: 512Mi}, limits: {cpu: "2", memory: 2Gi}}
           readinessProbe:
             exec:

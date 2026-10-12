@@ -14,7 +14,7 @@ spec:
           image: northstar/api:replace-with-immutable-tag
           command: [python, -m, northstar_api.workers.website_scheduler]
           envFrom: [{configMapRef: {name: northstar-config}}, {secretRef: {name: northstar-secrets}}]
-          env: [{name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-secrets, key: WORKER_DATABASE_URL}}}]
+          env: [{name: DATABASE_APPLY_RUNTIME_ROLE, value: "false"}, {name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-worker-secrets, key: DATABASE_URL}}}]
           resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: "1", memory: 512Mi}}
           readinessProbe:
             exec: {command: [python, -m, northstar_api.workers.worker_process_probe, --expect, northstar_api.workers.website_scheduler]}

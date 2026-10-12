@@ -4,14 +4,18 @@ metadata:
   name: northstar
   namespace: northstar
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 26m
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "180"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/inbound-cidrs: "192.0.2.1/32"
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:510439383733:certificate/04cd6697-9b51-4eea-b573-eae1b047525b
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=180
+    alb.ingress.kubernetes.io/tags: Project=TalkToBot,Environment=staging
 spec:
-  ingressClassName: nginx
-  tls:
-    - hosts: [staging.talktobot.com, app.staging.talktobot.com, api.staging.talktobot.com]
-      secretName: northstar-tls
+  ingressClassName: alb
   rules:
     - host: app.staging.talktobot.com
       http:

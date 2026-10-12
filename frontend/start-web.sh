@@ -26,6 +26,20 @@ if [ "${LOCAL_STORAGE_PROXY_ENABLED:-true}" = "false" ]; then
   mv /tmp/northstar-server-aws.conf /tmp/northstar-server.conf
 fi
 mkdir -p /tmp/nginx-client /tmp/nginx-proxy /tmp/nginx-fastcgi /tmp/nginx-uwsgi /tmp/nginx-scgi
+: > /tmp/northstar-trusted-proxies.conf
+: > /tmp/northstar-trusted-proxy-geo.conf
+proxy_list=${TRUSTED_PROXY_CIDRS:-}
+saved_ifs=$IFS
+IFS=,
+for cidr in $proxy_list; do
+  if ! printf '%s\n' "$cidr" | awk -F'[./]' 'NF != 5 {exit 1} {for(i=1;i<=4;i++) if ($i !~ /^[0-9]+$/ || $i > 255) exit 1; if ($5 !~ /^[0-9]+$/ || $5 < 8 || $5 > 32) exit 1}'; then
+    printf '%s\n' 'TRUSTED_PROXY_CIDRS must contain specific IPv4 CIDRs (/8 through /32).' >&2
+    exit 1
+  fi
+  printf 'set_real_ip_from %s;\n' "$cidr" >> /tmp/northstar-trusted-proxies.conf
+  printf '%s 1;\n' "$cidr" >> /tmp/northstar-trusted-proxy-geo.conf
+done
+IFS=$saved_ifs
 cat > /tmp/northstar-main.conf <<'CONFIG'
 pid /tmp/nginx.pid;
 error_log /dev/stderr warn;
@@ -40,6 +54,18 @@ http {
   fastcgi_temp_path /tmp/nginx-fastcgi;
   uwsgi_temp_path /tmp/nginx-uwsgi;
   scgi_temp_path /tmp/nginx-scgi;
+  include /tmp/northstar-trusted-proxies.conf;
+  real_ip_header X-Forwarded-For;
+  real_ip_recursive on;
+  geo $realip_remote_addr $northstar_trusted_proxy {
+    default 0;
+    include /tmp/northstar-trusted-proxy-geo.conf;
+  }
+  map "$northstar_trusted_proxy:$http_x_forwarded_proto" $northstar_proxy_scheme {
+    default $scheme;
+    "1:https" https;
+    "1:http" http;
+  }
   include /tmp/northstar-server.conf;
 }
 CONFIG

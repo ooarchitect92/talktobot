@@ -11,7 +11,7 @@ Scope: public website, owner console, customer application, API and every enable
 | AWS identity | Account 510439383733, authenticated IAM user @ni | Verified |
 | Staging infrastructure | Terraform main/security/recovery/DNS configuration; encrypted remote state; managed private data services; EKS API public access disabled | Provisioned |
 | AWS Redis and OIDC | Private authenticated Redis TLS PING passed; 23 local Redis/config checks; staging-only OIDC role and namespace access configured | Basic connectivity verified; rollout and failover pending |
-| Staging DNS / HTTPS | ACM certificate requested and staging subzone created | Pending GoDaddy details; user deferred delegation |
+| Staging DNS / HTTPS | staging.talktobot.com delegation and validation records verified; Mumbai certificate 04cd6697-9b51-4eea-b573-eae1b047525b ISSUED | Certificate ready; load balancer attachment and application DNS pending |
 | Source vulnerability/secret/configuration scan | reports/readiness/trivy-source-current.json and its source-tree receipt | Zero critical/high findings for that diagnostic export; not release evidence for later edits |
 | Strict backend type checking | reports/readiness/gates-20261012T113504475412Z-757e28re/backend-types.log | Passed: 453 source files; explicit strict configuration |
 | Full backend tests | reports/readiness/gates-20261012T113504475412Z-757e28re/backend-tests.log | Passed: 1,701 tests, no skips; real Redis concurrency included. This worktree run changed during checks and is diagnostic, not immutable qualification. |
@@ -37,13 +37,18 @@ The prelaunch review corrected scoped education API-key authorization, frontend 
 
 The web image discovers its container DNS resolver, accepts a validated API hostname, uses the Kubernetes service FQDN in AWS and disables the Docker-only storage proxy there. Its startup writes Nginx state only under `/tmp`, supporting the existing non-root, read-only Kubernetes policy. Git enforces LF for shell scripts and the Nginx template. Source scans and test runs while files change remain diagnostic evidence.
 
-## Runtime security blocker
+## Runtime security and staging update, 2026-10-12
 
-The Debian 12 API image reported 7 critical and 142 high package findings. Moving its runtime to a digest-pinned Debian 13 Python image and updating packages reduced that to 1 critical and 100 high package findings. Counts are package findings, not unique vulnerabilities. The remaining findings have no fixed version listed for the installed Debian release. They have not been suppressed, accepted, or independently reviewed. In particular, [Debian's CVE-2026-6653 tracker](https://security-tracker.debian.org/tracker/CVE-2026-6653) still marks the installed libxml2 release vulnerable. Do not substitute an unstable distribution or incompatible library binary merely to obtain a clean scan.
+The prior Debian runtime scans are historical findings, not the current image result. The API now uses a digest-pinned Alpine 3.24 Python runtime and patched distribution LibreOffice/Tesseract packages. Playwright is a development-only QA dependency. `reports/readiness/api-alpine-security.json` records zero critical/high findings without ignoring unfixed vulnerabilities. Actual non-root, read-only DOCX-to-PDF rendering, OCR and native Python imports passed (`api-alpine-capabilities.log`). These checks precede later source edits and must be repeated for the published immutable images.
 
-The website runtime now pins its Node image, upgrades Alpine packages and removes npm, which the deployed server does not need. Its rebuilt runtime scan passes. The API starts successfully as a non-root user with a read-only filesystem, synthetic PostgreSQL and Redis, but this does not resolve its dependency findings.
+Restricted RDS TLS and hostname verification passed. The real database was migrated through `0082_service_audit_permissions`; API help/schema/migration writes and worker audit mutations are denied (`staging-postgres-boundaries.json`). Historical default grants unexpectedly retained help write access; the additive migration explicitly revokes it. Production startup no longer synchronizes global help through the API role. A separate migration job synchronized 118 help articles and 11 categories successfully; workers use their separate non-owner service identity.
 
-CI now loads the explicitly scoped public-configuration exceptions, uses Trivy v0.75.0 consistently and blocks both high and critical runtime findings. Topology acceptance builds/scans the public website and checks its scheduler and HTTP routes. Release verification requires a successful complete CI run for the exact commit and includes real Redis concurrency testing. No release tag, production deployment or launch qualification was issued.
+The AWS load balancer controller is installed and pinned by digest, the VPC CNI network policy agent is enabled, and three encrypted immutable ECR repositories are provisioned. OIDC publishing preserves the scanned/attested GHCR digest in ECR. Application deployment uses a hosted GitHub runner and a restricted SSM port-forward document that fixes the private Kubernetes hostname/HTTPS port; no shell, SSH, public Kubernetes API or permanent runner is required. The deployment role cannot change this document.
+
+Real SMTP authentication, NVIDIA chat and 2,048-dimensional embedding calls passed. Provider secrets are held in Secrets Manager and excluded from Terraform values and repository contents. Credentials disclosed in chat need rotation before public launch. No real email was sent by these connectivity checks. Billing and external delivery integrations remain disabled.
+
+HTTPS ingress defaults to a deny-only CIDR. Controlled validation admits only the operator and staging NAT addresses. Public/customer exposure remains blocked until release and acceptance gates pass. There are no application workloads or load balancer DNS records deployed at this checkpoint. Recovery, rollback, one-hour 100-session load, 24-hour soak, alert delivery, backup ownership and seven-day launch evidence are still pending. No 9/10 rating or qualified release is claimed.
+
 
 ## Exact local gates
 

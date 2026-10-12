@@ -23,7 +23,6 @@ dependencies = [
   "pydantic-settings>=2.10.0,<3",
   "pyjwt[crypto]>=2.10.0,<3",
   "pypdf>=5.9.0,<7",
-  "playwright>=1.55.0,<2",
   "requests>=2.32.0,<3",
   "beautifulsoup4>=4.13.0,<5",
   "pymupdf>=1.26.0,<2",
@@ -42,6 +41,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "playwright>=1.55.0,<2",
   "aiosqlite>=0.21.0,<1",
   "asgi-lifespan>=2.1.0,<3",
   "lxml-stubs>=0.5.1",

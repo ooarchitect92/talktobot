@@ -1,0 +1,16 @@
+# ALB targets receive traffic from the three dedicated public staging subnets.
+# Application nodes and pods run in different private subnets.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: staging-alb-ingress, namespace: northstar}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app, operator: In, values: [northstar-api, northstar-web, northstar-website]}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - {ipBlock: {cidr: 10.80.0.0/24}}
+        - {ipBlock: {cidr: 10.80.1.0/24}}
+        - {ipBlock: {cidr: 10.80.2.0/24}}
+      ports: [{protocol: TCP, port: 8000}, {protocol: TCP, port: 8080}]
