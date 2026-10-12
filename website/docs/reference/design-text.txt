@@ -1,0 +1,387 @@
+Talk To Bot
+Product
+Solution
+Features
+Pricing
+White-Label
+Resources
+Log in
+Get Started
+AI BOT PLATFORM
+Nami AI
+O
+ffici al
+Online " Verified AI A ssistant
+BUILD AI BOTS THAT WORK FOR 
+YOUR BUSINESS 
+SUGGESTED Q UESTIONS
+What is Nami AI?
+What channels do you support?
+Hi! I'm Nami AI.
+How can I help you today?
+How does it work?
+Create AI bots powered by your knowledge, connected to your 
+business systems and channels, and built to handle real 
+conversations
+Can I connect my CRM?
+How much does it cost?
+4.5 rating
+Get Started
+Book a Demo
+What is Nami AI?
+Nami AI is an enterprise AI agent
+platform that helps businesses create,
+configure and deploy autonomous AI
+agents using their own knowledge, tools
+and integrations.
+Grounded on Official Docs
+Ask anything about Nami AI...
+You can connect your agents to channel
+s
+like Website and WhatsApp, manag
+e
+conversations, captur e qualified lead
+s,
+and automate end-t
+o-end CRM workflow s.
+Powered by Nami AI
+Bo ok a demo with our team ™
+AI BOT PLATFORM
+How  Nami  Works .
+Turn your organization's knowledge into an enterprise-
+grade AI assistant in four deterministic steps.
+ADD KNOWLEDGE
+SYNCHRONIZED
+Bring your organization's documents, internal wikis,
+database schemas, FAQs, and unstructured knowledge 
+into
+Nami.
+01
+02
+BUILD YOUR AI
+GUARDRAILED
+Create and configure an AI assistant with strict
+deterministic controls, organizational boundaries, and 
+tuned retrieval filters.
+MONITOR & IMPROVE
+AUTONOMOUS HEALING
+Track full conversation traces, isolate unanswered 
+queries in a knowledge gap triage, and refine 
+vectors on the fly.
+03
+04
+MONITOR & IMPROVE
+GUARDRAILED
+Create and configure an AI assistant with strict
+deterministic controls, organizational boundaries, 
+and tuned retrieval filters.
+ENTERPRISE CORE PLATFORM ARCHITECTURE
+Intelligent Bot Systems Built
+for Autonomous Enterprise
+Operations
+01 / AI BOTS
+Turn Every Conversation 
+Into Useful Business Data.
+Let your AI bot ask the right questions, collect customer
+information, and turn conversations into structured
+business data without forcing users through long forms.
+AUTO-EXTRACT: ACTIVE
+"
+LATENCY < 420ms
+Conversational slot-filling with adaptive validation
+Real-time webhook payloads streamed directly to CRM
+Zero drop-off form abandonment recovery
+AI
+What can I help you with?
+AI is routing lead to enterprise rep...
+nami-chat-session // ref_8921_crm
+PIPELINE: STREAMING PAYLOAD
+Live Lead Capture
+10:42 AM
+PARSED ENTITY
+SCHEMA
+Auto-
+Structured
+INTENT TARGET
+Enterprise Plan
+0.99 CONF
+LEAD NAME
+Rahul
+WORK EMAIL
+rahul@company.com
+TEAM TIER
+50 Seats (Scale Tier)
+Lead Created
+READY
+Dispatched to enterprise sales pipeline &
+notified account executive.
+CONNECTED TARGET SYSTEMS
+CRM
+Customer
+Profile
+Analytics
+Webhook
+Dispatch
+AI OBSERVABILITY & HEALTH CENTER
+Last 30 Days ¼
+Live Stream
+AI RESOLUTION
+87%
+‚ +4.2% vs last week
+KNOWLEDGE COV.
+92%
+Healthy (420 docs)
+HUMAN HANDOFFS
+8%
+ﬁ -1.8% drop
+ACTIVE CONVS
+24.8K
+99.98% uptime
+TOP PERFORMING QUESTIONS
+"What is your pricing?"
+"How does the product work?"
+"How do I get started?"
+HEALTHY
+98% match
+95% match
+92% match
+IDENTIFIED KNOWLEDGE
+GAPS
+"What integrations are
+supported?"
+Missing ERP connector page docs
+"How does billing work?"
+Stripe tax policy update ungrounded
+"Is API access available?"
+Rate limit documentation required
+NEEDS
+REVIEW
++
+Train
++ Train
++ Train
+02 / AI HEALTH
+See How Your AI Is
+Performing.
+Monitor real conversations, identify weak answers, and
+understand where your AI needs improvement with
+telemetry built specifically for autonomous agents.
+01
+Automated Knowledge Gap Detection
+Surfaces queries that received low-confidence grounding so technical
+teams can update specific documentation immediately.
+02
+Continuous Sentiment & Resolution Drift
+Track satisfaction shifts before they escalate, with granular inspection into
+every customer exchange.
+Automated Weekly Health Digest Enabled
+FEEDBACK LOOP: MONITOR ™ IDENTIFY ™ IMPROVE
+Next fine-tune check scheduled in 4h 12m
+KB
+Enterprise Knowledge Connectors
+Sync: Realtime Continuous Polling
+5 SOURCES SYNCHRONIZED
+03 / AI TRAINING
+One Hub for All
+Your Knowledge.
+Connect your website, documents, FAQs, policies, and
+other supported sources so your AI bot can answer with
+information specific to your business.
+GROUNDED RETRIEVAL PIPELINE
+KNOWLEDGE SOURCES
+™
+VECTOR RAG
+™
+VERIFIED ANSWER
+Eliminates hallucinations through deterministic document chunking and strict
+citation boundary enforcement.
+Website
+https://nami.ai/*
+CONNECTED " 1,482 PAGES
+Product Docs
+API & SDK specifications
+CONNECTED
+PDF Documents
+FAQs
+TOS, Security, SOPs
+Q&A Knowledge Pairings
+12 FILES READY
+48 ENTRIES ACTIVE
+Google Drive & Internal Workspace
+Corporate Policies & Pricing Folders
+CONNECTED " SYNCED 4M AGO
+GROUNDING DEMONSTRATION PREVIEW
+CUSTOMER
+What is your refund policy?
+AI BOT
+According to your refund policy, eligible products can be returned within 30 days of
+purchase for a full credit refund, provided they remain in original condition.
+Knowledge Used:
+Refund Policy (Rev 2024.1) " Page 4
+VERIFIED SOURCE
+RAG Match 99.4%
+Markdown
+PDF & Docx
+Live Web Crawler
+Notion / Drive
+ENTERPRISE ORCHESTRATION CANVAS
+HubSpot / Salesforce
+CRM
+AI BOT ™ CRM
+Create Lead
+AI
+NAMI CORE BOT
+Orchestrator & Reasoning Layer
+Order Management
+API
+AI BOT ™ Order API Get Order Status
+Runtime: Event-Driven Microservices
+04 / API + INTEGRATIONS
+Connect Your AI to the 
+Systems You Already 
+Use.
+Bring your AI bot into your existing products and
+connect it to the systems that run your business.
+Execute real actions without manual human intervention.
+REST/GraphQL
+mTLS Auth
+SOC2 Ready
+Calendar & Booking
+CAL
+AI BOT ™ Booking
+API
+Book
+Appointment
+Custom Webhooks
+HOOK
+AI BOT ™ Webhook
+External System
+All 14 Systems Healthy
+Bi-Directional Function Calling:
+Not just answering questionsreading order statuses, triggering refunds,
+creating CRM records, and updating enterprise databases in real time.
+Enterprise Security & Compliance:
+Encrypted payload delivery, custom bearer tokens, IP whitelisting, and role-
+based execution policies.
+MULTI-CHANNEL GATEWAY DISTRIBUTION
+SINGLE SOURCE OF TRUTH
+05 / CHANNELS
+One AI Bot. Multiple
+Channels.
+Build your AI once and connect it to the channels where
+your customers already communicate. Maintain context
+and unified business logic everywhere.
+Website Widget & Embedded iframe
+Official WhatsApp Business Cloud
+Headless REST API / Mobile SDKs
+Slack, Microsoft Teams, Apple Messages
+READY
+READY
+READY
+COMING SOON
+ONLINE
+Website
+Direct embed script, custom
+CSS themes, auth cookie
+passing.
+Active on 3 domains
+ONLINE
+WhatsApp
+Official Cloud API, template
+messaging, image & PDF
+processing.
+24/7 Auto-replies
+ONLINE
+Headless API
+Custom native apps, in-car
+displays, customer support
+portal.
+Streaming WebSocket
+Additional Channels (Instagram DM, Telegram, Slack)
+AI
+MASTER AI BOT ENGINE
+Shared Vector Memory & Tools
+Coming Soon
+White Label Control Center
+CUSTOM BRAND IDENTITY
+CUSTOM DOMAIN
+ai.youragency.com
+BRAND COLORS
+Custom Palette
+CLIENT WORKSPACES
+12 Active Client Portals
+ "Powered by Nami" Completely
+Hidden
+²
+Apex Growth AI
+Client: Acme Corp
+Branded AI Bot Performance
+3,491 queries answered this month
+Domain SSL Status
+Active (Let's Encrypt)
+License: Enterprise White-Label
+100% Native Resell
+YOUR TECH ™ YOUR BRAND ™ YOUR CLIENTS
+06 / WHITE LABEL
+Your AI Platform.
+Your Brand.
+Deliver AI-powered experiences under your own brand
+with custom identity, domain, and client workspaces.
+Ideal for agencies, enterprises, and MSPs.
+Custom CNAME domain with automatic SSL generation
+Multi-tenant client accounts with custom billing rules
+Custom logo, favicon, email templates, and bot avatars
+View White Label Partner Program
+Built for your industry
+Where is my order? It's late.
+Your order is out for delivery today. Tracking link sent to
+your email.
+AI AGENT
+Retail & E-commerce
+FAQ
+Frequently asked questions
+What is TalkToBot?
+What channels can I connect?
+Can I connect my CRM?
+How much does it cost?
+Can I use TalkToBot under my own brand?
+READY TO DEPLOY
+YOUR KNOWLEDGE IS ALREADY
+VALUABLE.
+MAKE IT INTELLIGENT.
+Turn the knowledge your organization already has into AI assistants that work across your
+teams, tools, and omnichannel customer touchpoints.
+Get Started
+Book a Demo
+14-Day Free Evaluation
+"
+No Credit Card Required
+"
+Enterprise Ready & SOC2 Compliant
+Ai teaching OS for Coaching institutes, Private
+institute AI teacher across web + WhatsApp,
+trained on institute controlled content.
+Stay Updated!
+Get Product Updates, newsletters
+feature releases & insights.
+Get Started
+Enter Email Id
+Product
+Bots & Workspace
+WhatsApp Channel
+Knowledge & RAG
+Analytics
+Pricing
+Resources
+Help Center
+Api Documentation
+System Status
+Guides
+Product Updates
+Company
+Privacy Policy
+Terms of Service
+Security
+Contact Us
+Follow us 
+© 2026 Nami Ai . All rights reserved.
