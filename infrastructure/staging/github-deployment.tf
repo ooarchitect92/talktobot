@@ -47,7 +47,9 @@ resource "aws_iam_role_policy" "github_staging_deploy" {
       , { Effect = "Allow", Action = ["ssm:StartSession"], Resource = aws_ssm_document.staging_eks_tunnel.arn }
       , { Effect = "Allow", Action = ["ssm:StartSession"], Resource = "arn:aws:ec2:ap-south-1:510439383733:instance/*",
       Condition = { StringEquals = { "ssm:resourceTag/eks:cluster-name" = "talktobot-staging" } } }
-      , { Effect = "Allow", Action = ["ssm:TerminateSession"], Resource = "arn:aws:ssm:ap-south-1:510439383733:session/talktobot-*" }
+      , { Effect = "Allow", Action = ["ssmmessages:OpenDataChannel"], Resource = "arn:aws:ssm:ap-south-1:510439383733:session/talktobot-*" }
+      , { Effect = "Allow", Action = ["ssm:TerminateSession"], Resource = "arn:aws:ssm:ap-south-1:510439383733:session/talktobot-*",
+      Condition = { StringEquals = { "ssm:resourceTag/aws:ssmmessages:session-id" = "$${aws:userid}" } } }
     ]
   })
 }

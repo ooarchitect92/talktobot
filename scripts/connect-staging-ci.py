@@ -38,7 +38,9 @@ def main():
     (directory / "tunnel.pid").write_text(str(process.pid))
     for _ in range(60):
         if process.poll() is not None:
-            raise RuntimeError("Private staging tunnel exited")
+            message = (directory / "tunnel.log").read_text(errors="replace")
+            reason = "AWS session permission denied" if "AccessDenied" in message or "not authorized" in message else "session transport failed"
+            raise RuntimeError(f"Private staging tunnel exited: {reason}")
         try:
             with socket.create_connection(("127.0.0.1", 9443), timeout=1):
                 break
@@ -47,7 +49,7 @@ def main():
     else:
         process.terminate()
         raise RuntimeError("Private staging tunnel did not become ready")
-    subprocess.run(["kubectl", "get", "namespace", "northstar"], check=True)
+    subprocess.run(["kubectl", "get", "serviceaccounts", "--namespace", "northstar"], check=True)
     print("Private staging connection established with original CA and hostname verification.")
 
 
