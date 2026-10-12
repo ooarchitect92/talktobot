@@ -27,6 +27,14 @@ resource "aws_iam_role_policy" "github_staging_deploy" {
       { Effect = "Allow", Action = ["eks:DescribeCluster"], Resource = aws_eks_cluster.staging.arn },
       { Effect = "Allow", Action = ["rds:DescribeDBInstances"], Resource = aws_db_instance.staging.arn },
       { Effect = "Allow", Action = ["ecr:DescribeImages"], Resource = [for repo in aws_ecr_repository.application : repo.arn] },
+      { Effect = "Allow", Action = ["elasticloadbalancing:DescribeLoadBalancers"], Resource = "*" },
+      { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = aws_route53_zone.staging_com.arn,
+        Condition = { "ForAllValues:StringEquals" = {
+          "route53:ChangeResourceRecordSetsNormalizedRecordNames" = ["staging.talktobot.com", "app.staging.talktobot.com", "api.staging.talktobot.com"]
+          "route53:ChangeResourceRecordSetsRecordTypes"           = ["A"]
+          "route53:ChangeResourceRecordSetsActions"               = ["UPSERT"]
+      } } },
+      { Effect = "Allow", Action = ["route53:GetChange"], Resource = "arn:aws:route53:::change/*" },
       { Effect = "Allow", Action = ["secretsmanager:GetSecretValue"], Resource = [aws_secretsmanager_secret.application.arn, aws_secretsmanager_secret.providers.arn, aws_db_instance.staging.master_user_secret[0].secret_arn] },
       { Effect = "Allow", Action = ["kms:Decrypt"], Resource = aws_kms_key.staging.arn,
         Condition = { StringEquals = {

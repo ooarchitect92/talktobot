@@ -141,6 +141,8 @@ jobs:
           for deployment in $(kubectl get deployments --namespace northstar -o json | jq -r '.items[] | select(.spec.replicas > 0) | "deployment/" + .metadata.name'); do
             kubectl rollout status "$deployment" --namespace northstar --timeout=10m
           done
+      - name: Publish verified staging load balancer DNS aliases
+        run: python scripts/publish-staging-dns.py
       - name: Verify public health
         env:
           HEALTH_URL: ${{ inputs.health_url }}
