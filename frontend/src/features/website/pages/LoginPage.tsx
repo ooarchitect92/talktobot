@@ -24,7 +24,7 @@ export function LoginPage() {
       const target = (location.state as { from?: string } | null)?.from ?? '/';
       const signedIn = await login(email, password);
       if (isMFAEnrollment(signedIn)) {
-        setPendingEnrollment(signedIn);
+        setPendingEnrollment(signedIn, password);
       navigate('/mfa-enrollment', { replace: true, state: { from: target } });
         return;
       }

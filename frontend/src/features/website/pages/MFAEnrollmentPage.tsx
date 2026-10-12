@@ -1,10 +1,10 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Brand } from '@/components/brand';
 import { Button, Field } from '@/components/ui';
 import { api, apiConfig } from '@/lib/api';
 import type { MFASetupMaterial } from '@/lib/mfa-api';
-import { clearPendingEnrollment, getPendingEnrollment } from '@/lib/mfa-enrollment-state';
+import { clearEnrollmentPassword, clearPendingEnrollment, getEnrollmentPassword, getPendingEnrollment } from '@/lib/mfa-enrollment-state';
 import { createQrAssets } from '@/lib/qr';
 import type { Session } from '@/types';
 
@@ -15,12 +15,29 @@ export function MFAEnrollmentPage() {
   const [enrollment] = useState(getPendingEnrollment);
   const [expired, setExpired] = useState(false);
   const [password, setPassword] = useState('');
+  const [automaticPassword, setAutomaticPassword] = useState(getEnrollmentPassword);
+  const automaticSetupStarted = useRef(false);
   const [material, setMaterial] = useState<MFASetupMaterial | null>(null);
   const [qr, setQr] = useState('');
   const [code, setCode] = useState('');
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  useEffect(() => {
+    if (!enrollment || !automaticPassword || automaticSetupStarted.current) return;
+    automaticSetupStarted.current = true;
+    clearEnrollmentPassword();
+    setBusy(true);
+    void fetch(`${apiConfig.baseUrl}/auth/mfa/setup`, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${enrollment.enrollmentToken}` },
+      body: JSON.stringify({ currentPassword: automaticPassword }),
+    }).then(async response => {
+      if (!response.ok) throw new Error('Unable to prepare your QR code. Verify your full sign-in password below or sign in again.');
+      setMaterial(await response.json() as MFASetupMaterial);
+    }).catch(reason => setError(reason instanceof Error ? reason.message : 'QR setup failed.'))
+      .finally(() => { setAutomaticPassword(''); setBusy(false); });
+  }, [enrollment, automaticPassword]);
   useEffect(() => {
     if (!material) return;
     let active = true;

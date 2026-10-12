@@ -53,7 +53,7 @@ export function SignupPage() {
         privacyAccepted: true,
       });
       if (isMFAEnrollment(created)) {
-        setPendingEnrollment(created);
+        setPendingEnrollment(created, password);
       navigate('/mfa-enrollment', { replace: true, state: null });
         return;
       }

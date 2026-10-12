@@ -104,7 +104,7 @@ export function MFASecurityPanel() {
     setError(''); const input = protectedInput(); if (!input) return; setBusy(true);
     try {
       const enrollment = await mfaApi.replace(input);
-      setPendingEnrollment(enrollment);
+      setPendingEnrollment(enrollment, actionPassword);
       navigate('/mfa-enrollment', { replace: true, state: null });
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Authenticator replacement failed.'); }
     finally { setBusy(false); }
