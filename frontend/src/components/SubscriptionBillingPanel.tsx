@@ -34,6 +34,7 @@ const checkoutPlans = [
 ] as const;
 
 const planRank: Record<string, number> = {
+  free: -1,
   starter: 0,
   professional: 1,
   business: 2,

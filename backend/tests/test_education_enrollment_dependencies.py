@@ -217,6 +217,16 @@ async def test_permanent_student_delete_removes_active_enrollments_only(
         await client.get(f"/api/v1/education/batches/{batch['id']}", headers=auth_headers)
     ).status_code == 200
 
+    # A permanent deletion must release the workspace-scoped Student ID so it
+    # can be used again for a replacement student.
+    recreated = await client.post(
+        "/api/v1/education/students",
+        headers=auth_headers,
+        json={"studentNumber": "DELETE-STUDENT-1", "name": "Replacement Student"},
+    )
+    assert recreated.status_code == 201, recreated.text
+    assert recreated.json()["studentNumber"] == "DELETE-STUDENT-1"
+
 
 async def test_permanent_course_delete_removes_its_batches_and_enrollments_only(
     client: AsyncClient,
