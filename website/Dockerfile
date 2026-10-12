@@ -1,4 +1,4 @@
-FROM node:26-alpine AS build
+FROM node:26-alpine@sha256:ef24c5053d50fdc3e4e56eb4e7ddb7861874ab0fdc797046ba897581deb8e868 AS build
 WORKDIR /site
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -8,8 +8,10 @@ ARG VITE_SITE_URL=http://localhost:3300
 ENV VITE_APP_URL=$VITE_APP_URL VITE_SITE_URL=$VITE_SITE_URL
 RUN npm run build
 
-FROM node:26-alpine
+FROM node:26-alpine@sha256:ef24c5053d50fdc3e4e56eb4e7ddb7861874ab0fdc797046ba897581deb8e868
 WORKDIR /site
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 COPY --from=build /site/dist ./dist
 COPY server.mjs ./server.mjs
 COPY proxy-context.mjs ./proxy-context.mjs
