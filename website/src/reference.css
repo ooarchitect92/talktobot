@@ -21,3 +21,106 @@
 .industry-art.agency .industry-chat {
   margin-top: 60px;
 }
+
+/* Typography from Dark TalkToBot.pdf; existing content and visual theme retained. */
+:root {
+  --mono: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+.hero h1 {
+  font-family: Inter, Arial, sans-serif;
+  font-size: clamp(38px, 5.2vw, 76px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+.hero-copy {
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+.nav-links, .nav-actions, .btn {
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.section-heading h2 {
+  font-size: clamp(30px, 3.15vw, 46px);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+.workflow .section-heading h2,
+.workflow .section-heading > p {
+  font-family: var(--mono);
+}
+.workflow .section-heading h2 {
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+.section-heading > p,
+.feature-copy > p {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+.feature-copy h3 {
+  font-size: clamp(30px, 2.75vw, 40px);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+.step-heading h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+.workflow-step p {
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+}
+.step-heading > span {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.faq .section-heading h2 {
+  font-size: clamp(30px, 3vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.faq summary {
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+.final-cta h2 {
+  font-family: var(--mono);
+  font-size: clamp(30px, 4.1vw, 60px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+.final-cta > p {
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+@media (max-width: 800px) {
+  .step-heading h3 { font-size: 16px; }
+  .feature-copy > p, .section-heading > p { font-size: 15px; }
+}
+@media (max-width: 520px) {
+  .hero h1 { font-size: 38px; letter-spacing: -0.035em; }
+  .step-heading > span { font-size: 8px; }
+  .workflow-step p { font-size: 12px; }
+  .final-cta > p { font-size: 12px; }
+}
