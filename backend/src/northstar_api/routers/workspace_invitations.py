@@ -184,7 +184,7 @@ def _set_refresh_cookie(response: Response, token: str) -> None:
 
 
 def _public_refresh_token(token: str) -> str | None:
-    return None if get_settings().is_production else token
+    return None if get_settings().app_env in {"staging", "production"} else token
 
 
 async def _session_response(

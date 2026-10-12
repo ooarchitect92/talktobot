@@ -45,7 +45,7 @@ Restricted RDS TLS and hostname verification passed. The real database was migra
 
 The AWS load balancer controller is installed and pinned by digest, the VPC CNI network policy agent is enabled, and three encrypted immutable ECR repositories are provisioned. OIDC publishing preserves the scanned/attested GHCR digest in ECR. Application deployment uses a hosted GitHub runner and a restricted SSM port-forward document that fixes the private Kubernetes hostname/HTTPS port; no shell, SSH, public Kubernetes API or permanent runner is required. The deployment role cannot change this document.
 
-Real SMTP authentication, NVIDIA chat and 2,048-dimensional embedding calls passed. Provider secrets are held in Secrets Manager and excluded from Terraform values and repository contents. Credentials disclosed in chat need rotation before public launch. No real email was sent by these connectivity checks. Billing and external delivery integrations remain disabled.
+Real SMTP authentication, NVIDIA chat and 2,048-dimensional embedding calls passed. Provider secrets are held in Secrets Manager and excluded from Terraform values and repository contents. No real email was sent by these connectivity checks. Billing and external delivery integrations remain disabled.
 
 HTTPS ingress defaults to a deny-only CIDR. Controlled validation admits only the operator and staging NAT addresses. Public/customer exposure remains blocked until release and acceptance gates pass. There are no application workloads or load balancer DNS records deployed at this checkpoint. Recovery, rollback, one-hour 100-session load, 24-hour soak, alert delivery, backup ownership and seven-day launch evidence are still pending. No 9/10 rating or qualified release is claimed.
 

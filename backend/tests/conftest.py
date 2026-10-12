@@ -30,6 +30,12 @@ os.environ.update(
         "ALLOW_DETERMINISTIC_EMBEDDINGS": "true",
         "RATE_LIMIT_FAIL_OPEN": "true",
         "BACKGROUND_DISPATCH_ENABLED": "false",
+        # Unit tests must not inherit live provider credentials from a local .env.
+        "NVIDIA_API_KEY": "",
+        "REQUIRE_NVIDIA": "false",
+        "EMAIL_DELIVERY_MODE": "log",
+        "SMTP_USERNAME": "",
+        "SMTP_PASSWORD": "",
     }
 )
 

@@ -142,7 +142,7 @@ async def select_organization(
     payload: OrganizationSelection, current: Identity, session: DB, request: Request, response: Response
 ) -> SelectedOrganizationSession:
     settings = get_settings()
-    if settings.is_production and payload.refresh_token is not None:
+    if settings.app_env in {"staging", "production"} and payload.refresh_token is not None:
         raise deny(422, "Production browser sessions use the secure refresh cookie")
     raw_refresh = request.cookies.get("northstar_refresh") or payload.refresh_token
     if not raw_refresh:

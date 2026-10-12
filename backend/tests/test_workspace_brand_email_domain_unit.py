@@ -143,8 +143,11 @@ def test_smtp_send_ssl_does_not_starttls_or_login_without_credentials(monkeypatc
     monkeypatch.setattr(smtp_service.smtplib, "SMTP_SSL", lambda *args, **kwargs: FakeClient())
     message = EmailMessage()
     settings = EmailSettings(
+        _env_file=None,
         email_delivery_mode="smtp",
         smtp_host="smtp.example.com",
+        smtp_username="",
+        smtp_password=None,
         smtp_ssl=True,
         smtp_starttls=False,
     )
