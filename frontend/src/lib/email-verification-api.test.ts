@@ -15,6 +15,12 @@ const verifiedSession = {
 };
 
 describe('emailVerificationApi', () => {
+  it('explains malformed verification links instead of showing generic validation failure', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      error: { message: 'Request validation failed' },
+    }), { status: 422 })));
+    await expect(emailVerificationApi.verify('truncated')).rejects.toThrow('The verification link is incomplete');
+  });
   afterEach(() => {
     localStorage.clear();
     vi.unstubAllGlobals();

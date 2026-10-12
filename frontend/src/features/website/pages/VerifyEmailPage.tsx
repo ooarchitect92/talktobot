@@ -52,10 +52,11 @@ export function VerifyEmailPage() {
           }
         }
         setState('success');
-        setMessage('Your email address is verified. Sign in to continue.');
+        setMessage('Your email address is verified. Sign in to continue and complete authenticator setup if requested.');
       } catch (reason) {
         setState('error');
-        setMessage(reason instanceof Error ? reason.message : 'Verification link is invalid or expired.');
+        const detail = reason instanceof Error ? reason.message : 'Verification link is invalid or expired.';
+        setMessage(`${detail} Open the newest verification email. Requesting another email invalidates previous links. If needed, request one new email below and use only that link.`);
       }
     };
     void run();
@@ -107,7 +108,7 @@ export function VerifyEmailPage() {
           <span className="eyebrow-pill"><MailCheck /> Secure account activation</span>
           <h1>{state === 'success' ? 'Email verified' : state === 'checking' ? 'Verifying your email' : 'Check your email'}</h1>
           <p>{state === 'success'
-            ? 'Your talktobot account can now access its workspace.'
+            ? 'Your email is verified. Sign-in and authenticator setup are still required before workspace access.'
             : 'Verify your business email before entering your workspace.'}</p>
         </div>
 
@@ -127,7 +128,7 @@ export function VerifyEmailPage() {
             <span className="verification-card__icon"><MailCheck /></span>
             <div>
               <strong>Verification email sent</strong>
-              <p>Open the email we sent to <b>{session?.user.email ?? 'your business email'}</b> and select the verification link. Links expire for security.</p>
+              <p>Open the newest email sent to <b>{session?.user.email ?? 'your business email'}</b> and select its verification link. Resending invalidates older links. Check that the email belongs to the account you want to sign in to.</p>
             </div>
           </div>
 

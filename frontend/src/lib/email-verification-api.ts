@@ -45,6 +45,7 @@ export const emailVerificationApi = {
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.trim().toLowerCase() }),
     });
+    if (response.status === 422) throw new ApiError('Enter the complete email address for your account.', 422);
     if (!response.ok) throw await errorFrom(response, 'Unable to request a verification email.');
   },
 
@@ -55,6 +56,7 @@ export const emailVerificationApi = {
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ token }),
     });
+    if (response.status === 422) throw new ApiError('The verification link is incomplete. Open the full link from your newest email, or request one new verification email.', 422);
     if (!response.ok) throw await errorFrom(response, 'Verification link is invalid or expired.');
     return response.json() as Promise<EmailVerificationResult>;
   },
