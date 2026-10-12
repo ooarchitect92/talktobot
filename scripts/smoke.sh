@@ -167,7 +167,24 @@ assert_presigned_upload_flow() (
   }
   trap cleanup_upload_probe EXIT
 
-  printf '%s' 'Northstar presigned POST integration smoke.' >"$payload_file"
+  # Native PDF text exercises automatic ingestion without bypassing the
+  # mandatory review policy for TXT/Markdown or low-confidence extraction.
+  docker compose exec -T api python -c '
+import sys
+import pymupdf
+document = pymupdf.open()
+page = document.new_page()
+remaining = page.insert_textbox(
+    pymupdf.Rect(50, 50, 550, 750),
+    "Northstar upload integration check. This synthetic document verifies the "
+    "presigned upload, storage promotion, native text extraction and background "
+    "knowledge ingestion workflow. It contains no customer data or external "
+    "provider instructions. The temporary source is deleted after acceptance.",
+    fontsize=12,
+)
+assert remaining >= 0, "Smoke document text does not fit its page"
+sys.stdout.buffer.write(document.tobytes())
+' >"$payload_file"
   local size_bytes
   local checksum_sha256
   size_bytes="$(wc -c <"$payload_file")"
@@ -201,7 +218,7 @@ assert_presigned_upload_flow() (
   printf '%-18s %s\n' "App catalog" "populated"
 
   local presign_json
-  presign_json="$(printf '{"filename":"infra-smoke.txt","contentType":"text/plain","sizeBytes":%s,"checksumSha256":"%s"}' "$size_bytes" "$checksum_sha256" | \
+  presign_json="$(printf '{"filename":"infra-smoke.pdf","contentType":"application/pdf","sizeBytes":%s,"checksumSha256":"%s"}' "$size_bytes" "$checksum_sha256" | \
     curl --fail-with-body --silent --show-error --max-time 30 \
       --header "Authorization: Bearer $access_token" \
       --header 'Content-Type: application/json' \
@@ -226,7 +243,7 @@ assert_presigned_upload_flow() (
   done < <(printf '%s' "$presign_json" | docker compose exec -T api python -c \
     'import json, sys; data=json.load(sys.stdin); [print(f"{key}\t{value}") for key, value in data["fields"].items()]')
   # S3-compatible POST handlers require the file part after all signed fields.
-  form_arguments+=(--form "file=@$payload_file;type=text/plain")
+  form_arguments+=(--form "file=@$payload_file;type=application/pdf")
 
   local upload_status
   upload_status="$(curl --fail --silent --show-error --max-time 30 \
@@ -277,7 +294,7 @@ assert_presigned_upload_flow() (
     sleep 2
   done
 
-  echo "Uploaded smoke source did not finish within ${SMOKE_TIMEOUT_SECONDS}s" >&2
+  echo "Uploaded smoke source did not finish within ${SMOKE_TIMEOUT_SECONDS}s (last status: $source_status)" >&2
   return 1
 )
 
