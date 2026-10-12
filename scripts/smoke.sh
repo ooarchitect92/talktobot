@@ -138,7 +138,7 @@ assert_object_store_cors() {
   printf '%-18s %s\n' "Object CORS" "restricted"
 }
 
-assert_presigned_upload_flow() {
+assert_presigned_upload_flow() (
   if [[ -z "$SMOKE_ADMIN_EMAIL" && -z "$SMOKE_ADMIN_PASSWORD" ]]; then
     printf '%-18s %s\n' "Upload flow" "skipped (set SMOKE_ADMIN_EMAIL and SMOKE_ADMIN_PASSWORD)"
     return 0
@@ -157,7 +157,7 @@ assert_presigned_upload_flow() {
   local access_token=""
 
   cleanup_upload_probe() {
-    trap - RETURN EXIT
+    trap - EXIT
     if [[ -n "$source_id" && -n "$access_token" ]]; then
       curl --silent --show-error --max-time 30 --output /dev/null --request DELETE \
         --header "Authorization: Bearer $access_token" \
@@ -165,7 +165,7 @@ assert_presigned_upload_flow() {
     fi
     rm -f -- "$payload_file" "$response_headers"
   }
-  trap cleanup_upload_probe RETURN EXIT
+  trap cleanup_upload_probe EXIT
 
   printf '%s' 'Northstar presigned POST integration smoke.' >"$payload_file"
   local size_bytes
@@ -212,6 +212,10 @@ assert_presigned_upload_flow() {
   local object_key
   upload_url="$(printf '%s' "$presign_json" | docker compose exec -T api python -c \
     'import json, sys; data=json.load(sys.stdin); assert data["method"] == "POST"; print(data["url"])')"
+  # Local uploads use the application's same-origin storage proxy.
+  if [[ "$upload_url" == /storage/* ]]; then
+    upload_url="${WEB_URL%/}$upload_url"
+  fi
   object_key="$(printf '%s' "$presign_json" | docker compose exec -T api python -c \
     'import json, sys; data=json.load(sys.stdin); key=data["objectKey"]; assert key.startswith("staging/"); print(key)')"
 
@@ -275,7 +279,7 @@ assert_presigned_upload_flow() {
 
   echo "Uploaded smoke source did not finish within ${SMOKE_TIMEOUT_SECONDS}s" >&2
   return 1
-}
+)
 
 require_command curl
 require_command docker
