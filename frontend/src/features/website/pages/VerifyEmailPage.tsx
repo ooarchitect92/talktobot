@@ -56,7 +56,7 @@ export function VerifyEmailPage() {
       } catch (reason) {
         setState('error');
         const detail = reason instanceof Error ? reason.message : 'Verification link is invalid or expired.';
-        setMessage(`${detail} Open the newest verification email. Requesting another email invalidates previous links. If needed, request one new email below and use only that link.`);
+        setMessage(`${detail} Open the newest verification email. If needed, request one new email below and use only that link.`);
       }
     };
     void run();
@@ -128,7 +128,7 @@ export function VerifyEmailPage() {
             <span className="verification-card__icon"><MailCheck /></span>
             <div>
               <strong>Verification email sent</strong>
-              <p>Open the newest email sent to <b>{session?.user.email ?? 'your business email'}</b> and select its verification link. Resending invalidates older links. Check that the email belongs to the account you want to sign in to.</p>
+              <p>Open the newest email sent to <b>{session?.user.email ?? 'your business email'}</b> and select its verification link. Verification links expire after 24 hours. Check that the email belongs to the account you want to sign in to.</p>
             </div>
           </div>
 

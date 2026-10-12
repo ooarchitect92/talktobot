@@ -68,11 +68,14 @@ async def issue_verification_token(
     if state.verified_at is not None:
         raise EmailVerificationError("Email address is already verified")
 
+    # Resends must not invalidate unexpired links when email arrives out of order.
+    # Successful verification still consumes all outstanding challenges.
     await session.execute(
         update(EmailVerificationToken)
         .where(
             EmailVerificationToken.user_id == user_id,
             EmailVerificationToken.consumed_at.is_(None),
+            EmailVerificationToken.expires_at <= now,
         )
         .values(consumed_at=now)
     )

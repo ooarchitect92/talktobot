@@ -88,7 +88,7 @@ async def test_email_verification_unlocks_workspace_and_refreshes_session(
         assert raw_token != token.token_hash
 
 
-async def test_resend_invalidates_old_link_and_is_generic(
+async def test_resend_preserves_unexpired_link_and_is_generic(
     client: AsyncClient,
     monkeypatch,
 ) -> None:
@@ -120,14 +120,15 @@ async def test_resend_invalidates_old_link_and_is_generic(
         "/api/v1/auth/email-verification/verify",
         json={"token": first_token},
     )
-    assert old_link.status_code == 400
-    assert old_link.json()["error"]["message"] == "Verification link is invalid or expired"
+    assert old_link.status_code == 200, old_link.text
+    assert old_link.json() == {"verified": True, "alreadyVerified": False}
 
     new_link = await client.post(
         "/api/v1/auth/email-verification/verify",
         json={"token": second_token},
     )
     assert new_link.status_code == 200, new_link.text
+    assert new_link.json() == {"verified": True, "alreadyVerified": True}
 
     already_verified_resend = await client.post(
         "/api/v1/auth/email-verification/resend",
