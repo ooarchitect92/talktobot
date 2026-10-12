@@ -29,7 +29,7 @@ resource "aws_iam_role" "github_image_publish" {
     Action    = "sts:AssumeRoleWithWebIdentity"
     Condition = { StringEquals = {
       "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-      "token.actions.githubusercontent.com:sub" = "repo:ooarchitect92/talktobot:environment:staging"
+      "token.actions.githubusercontent.com:sub" = "repo:ooarchitect92@274523797/talktobot@1415168926:environment:staging"
     } }
   }] })
 }
