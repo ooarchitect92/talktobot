@@ -26,7 +26,7 @@
     "@tiptap/react": "^3.31.3",
     "lucide-react": "^1.42.0",
     "qrcode": "^1.5.4",
-    "react": "^18.3.1",
+    "react": "^19.3.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1",
     "three": "0.186.0"
@@ -38,7 +38,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/node": "^26.5.0",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "^18.3.18",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^18.3.5",
     "@types/three": "0.186.0",
     "@vitejs/plugin-react": "6.1.1",
