@@ -158,7 +158,7 @@ jobs:
   integration:
     name: Production topology integration gate
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 60
     needs: [frontend, backend, configuration, security]
     env:
       WEB_PORT: "3100"
@@ -185,7 +185,7 @@ jobs:
         with: {persist-credentials: false}
       - run: cp .env.example .env
       - name: Build all application workloads
-        run: docker compose build web website website-scheduler api migrate worker job-dispatcher outbox-relay analytics-consumer object-cleaner crm-router crm-delivery crm-reconciliation channel-event-consumer crm-webhook-consumer
+        run: docker compose build minio minio-init web website website-scheduler api migrate worker job-dispatcher outbox-relay analytics-consumer object-cleaner crm-router crm-delivery crm-reconciliation channel-event-consumer crm-webhook-consumer
       - name: Scan runtime API image
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
