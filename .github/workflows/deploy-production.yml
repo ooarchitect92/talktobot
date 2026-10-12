@@ -10,7 +10,7 @@ on:
       health_url:
         description: Public HTTPS health URL checked after rollout
         required: true
-        default: https://talktobot.io/healthz
+        default: https://talktobot.com/healthz
         type: string
 
 permissions:

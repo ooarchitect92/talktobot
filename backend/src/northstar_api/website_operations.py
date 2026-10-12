@@ -1134,7 +1134,7 @@ async def overview(session: DBSession, principal: EditorPrincipal) -> dict[str, 
         "enquiries": await session.scalar(select(func.count()).select_from(WebsiteInquiry)),
         "resources": await session.scalar(select(func.count()).select_from(WebsiteResource)),
         "audit_records": await session.scalar(select(func.count()).select_from(WebsiteOperation)),
-        "domain": "talktobot.io",
+        "domain": "talktobot.com",
         "external_delivery": "not_configured",
     }
 
@@ -1254,7 +1254,7 @@ async def export_content(
     return {
         "format": "talktobot.website.archive.v1",
         "created_at": datetime.now(UTC).isoformat(),
-        "domain": "talktobot.io",
+        "domain": "talktobot.com",
         "sha256": checksum,
         "includes_contacts": include_contacts,
         "media_bytes_included": False,
