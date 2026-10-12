@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   packages: write
   id-token: write
   attestations: write
@@ -20,7 +21,22 @@ jobs:
     name: Re-verify release source
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    services:
+      redis:
+        image: redis:7.4@sha256:4fa24486b8bcca8eec45ee0eb166edc674795e53a2b53d1a9ef263eecebaac85
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      REDIS_TEST_URL: redis://127.0.0.1:6379/15
     steps:
+      - name: Require passing complete CI for this immutable commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          result="$(gh api "repos/$RELEASE_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$RELEASE_SHA&per_page=100" --jq 'any(.workflow_runs[]; .conclusion == "success")')"
+          test "$result" = true || { echo 'Complete CI, including topology acceptance, must pass for this exact commit before release.' >&2; exit 1; }
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0

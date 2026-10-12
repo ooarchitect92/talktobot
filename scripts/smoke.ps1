@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param(
+    [string]$WebsiteUrl = $(if ($env:WEBSITE_URL) { $env:WEBSITE_URL } else { "http://localhost:3300" }),
     [string]$WebUrl = $(if ($env:WEB_URL) { $env:WEB_URL } else { "http://localhost:3000" }),
     [string]$ApiUrl = $(if ($env:API_URL) { $env:API_URL } else { "http://localhost:8000" }),
     [string]$ObjectStoreUrl = $(if ($env:OBJECT_STORE_URL) { $env:OBJECT_STORE_URL } else { "http://localhost:9000" }),
@@ -264,16 +265,18 @@ Wait-OneShotCompleted -Service "migrate"
 Wait-OneShotCompleted -Service "minio-init"
 Assert-ObjectStoreCors
 
-foreach ($service in @("api", "web", "worker")) {
+foreach ($service in @("api", "web", "website", "worker")) {
     Wait-ContainerHealthy -Service $service
 }
-foreach ($service in @("job-dispatcher", "outbox-relay", "analytics-consumer", "object-cleaner")) {
+foreach ($service in @("job-dispatcher", "outbox-relay", "analytics-consumer", "object-cleaner", "website-scheduler")) {
     Assert-ContainerRunning -Service $service
 }
 
 Wait-HttpReady -Name "API liveness" -Uri "$ApiUrl/health/live"
 Wait-HttpReady -Name "API readiness" -Uri "$ApiUrl/health/ready"
 Wait-HttpReady -Name "Web application" -Uri "$WebUrl/healthz"
+Wait-HttpReady -Name "Public website" -Uri "$WebsiteUrl/healthz"
+Wait-HttpReady -Name "Website page" -Uri "$WebsiteUrl/"
 Assert-PresignedUploadFlow
 
 docker compose ps --status running

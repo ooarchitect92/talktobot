@@ -162,6 +162,8 @@ jobs:
     needs: [frontend, backend, configuration, security]
     env:
       WEB_PORT: "3100"
+      WEBSITE_PORT: "3300"
+      WEBSITE_URL: http://localhost:3300
       API_PORT: "8100"
       POSTGRES_PORT: "55432"
       REDIS_PORT: "6399"
@@ -183,7 +185,7 @@ jobs:
         with: {persist-credentials: false}
       - run: cp .env.example .env
       - name: Build all application workloads
-        run: docker compose build web api migrate worker job-dispatcher outbox-relay analytics-consumer object-cleaner crm-router crm-delivery crm-reconciliation channel-event-consumer crm-webhook-consumer
+        run: docker compose build web website website-scheduler api migrate worker job-dispatcher outbox-relay analytics-consumer object-cleaner crm-router crm-delivery crm-reconciliation channel-event-consumer crm-webhook-consumer
       - name: Scan runtime API image
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -199,6 +201,14 @@ jobs:
           version: v0.75.0
           trivyignores: .trivyignore.yaml
           image-ref: northstar/web:local
+          severity: HIGH,CRITICAL
+          ignore-unfixed: false
+          exit-code: "1"
+      - name: Scan runtime website image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: v0.75.0
+          image-ref: northstar/website:local
           severity: HIGH,CRITICAL
           ignore-unfixed: false
           exit-code: "1"

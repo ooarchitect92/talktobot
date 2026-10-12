@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 WEB_URL="${WEB_URL:-http://localhost:3000}"
 API_URL="${API_URL:-http://localhost:8000}"
+WEBSITE_URL="${WEBSITE_URL:-http://localhost:3300}"
 OBJECT_STORE_URL="${OBJECT_STORE_URL:-http://localhost:9000}"
 SMOKE_WEB_ORIGIN="${SMOKE_WEB_ORIGIN:-http://localhost:3000}"
 SMOKE_TIMEOUT_SECONDS="${SMOKE_TIMEOUT_SECONDS:-180}"
@@ -289,16 +290,18 @@ wait_for_one_shot migrate
 wait_for_one_shot minio-init
 assert_object_store_cors
 
-for service in api web worker; do
+for service in api web website worker; do
   wait_for_container_health "$service"
 done
-for service in job-dispatcher outbox-relay analytics-consumer object-cleaner; do
+for service in job-dispatcher outbox-relay analytics-consumer object-cleaner website-scheduler; do
   assert_container_running "$service"
 done
 
 wait_for_http "API liveness" "$API_URL/health/live"
 wait_for_http "API readiness" "$API_URL/health/ready"
 wait_for_http "Web application" "$WEB_URL/healthz"
+wait_for_http "Public website" "$WEBSITE_URL/healthz"
+wait_for_http "Website page" "$WEBSITE_URL/"
 assert_presigned_upload_flow
 
 docker compose ps --status running
