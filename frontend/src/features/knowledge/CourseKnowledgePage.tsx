@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth, useWorkspace } from '@/components/providers';
 import { api } from '@/lib/api';
@@ -25,13 +25,15 @@ function KnowledgeWorkspace() {
   const [progress, setProgress] = useState<TutorProgress[]>([]);
   const [contexts, setContexts] = useState<TutorContext[]>([]);
   const [reviews, setReviews] = useState<AcademicReview[]>([]);
-  const [workflow, setWorkflow] = useState<BotWorkflow | null>(null);
-  const [turns, setTurns] = useState<WhatsappTurn[]>([]);
+  const [selectedWorkflow, setWorkflow] = useState<BotWorkflow | null>(null);
+  const [turnRows, setTurnRows] = useState<{ agent: string; values: WhatsappTurn[] } | null>(null);
   const [auditPath, setAuditPath] = useState('');
   const [auditDelivery, setAuditDelivery] = useState('');
   const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
   const [agents, setAgents] = useState<KnowledgeRecord[]>([]);
   const [agent, setAgent] = useState(params.get('agentId') ?? '');
+  const turns = turnRows?.agent === agent ? turnRows.values : [];
+  const workflow = selectedWorkflow?.agentId === agent ? selectedWorkflow : null;
   const [course, setCourse] = useState(params.get('courseId') ?? '');
   const [paper, setPaper] = useState('');
   const [batch, setBatch] = useState('');
@@ -113,6 +115,13 @@ function KnowledgeWorkspace() {
       window.requestAnimationFrame(() => feedback.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' }));
     }
   }
+  const auditQuery = useCallback(() => {
+    const query = new URLSearchParams();
+    if (course) query.set('course_id', course);
+    if (auditPath) query.set('answer_path', auditPath);
+    if (auditDelivery) query.set('delivery_status', auditDelivery);
+    return query.toString();
+  }, [course, auditPath, auditDelivery]);
   useEffect(() => {
     let live = true;
     void Promise.all([knowledgeRequest<KnowledgeCatalog>('/education/knowledge/catalog'), api.agents.list()]).then(([next, list]) => {
@@ -133,19 +142,19 @@ function KnowledgeWorkspace() {
     return () => { live = false; clearInterval(timer); };
   }, [agent]);
   useEffect(() => {
-    if (!agent) { setTurns([]); setWorkflow(null); return; }
+    if (!agent) return;
     let live = true;
     const query = auditQuery();
     const refresh = () => void Promise.all([
       knowledgeRequest<WhatsappTurn[]>(knowledgePath(agent, `/whatsapp-turns?limit=25${query ? `&${query}` : ''}`)),
       botWorkflowApi.list().catch(() => [] as BotWorkflow[]),
     ]).then(([nextTurns, workflows]) => {
-      if (live) { setTurns(nextTurns); setWorkflow(workflows.find(item => item.agentId === agent) ?? null); }
+      if (live) { setTurnRows({ agent, values: nextTurns }); setWorkflow(workflows.find(item => item.agentId === agent) ?? null); }
     }).catch(e => { if (live) setError(String(e)); });
     refresh();
     const timer = setInterval(refresh, 15000);
     return () => { live = false; clearInterval(timer); };
-  }, [agent, course, auditPath, auditDelivery]);
+  }, [agent, auditQuery]);
   useEffect(() => () => { if (originalImage) URL.revokeObjectURL(originalImage); }, [originalImage]);
   const preparingCourse = useRef('');
   const feedback = useRef<HTMLDivElement>(null);
@@ -206,13 +215,7 @@ function KnowledgeWorkspace() {
     }, 'Mapping saved for review. Previous approval cannot authorize an edited mapping.');
   }
   async function download(path: string, filename: string) { saveKnowledgeBlob(await knowledgeBlob(path), filename); }
-  function auditQuery() {
-    const query = new URLSearchParams();
-    if (course) query.set('course_id', course);
-    if (auditPath) query.set('answer_path', auditPath);
-    if (auditDelivery) query.set('delivery_status', auditDelivery);
-    return query.toString();
-  }
+
   async function publish(release: KnowledgeRecord) {
     const head = status.heads.find(h => h.courseId === release.courseId && h.curriculumId === release.curriculumId);
     if (!window.confirm(`Publish this exact release for ${courseName}? Each included assignment retains its own paper and batch restrictions.`)) return;

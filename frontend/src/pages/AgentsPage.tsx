@@ -101,22 +101,23 @@ export function CreateAgentModal({ onClose, onCreated }: { onClose: () => void; 
   const [step, setStep] = useState(0); const [name, setName] = useState(''); const [description, setDescription] = useState(''); const [purpose, setPurpose] = useState<AgentPurpose>('support'); const [tone, setTone] = useState<AgentTone>('friendly'); const [language, setLanguage] = useState('English'); const [deploymentChannel, setDeploymentChannel] = useState<DeploymentChannel>('website'); const [saving, setSaving] = useState(false); const [error, setError] = useState('');
   const [numbers, setNumbers] = useState<WhatsAppConnection[]>([]);
   const [numberId, setNumberId] = useState('');
-  const [numberLoading, setNumberLoading] = useState(false);
+  const [numberLoading, setNumberLoading] = useState(true);
+  const [availabilityTime, setAvailabilityTime] = useState(() => Date.now());
+  useEffect(() => { const timer = window.setInterval(() => setAvailabilityTime(Date.now()), 30000); return () => window.clearInterval(timer); }, []);
   const [numberError, setNumberError] = useState('');
   const [numberRevision, setNumberRevision] = useState(0);
   const [agents, setAgents] = useState<Agent[]>([]);
   useEffect(() => {
     if (deploymentChannel !== 'whatsapp') return;
     let active = true;
-    setNumberLoading(true); setNumberError('');
     void Promise.all([api.integrations.whatsapp.status(), api.agents.list()]).then(([status, items]) => {
-      if (active) { setNumbers(status.connections ?? []); setAgents(items); }
+      if (active) { setNumbers(status.connections ?? []); setAgents(items); setNumberError(''); setAvailabilityTime(Date.now()); }
     }).catch(() => { if (active) setNumberError('Could not load connected numbers. Check your integration access and retry.'); })
       .finally(() => { if (active) setNumberLoading(false); });
     return () => { active = false; };
   }, [deploymentChannel, numberRevision]);
   const selectedNumber = numbers.find((number) => number.id === numberId);
-  const available = (number: WhatsAppConnection) => Boolean(number.id && !number.agentId && number.status === 'connected' && (!number.tokenExpiresAt || Date.parse(number.tokenExpiresAt) > Date.now()));
+  const available = (number: WhatsAppConnection) => Boolean(number.id && !number.agentId && number.status === 'connected' && (!number.tokenExpiresAt || Date.parse(number.tokenExpiresAt) > availabilityTime));
   const steps = ['Basics', 'Purpose', 'Voice', 'Channel'];
   const locale = getWidgetLocale(language);
   const canContinue = (step !== 0 || Boolean(name.trim())) && (step !== 3 || deploymentChannel !== 'whatsapp' || Boolean(!numberLoading && !numberError && selectedNumber && available(selectedNumber)));
@@ -137,7 +138,7 @@ export function CreateAgentModal({ onClose, onCreated }: { onClose: () => void; 
         </Field>
         {numberError ? <p role="alert">{numberError}</p> : null}
         {!numberLoading && !numbers.some(available) ? <p>No available connected numbers. Add a number in Integrations or release an existing assignment in Deploy.</p> : null}
-        <div className="whatsapp-manager__actions"><a href="/integrations" target="_blank" rel="noreferrer">Manage WhatsApp numbers</a><Button variant="secondary" disabled={numberLoading || saving} onClick={() => setNumberRevision((value) => value + 1)}>Refresh numbers</Button></div>
+        <div className="whatsapp-manager__actions"><a href="/integrations" target="_blank" rel="noreferrer">Manage WhatsApp numbers</a><Button variant="secondary" disabled={numberLoading || saving} onClick={() => { setNumberLoading(true); setNumberError(''); setNumberRevision((value) => value + 1); }}>Refresh numbers</Button></div>
         {purpose === 'education' ? <p>The number will be reserved for this draft bot. Replies start only after education access is configured and the bot is published.</p> : null}
       </div> : null}<div className="agent-flow__summary"><span><small>Agent</small><strong>{name}</strong></span><span><small>Purpose</small><strong>{purposeLabels[purpose]}</strong></span><span><small>Language</small><strong>{language}</strong></span><span><small>Channel</small><strong>{deploymentOptions.find((item) => item.id === deploymentChannel)?.name}</strong></span>{deploymentChannel === 'whatsapp' ? <span><small>WhatsApp number</small><strong>{selectedNumber?.displayPhoneNumber || selectedNumber?.phoneNumberId || 'Select a number'}</strong></span> : null}</div></section> : null}
       {error ? <div className="form-error" role="alert">{error}</div> : null}

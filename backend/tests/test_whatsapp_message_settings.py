@@ -91,7 +91,7 @@ def test_invalid_reply_structure_is_rejected(template):
 
 
 @pytest.mark.parametrize("incoming,enabled", [("Hi", True), ("Explain the topic", True), ("Hi", False)])
-async def test_saved_settings_are_used_in_education_whatsapp_delivery(
+async def test_saved_settings_do_not_bypass_missing_education_study_configuration(
     client, auth_headers, monkeypatch, incoming, enabled
 ):
     seeded, headers = await _seed_authorized_student(client, auth_headers)
@@ -157,12 +157,13 @@ async def test_saved_settings_are_used_in_education_whatsapp_delivery(
     await _process_whatsapp_inbound_async(receipt_id)
     sender.assert_awaited_once()
     sent = sender.call_args.kwargs["text"]
-    if incoming == "Hi" and enabled:
-        assert sent == settings["welcomeMessage"]
-        retrieval.assert_not_awaited()
+    # Study mode must complete course/paper selection before generic greeting or
+    # reply appearance can be applied; this fixture deliberately has no curriculum.
+    if incoming == "Hi":
+        assert "Choose your active course" in sent
     else:
-        assert sent == f"*{reloaded['name']}*\n\n{localized_no_evidence('English')}\n\n_Keep learning!_"
-        retrieval.assert_awaited_once()
+        assert "configure curriculum and paper access" in sent
+    retrieval.assert_not_awaited()
     async with SessionFactory() as session:
         receipt = await session.get(WhatsAppInboundMessage, receipt_id)
         assert receipt.status == "processed", receipt.last_error

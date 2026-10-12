@@ -127,13 +127,14 @@ export function DeployPage() {
   const [saving, setSaving] = useState(false);
   const { pushToast } = useToast();
 
-  useEffect(() => {
-    if (!agents.data?.length) return;
-    const next = agents.data.map(cloneAgent);
+  const [previousAgents, setPreviousAgents] = useState(agents.data);
+  if (agents.data !== previousAgents) {
+    setPreviousAgents(agents.data);
+    const next = (agents.data ?? []).map(cloneAgent);
     setSavedAgents(next);
     setDraftAgents(next.map(cloneAgent));
-    setAgentId((current) => next.some((agent) => agent.id === current) ? current : next[0]!.id);
-  }, [agents.data]);
+    if (next.length) setAgentId((current) => next.some((item) => item.id === current) ? current : next[0]!.id);
+  }
 
   const agent = draftAgents.find((item) => item.id === agentId) ?? draftAgents[0];
   const savedAgent = savedAgents.find((item) => item.id === agent?.id);
@@ -148,12 +149,15 @@ export function DeployPage() {
   const selectedAgentId = agent?.id;
   const preferredDeploymentChannel = agent?.appearance.deploymentChannel ?? 'website';
 
-  useEffect(() => {
-    if (!selectedAgentId) return;
-    if (!integrations.data?.some((item) => item.id === preferredDeploymentChannel)) return;
-    setIntegrationId(preferredDeploymentChannel);
-    setSection(preferredDeploymentChannel === 'website' ? 'look' : 'channel');
-  }, [selectedAgentId, preferredDeploymentChannel, integrations.data]);
+  const integrationContext = `${selectedAgentId ?? ''}:${preferredDeploymentChannel}:${Boolean(integrations.data?.some((item) => item.id === preferredDeploymentChannel))}`;
+  const [previousIntegrationContext, setPreviousIntegrationContext] = useState('');
+  if (previousIntegrationContext !== integrationContext) {
+    setPreviousIntegrationContext(integrationContext);
+    if (selectedAgentId && integrations.data?.some((item) => item.id === preferredDeploymentChannel)) {
+      setIntegrationId(preferredDeploymentChannel);
+      setSection(preferredDeploymentChannel === 'website' ? 'look' : 'channel');
+    }
+  }
 
   useEffect(() => {
     if (!dirty) return;
@@ -319,7 +323,9 @@ export function AgentDeploymentPreview({ agent, integrationId, device = 'mobile'
 function WebsiteDeploymentPreview({ agent, device, section }: { agent: Agent; device: 'desktop' | 'mobile'; section: DeploySection }) {
   const openOnLoad = agent.appearance.openOnPageLoad ?? false;
   const [manuallyOpen, setManuallyOpen] = useState(false);
-  useEffect(() => { setManuallyOpen(false); }, [agent.id, agent.status, openOnLoad, section, device]);
+  const previewContext = `${agent.id}:${agent.status}:${openOnLoad}:${section}:${device}`;
+  const [previousPreviewContext, setPreviousPreviewContext] = useState(previewContext);
+  if (previousPreviewContext !== previewContext) { setPreviousPreviewContext(previewContext); setManuallyOpen(false); }
   const enabled = agent.status === 'active';
   const showLauncherState = enabled && section === 'toggle' && !openOnLoad && !manuallyOpen;
   const width = agent.appearance.widgetWidth ?? 380;
@@ -539,15 +545,16 @@ function DeployEditor({ section, agent, agents, setAgentId, updateAgent, updateA
   </SharePanel>;
 }
 
-function QrSharePanel({ hostedUrl, agent, whatsapp = false }: { hostedUrl: string; agent: Agent; whatsapp?: boolean }) {
+function QrSharePanel(props: { hostedUrl: string; agent: Agent; whatsapp?: boolean }) {
+  return <QrShare key={props.hostedUrl} {...props} />;
+}
+function QrShare({ hostedUrl, agent, whatsapp = false }: { hostedUrl: string; agent: Agent; whatsapp?: boolean }) {
   const [assets, setAssets] = useState<QrAssets>();
   const [error, setError] = useState('');
   const { pushToast } = useToast();
 
   useEffect(() => {
     let active = true;
-    setAssets(undefined);
-    setError('');
     void createQrAssets(hostedUrl)
       .then((result) => { if (active) setAssets(result); })
       .catch(() => { if (active) setError('Could not generate this QR code. Please try again.'); });

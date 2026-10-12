@@ -13,6 +13,9 @@ spec:
       containers:
         - name: web
           image: northstar/web:replace-with-immutable-tag
+          env:
+            - {name: API_UPSTREAM, value: "api.northstar.svc.cluster.local:8000"}
+            - {name: LOCAL_STORAGE_PROXY_ENABLED, value: "false"}
           ports: [{name: http, containerPort: 8080}]
           readinessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 10}
           livenessProbe: {httpGet: {path: /healthz, port: http}, periodSeconds: 20}

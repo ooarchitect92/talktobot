@@ -26,6 +26,7 @@ from northstar_api.models import (
     KnowledgeStatus,
     Message,
 )
+from northstar_api.modules.knowledge.ingestion import ingest_source_async
 from northstar_api.schemas import ChatStreamRequest
 from northstar_api.services import education_chat
 from northstar_api.services.education_chat import (
@@ -302,6 +303,9 @@ async def test_course_aware_upload_requires_approved_active_release(
     )
     assert created.status_code == 201, created.text
     source_id = created.json()["id"]
+    # The queued ingestion worker must finish before testing indexed retrieval.
+    async with SessionFactory() as session:
+        await ingest_source_async(session, uuid.UUID(source_id))
 
     scopes = await client.get(
         f"/api/v1/knowledge/{source_id}/education-scopes",
@@ -359,7 +363,7 @@ async def test_course_aware_upload_requires_approved_active_release(
             session,
             tenant_id=agent_model.tenant_id,
             agent_id=agent_model.id,
-            revision=1,
+            revision=agent_model.published_knowledge_revision,
             query="alpha",
             education_scope=EducationRetrievalScope(
                 workspace_id=uuid.UUID(workspace_id),

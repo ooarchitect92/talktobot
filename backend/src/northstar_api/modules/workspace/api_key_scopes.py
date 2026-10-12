@@ -9,6 +9,8 @@ API_KEY_SCOPE_PERMISSIONS: dict[str, frozenset[str]] = {
     "contacts:read": frozenset({"leads.view"}),
     "leads:write": frozenset({"leads.view", "leads.update"}),
     "agents:read": frozenset({"agents.view"}),
+    "education:read": frozenset({"education.view"}),
+    "education:manage": frozenset({"education.view", "education.manage"}),
     "analytics:read": frozenset({"analytics.view"}),
     "webhooks:manage": frozenset({"integrations.view", "integrations.manage"}),
 }

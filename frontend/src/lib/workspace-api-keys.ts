@@ -8,6 +8,8 @@ export const WORKSPACE_API_KEY_SCOPES = [
   'contacts:read',
   'leads:write',
   'agents:read',
+  'education:read',
+  'education:manage',
   'analytics:read',
   'webhooks:manage',
 ] as const;

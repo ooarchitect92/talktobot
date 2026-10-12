@@ -472,6 +472,7 @@ async def test_education_channel_runtime_denies_mismatched_connection_agent_scop
             .where(
                 OutboxEvent.tenant_id == education_agent.tenant_id,
                 OutboxEvent.event_type == "education.access.denied.v1",
+                OutboxEvent.payload["rawEventId"].as_string() == str(raw.id),
             )
             .order_by(OutboxEvent.occurred_at.desc())
         )

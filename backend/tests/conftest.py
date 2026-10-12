@@ -19,6 +19,9 @@ os.environ.update(
         "REDIS_URL": "redis://127.0.0.1:6399/15",
         "APP_AUTO_CREATE_SCHEMA": "true",
         "JWT_SECRET": "test-only-secret-with-more-than-thirty-two-characters",
+        # The session-scoped fixture must outlive a complete 30-minute gate.
+        # Expiry/revocation tests still construct or override their own tokens.
+        "JWT_ACCESS_TTL_MINUTES": "60",
         "SEED_ADMIN_EMAIL": "owner@example.com",
         "SEED_ADMIN_PASSWORD": "Correct-Horse-Test-Password-42!",
         "SEED_ADMIN_NAME": "Test Owner",

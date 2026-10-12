@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -50,8 +51,9 @@ def main() -> int:
     parser.add_argument("--checks", nargs="+", choices=list(gates), default=list(gates))
     args = parser.parse_args()
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
-    directory = ROOT / "reports/readiness" / f"gates-{stamp}"
-    directory.mkdir(parents=True, exist_ok=False)
+    report_root = ROOT / "reports/readiness"
+    report_root.mkdir(parents=True, exist_ok=True)
+    directory = Path(tempfile.mkdtemp(prefix=f"gates-{stamp}-", dir=report_root))
     receipt = {
         "startedAt": datetime.now(UTC).isoformat(),
         "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),

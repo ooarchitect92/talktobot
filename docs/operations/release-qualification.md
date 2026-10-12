@@ -14,10 +14,11 @@ Scope: public website, owner console, customer application, API and every enable
 | Staging DNS / HTTPS | ACM certificate requested and staging subzone created | Pending GoDaddy details; user deferred delegation |
 | Source vulnerability/secret/configuration scan | reports/readiness/trivy-source-current.json and its source-tree receipt | Zero critical/high findings for that diagnostic export; not release evidence for later edits |
 | Strict backend type checking | reports/readiness/backend-types-current.log | Passed: 453 source files; explicit strict configuration |
-| Full backend tests | reports/readiness/backend-tests-latest.xml | 1,681 passed / 11 failed before subsequent fixes; 21 policy/identity follow-up tests passed; fresh full run needed |
-| Full frontend tests | reports/readiness/gates-20261012T045723705893Z/frontend-tests.log | 624 passed before later fixes; fresh full run needed |
+| Full backend tests | Prelaunch diagnostic runs under reports/readiness/gates-* | Last completed run: 1,699 passed, one failed, one Redis check skipped. The remaining audit-event selection was corrected and its focused tests pass; complete rerun with real Redis is in progress. |
+| Full frontend tests | Prelaunch diagnostic runs under reports/readiness/gates-* | 624 passed; final unchanged-source rerun required after the WhatsApp number-retry fix. |
 | Website build/server checks | reports/readiness/website-build-next.log; website-tests-next.log | Build and 8 server tests passed before later edits |
-| Frontend lint | Remaining React state/effect failures are being corrected without disabling rules | Not yet passing |
+| Frontend lint / types / build | Prelaunch gate logs | Passed after React state/effect fixes without disabling lint rules; final unchanged-source run required. |
+| Read-only web startup | reports/readiness/web-proxy-smoke.json; web-image-final-scan.json | Non-root, read-only startup passes health, page, unauthenticated API denial and disabled AWS storage checks; web image has no critical/high findings. |
 | Immutable commit and image digests | None qualified | Pending |
 | Container scans / remote CI | None for a qualified candidate | Pending |
 | Restore and rollback | Infrastructure supports protected versions and 35-day database backups; dedicated recovery role exists | Actual restoration/rollback drills pending |
@@ -29,6 +30,12 @@ Scope: public website, owner console, customer application, API and every enable
 Earlier follow-up type checks from the repository root did not load backend/pyproject.toml and must not be treated as strict CI evidence. Use the explicit commands below. Diagnostic test runs while source files change are not qualification runs.
 
 Primary operational contact: **ooarchitect92@gmail.com**, supplied by the user. Backup/on-call owner remains unassigned. Business identity: Northstar edtech; business contact tech@northstaracad.com. Legal policies and retention decisions still require business approval. No email or Slack messages have been sent to these contacts.
+
+## Prelaunch fixes
+
+The prelaunch review corrected scoped education API-key authorization, frontend asynchronous state handling and a WhatsApp number refresh that could retain an old error. Test fixtures now wait for real knowledge ingestion, assert the existing educational privacy/curriculum boundaries, select their own audit event and keep session tokens valid for the full test gate. Production token expiration and access controls were not relaxed.
+
+The web image discovers its container DNS resolver, accepts a validated API hostname, uses the Kubernetes service FQDN in AWS and disables the Docker-only storage proxy there. Its startup writes Nginx state only under `/tmp`, supporting the existing non-root, read-only Kubernetes policy. Git enforces LF for shell scripts and the Nginx template. Source scans and test runs while files change remain diagnostic evidence.
 
 ## Exact local gates
 

@@ -234,14 +234,16 @@ export function WhatsAppWorkspaceEnhancer() {
 
   useEffect(() => {
     if (!target || !channel || channel === 'website') return;
-    const previous = target.style.position;
-    target.style.position = 'relative';
-    const toolbar = target.closest('.agent-template-preview')?.querySelector<HTMLElement>('.preview-toolbar span')
-      ?? target.closest('.deploy-preview')?.querySelector<HTMLElement>('.preview-heading span');
+    const element = previewStage();
+    if (!element || element !== target) return;
+    const previous = element.style.position;
+    element.style.position = 'relative';
+    const toolbar = element.closest('.agent-template-preview')?.querySelector<HTMLElement>('.preview-toolbar span')
+      ?? element.closest('.deploy-preview')?.querySelector<HTMLElement>('.preview-heading span');
     const oldText = toolbar?.textContent ?? '';
     if (toolbar) toolbar.textContent = `${channelNames[channel]} preview`;
     return () => {
-      target.style.position = previous;
+      element.style.position = previous;
       if (toolbar && oldText) toolbar.textContent = oldText;
     };
   }, [target, channel]);
@@ -254,7 +256,16 @@ export function WhatsAppWorkspaceEnhancer() {
   );
 }
 
-export function InteractiveChannelWorkspace({
+export function InteractiveChannelWorkspace(props: {
+  agentId: string;
+  channel: DeploymentChannel;
+  language?: string;
+  testOnly?: boolean;
+}) {
+  return <ChannelWorkspace key={`${props.agentId}:${props.channel}:${props.language ?? "auto"}`} {...props} />;
+}
+
+function ChannelWorkspace({
   agentId,
   channel,
   language,
@@ -273,13 +284,14 @@ export function InteractiveChannelWorkspace({
   const [connection, setConnection] = useState<WhatsAppConnection | null>(null);
   const [connected, setConnected] = useState(false);
   const [liveConversation, setLiveConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<PreviewMessage[]>([]);
+  const [messageRows, setMessages] = useState<PreviewMessage[]>([]);
   const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
 
   const activeLanguage = language ?? agent?.appearance.interfaceLanguage ?? agent?.language ?? 'English';
   const locale = getWidgetLocale(activeLanguage);
+  const messages: PreviewMessage[] = messageRows.length ? messageRows : [{ id: 'welcome', role: 'assistant', content: locale.welcomeMessage }];
   const copy = labels[activeLanguage] ?? labels.English!;
   const appearance = agent ? {
     ...agent.appearance,
@@ -300,17 +312,7 @@ export function InteractiveChannelWorkspace({
     return () => { active = false; };
   }, [agentId, copy.failed]);
 
-  useEffect(() => {
-    abortRef.current?.abort();
-    setDraft('');
-    setSending(false);
-    setConversationId(undefined);
-    setConnection(null);
-    setConnected(false);
-    setLiveConversation(null);
-    setError('');
-    setMessages([{ id: 'welcome', role: 'assistant', content: locale.welcomeMessage }]);
-  }, [agentId, channel, activeLanguage, locale.welcomeMessage]);
+
 
   useEffect(() => () => abortRef.current?.abort(), []);
 

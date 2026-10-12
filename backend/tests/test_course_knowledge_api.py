@@ -976,14 +976,16 @@ async def test_no_course_evidence_obeys_each_internet_policy_and_opens_review(
         )
         assert status == 200, body
         if policy == "none":
-            assert calls == [] and "not published" in body.lower()
+            assert calls == [] and "enough verified" in body.lower()
         else:
             assert "external web information" in body.lower() and "https://example.edu/lesson" in body
             assert calls[-1][2] is (policy == "public")
     reviews = await call(
         client, s["headers"], "GET", f"/education/academic-reviews?agent_id={s['agent']['id']}"
     )
-    assert any(review["reason"] == "no_authorized_published_evidence" for review in reviews)
+    assert any(review["reason"] == "no_published_release" for review in reviews), [
+        review["reason"] for review in reviews
+    ]
     async with SessionFactory() as session:
         agent = await session.get(Agent, UUID(s["agent"]["id"]))
         agent.security = {**(agent.security or {}), "blockedTopics": ["Paper A approved lesson"]}

@@ -34,7 +34,7 @@ export function EducationActivityPage() {
   const [agentId, setAgentId] = useState('all');
   const [courseId, setCourseId] = useState('all');
   const [batchId, setBatchId] = useState('all');
-  const [studentId, setStudentId] = useState('all');
+  const [studentSelection, setStudentId] = useState('all');
   const [eventType, setEventType] = useState('all');
 
   useEffect(() => {
@@ -82,16 +82,10 @@ export function EducationActivityPage() {
     [students.data, eligibleStudentIds],
   );
 
-  useEffect(() => {
-    if (
-      studentId !== 'all'
-      && !eligibleStudents.some((student) => student.id === studentId)
-      && !students.loading
-      && !enrollments.loading
-    ) {
-      setStudentId('all');
-    }
-  }, [eligibleStudents, enrollments.loading, studentId, students.loading]);
+  const studentId = studentSelection !== 'all'
+    && !students.loading && !enrollments.loading
+    && !eligibleStudents.some((student) => student.id === studentSelection)
+    ? 'all' : studentSelection;
 
   const result = useApi(
     () => educationActivityApi.list({

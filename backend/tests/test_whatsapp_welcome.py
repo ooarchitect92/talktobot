@@ -57,7 +57,7 @@ def test_only_short_greetings_use_configured_welcome():
     assert whatsapp_welcome(agent, "higher accounting") is None
 
 
-async def test_verified_student_gets_welcome_at_india_midnight_without_model(
+async def test_verified_student_at_india_midnight_requires_curriculum_without_model(
     client, auth_headers, monkeypatch
 ):
     seeded, _ = await _seed_authorized_student(client, auth_headers)
@@ -117,8 +117,9 @@ async def test_verified_student_gets_welcome_at_india_midnight_without_model(
     sender.assert_awaited_once()
     sent = sender.call_args.kwargs
     assert sent["to"] == seeded["phone"].lstrip("+")
-    assert "Welcome to" in sent["text"]
-    assert "Which course topic would you like to study?" in sent["text"]
+    # Enrollment is valid in the workspace timezone, but missing curriculum/paper
+    # configuration still prevents tutoring. It must not trigger retrieval or AI.
+    assert "configure curriculum and paper access" in sent["text"]
     retrieve.assert_not_awaited()
     generate.assert_not_awaited()
     async with SessionFactory() as session:

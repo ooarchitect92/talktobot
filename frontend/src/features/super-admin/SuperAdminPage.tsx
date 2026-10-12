@@ -67,8 +67,6 @@ export function SuperAdminPage() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError('');
     void Promise.all([
       platformAdminApi.overview(),
       platformAdminApi.tenants(appliedQuery),
@@ -104,7 +102,6 @@ export function SuperAdminPage() {
   useEffect(() => {
     if (!selectedTenantId) return;
     let active = true;
-    setDetailLoading(true);
     void platformAdminApi.tenant(selectedTenantId)
       .then((value) => { if (active) { setDetail(value); setPlanDraft(value.plan); setStatusDraft(value.subscriptionStatus); } })
       .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : 'Tenant detail could not be loaded'); })
@@ -116,7 +113,10 @@ export function SuperAdminPage() {
     event.preventDefault();
     setSelectedTenantId(null);
     setDetail(null);
-    setAppliedQuery(query.trim());
+    setError('');
+    if (query.trim() !== appliedQuery) {
+      setLoading(true); setAppliedQuery(query.trim());
+    }
   };
 
   const updateLifecycle = async (action: 'suspend' | 'reactivate') => {
@@ -283,7 +283,7 @@ export function SuperAdminPage() {
         <form onSubmit={submitSearch} style={{ display: 'flex', gap: 8 }}><input aria-label="Search tenants" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tenant or slug" /><Button type="submit" variant="secondary" icon={Search}>Search</Button></form>
       </div>
       <div className="agent-row-list">
-        {tenants.map((tenant) => <button className="agent-row" type="button" key={tenant.id} onClick={() => setSelectedTenantId(tenant.id)} aria-pressed={tenant.id === selectedTenantId}>
+        {tenants.map((tenant) => <button className="agent-row" type="button" key={tenant.id} onClick={() => { if (tenant.id !== selectedTenantId) { setDetail(null); setDetailLoading(true); setSelectedTenantId(tenant.id); } }} aria-pressed={tenant.id === selectedTenantId}>
           <span className="agent-avatar">{tenant.name.charAt(0).toUpperCase()}</span>
           <span className="agent-row__main"><strong>{tenant.name}</strong><small>{tenant.slug} · {tenant.workspaceCount} workspaces · {tenant.memberCount} members</small></span>
           <span className="agent-row__metric"><small>Agents</small><strong>{tenant.agentCount}</strong></span>

@@ -60,21 +60,15 @@ export function CRMManagementPanel({ connections, canManage, onConnectionsChange
     setMappingBaseline(EMPTY_LEAD_MAPPING);
   }, []);
 
-  useEffect(() => {
-    if (!connections.length) {
-      setSelectedId('');
-      setPendingConnectionId('');
-      clearConnectionState();
-      resetRouteDraft();
-      return;
-    }
-    if (!connections.some((connection) => connection.id === selectedId)) {
-      setPendingConnectionId('');
-      clearConnectionState();
-      resetRouteDraft();
+  const [previousConnections, setPreviousConnections] = useState<CRMConnectionView[] | null>(null);
+  if (previousConnections !== connections) {
+    setPreviousConnections(connections);
+    if (!connections.length || !connections.some((connection) => connection.id === selectedId)) {
       setSelectedId(connections[0]?.id ?? '');
+      setPendingConnectionId('');
+      clearConnectionState(); resetRouteDraft();
     }
-  }, [clearConnectionState, connections, resetRouteDraft, selectedId]);
+  }
 
   const selected = useMemo(
     () => connections.find((connection) => connection.id === selectedId) ?? null,
@@ -92,21 +86,16 @@ export function CRMManagementPanel({ connections, canManage, onConnectionsChange
     || conditionsText !== DEFAULT_ROUTE_CONDITIONS;
   const hasUnsavedDraft = mappingDirty || routeDraftDirty;
 
-  const load = useCallback(async () => {
+  const load = useCallback(() => {
     const connectionId = selectedId;
     const requestId = ++loadRequestRef.current;
-    clearConnectionState();
-    if (!connectionId) {
-      setRoutes([]);
-      return;
-    }
-    try {
-      const [nextSchema, nextMappings, nextRoutes, nextWorkspaceSettings] = await Promise.all([
+    if (!connectionId) return Promise.resolve();
+    return Promise.all([
         leadCrmApi.schema(connectionId),
         leadCrmApi.mappings(connectionId),
         leadCrmApi.routes(),
         leadCrmApi.workspaceSettings(connectionId),
-      ]);
+      ]).then(([nextSchema, nextMappings, nextRoutes, nextWorkspaceSettings]) => {
       if (requestId !== loadRequestRef.current) return;
       setSchema(nextSchema);
       setMappings(nextMappings);
@@ -118,11 +107,11 @@ export function CRMManagementPanel({ connections, canManage, onConnectionsChange
         : EMPTY_LEAD_MAPPING;
       setMappingBaseline(nextMappingText);
       setMappingText(nextMappingText);
-    } catch (error) {
+    }).catch((error: unknown) => {
       if (requestId !== loadRequestRef.current) return;
       pushToast(error instanceof Error ? error.message : 'Could not load CRM management data', 'error');
-    }
-  }, [clearConnectionState, pushToast, selectedId]);
+    });
+  }, [pushToast, selectedId]);
 
   useEffect(() => {
     void load();
@@ -135,6 +124,7 @@ export function CRMManagementPanel({ connections, canManage, onConnectionsChange
       return;
     }
     setPendingConnectionId('');
+    clearConnectionState();
     resetRouteDraft();
     setSelectedId(nextConnectionId);
   };

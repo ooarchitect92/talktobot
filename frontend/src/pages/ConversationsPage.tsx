@@ -105,23 +105,12 @@ export function ConversationsPage() {
     [students.data, eligibleStudentIds],
   );
 
-  useEffect(() => {
-    if (!isEducationAgent) {
-      setCourseId('all');
-      setBatchId('all');
-      setStudentId('all');
-    }
-  }, [isEducationAgent]);
-
-  useEffect(() => {
-    if (
-      studentId !== 'all'
-      && !eligibleStudents.some((student) => student.id === studentId)
-      && !students.loading
-    ) {
-      setStudentId('all');
-    }
-  }, [eligibleStudents, studentId, students.loading]);
+  if (!isEducationAgent && (courseId !== 'all' || batchId !== 'all' || studentId !== 'all')) {
+    setCourseId('all'); setBatchId('all'); setStudentId('all');
+  }
+  if (studentId !== 'all' && !students.loading && !eligibleStudents.some((student) => student.id === studentId)) {
+    setStudentId('all');
+  }
 
   const result = usePollingApi(
     (signal) => conversationApi.list({
@@ -270,7 +259,9 @@ export function ConversationsPage() {
 
 function ConversationDetail({ savingState, onVisitorSaved, conversation, agentName, workspaceName, reply, setReply, submitReply, sendStructuredReply, setState, purpose, onBack, sending }: { savingState: boolean; onVisitorSaved: () => void; conversation: Conversation; agentName: string; workspaceName: string; reply: string; setReply: (value: string) => void; submitReply: (event: FormEvent) => void; sendStructuredReply: (draft: StructuredReply) => Promise<boolean>; setState: (state: ConversationState, leadStatus?: string) => Promise<void>; purpose: Conversation['purpose']; onBack: () => void; sending: boolean }) {
   const [leadStatus, setLeadStatus] = useState(conversation.leadStatus ?? 'new');
-  useEffect(() => { setLeadStatus(conversation.leadStatus ?? 'new'); }, [conversation.id, conversation.leadStatus]);
+  const sourceLeadStatus = conversation.leadStatus ?? 'new';
+  const [previousLeadStatus, setPreviousLeadStatus] = useState(sourceLeadStatus);
+  if (previousLeadStatus !== sourceLeadStatus) { setPreviousLeadStatus(sourceLeadStatus); setLeadStatus(sourceLeadStatus); }
   const [showContactDetails, setShowContactDetails] = useState(false);
   const isWhatsApp = conversation.channel === 'whatsapp';
   const isEducation = purpose === 'education';

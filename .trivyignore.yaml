@@ -3,4 +3,5 @@ misconfigurations:
     paths:
       - kubernetes/base/configmap.yaml
       - kubernetes/overlays/production/production-config.yaml
+      - kubernetes/overlays/staging/staging-config.yaml
     statement: "PASSWORD_RESET_FRONTEND_URL contains a public redirect URL, not a password. Runtime credentials are supplied through Kubernetes Secrets."

@@ -42,15 +42,12 @@ export function EducationAccessRequestsPage() {
   const [reviewing, setReviewing] = useState<string>();
   const [drafts, setDrafts] = useState<Record<string, ReviewDraft>>({});
 
-  const load = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const [requestValues, studentValues, enrollmentValues] = await Promise.all([
+  const load = () => {
+    return Promise.all([
         educationAccessRequestApi.list(),
         educationStudentApi.list({ status: 'active' }),
         educationEnrollmentApi.list({ status: 'active' }),
-      ]);
+      ]).then(([requestValues, studentValues, enrollmentValues]) => {
       setRequests(requestValues);
       setStudents(studentValues);
       setEnrollments(enrollmentValues);
@@ -66,12 +63,12 @@ export function EducationAccessRequestsPage() {
         }
         return next;
       });
-    } catch (reason) {
+    }).catch((reason: unknown) => {
       setError(reason instanceof Error ? reason.message : 'Education access requests could not be loaded.');
-    } finally {
-      setLoading(false);
-    }
+    }).finally(() => { setLoading(false); });
   };
+
+  const reload = () => { setLoading(true); setError(''); return load(); };
 
   useEffect(() => { void load(); }, []);
 
@@ -143,7 +140,7 @@ export function EducationAccessRequestsPage() {
         <h2>Education access requests</h2>
         <p>Review students who could not complete self-service identity verification. Approval only verifies the identity; normal Education authorization still decides course access.</p>
       </div>
-      <Button variant="secondary" icon={RefreshCw} onClick={() => void load()} disabled={loading}>Refresh</Button>
+      <Button variant="secondary" icon={RefreshCw} onClick={() => void reload()} disabled={loading}>Refresh</Button>
     </div>
 
     <div className="access-request-stats" aria-label="Access request summary">

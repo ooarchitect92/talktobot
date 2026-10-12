@@ -84,9 +84,19 @@ async def test_paid_event_provisions_draft_bot_then_activation_and_idempotent_cr
         f"/api/v1/agents/{agent['id']}", headers=auth_headers, json={"status": "active"}
     )
     assert blocked.status_code == 409
+    default_key = await client.post(
+        "/api/v1/workspace/api-keys", headers=auth_headers, json={"name": "Read-only enrollment test"}
+    )
+    assert default_key.status_code == 201
+    denied = await client.post(
+        url, headers={"Authorization": f"Bearer {default_key.json()['secret']}"}, json=body
+    )
+    assert denied.status_code == 403
     # Authenticate the automated integration using the same server key customers use.
     key = await client.post(
-        "/api/v1/workspace/api-keys", headers=auth_headers, json={"name": "Enrollment test"}
+        "/api/v1/workspace/api-keys",
+        headers=auth_headers,
+        json={"name": "Enrollment test", "scopes": ["education:manage"]},
     )
     assert key.status_code == 201, key.text
     service_headers = {"Authorization": f"Bearer {key.json()['secret']}"}
@@ -178,7 +188,8 @@ async def test_paid_event_provisions_draft_bot_then_activation_and_idempotent_cr
         deliveries = await workspace_crm_route_service.create_deliveries(
             session, tenant_id=lead.tenant_id, lead_id=lead.id, sync_reason=event.payload["reason"]
         )
-        assert len(deliveries) == 1
+        # Educational student records must not escape through generic CRM delivery.
+        assert deliveries == []
         profile = await session.scalar(select(LeadProfile).where(LeadProfile.lead_id == lead.id))
         mapped = build_mapped_payload(
             lead,
