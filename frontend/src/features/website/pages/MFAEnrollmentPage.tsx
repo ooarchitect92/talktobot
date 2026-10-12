@@ -41,13 +41,17 @@ export function MFAEnrollmentPage() {
       body: JSON.stringify(body),
     });
     const value = await response.json();
-    if (!response.ok) throw new Error(value.error?.message || value.detail || 'Setup failed. Sign in again if your setup session expired.');
+    if (!response.ok) {
+      if (response.status === 422) throw new Error('Enter your full sign-in password (at least eight characters). Then enter exactly six digits when confirming your authenticator.');
+      throw new Error(value.error?.message || (typeof value.detail === 'string' ? value.detail : null) || 'Setup failed. Sign in again if your setup session expired.');
+    }
     return value as T;
   }
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(''); setBusy(true);
     try {
       if (!material) {
+        if (password.length < 8) throw new Error('Enter your full sign-in password, not an authenticator code.');
         setMaterial(await enrollmentRequest<MFASetupMaterial>('setup', { currentPassword: password }));
         setPassword('');
       } else {
@@ -66,8 +70,9 @@ export function MFAEnrollmentPage() {
     <Brand /><h1>Set up your authenticator</h1>
     <p>Add TalkToBot to Google Authenticator or Microsoft Authenticator. Set up once, then enter a code when you sign in.</p>
     <form className="login-form" onSubmit={event => void submit(event)}>
-      {!material ? <Field label="Verify your password" htmlFor="enrollment-password"><input id="enrollment-password" type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.target.value)} /></Field> : <>
-        {qr ? <img src={qr} alt="Scan to add TalkToBot to your authenticator" width={220} height={220} /> : null}
+      {!material ? <><Field label="Verify your sign-in password" htmlFor="enrollment-password"><input id="enrollment-password" type="password" autoComplete="current-password" required minLength={8} maxLength={256} value={password} onChange={event => setPassword(event.target.value)} /></Field><p>Enter the password you used to sign in. Your QR code appears after verification.</p></> : <>
+        <p>In Google Authenticator, choose Add account → Scan a QR code. In Microsoft Authenticator, choose Add account → Other account → Scan a QR code.</p>
+        {qr ? <img src={qr} alt="Scan to add TalkToBot to your authenticator" width={220} height={220} /> : <p role="status">Preparing your QR code. You can also use the manual setup key below.</p>}
         <p>Manual setup key: <code style={{ overflowWrap: 'anywhere' }}>{material.secret}</code></p>
         <p>Save these ten recovery codes outside this browser. Each works once.</p>
         <div>{material.recoveryCodes.map(value => <div key={value}><code>{value}</code></div>)}</div>
@@ -76,7 +81,7 @@ export function MFAEnrollmentPage() {
         <Field label="Six-digit authenticator code" htmlFor="enrollment-code"><input id="enrollment-code" inputMode="numeric" autoComplete="one-time-code" required pattern="[0-9]{6}" value={code} onChange={event => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} /></Field>
       </>}
       {error ? <p className="form-error" role="alert">{error}</p> : null}
-      <Button type="submit" disabled={busy || (!!material && !saved)}>{busy ? 'Please wait…' : material ? 'Confirm and continue' : 'Create setup key'}</Button>
+      <Button type="submit" disabled={busy || (!!material && !saved)}>{busy ? 'Please wait…' : material ? 'Confirm and continue' : 'Show authenticator QR code'}</Button>
     </form><Button type="button" variant="secondary" disabled={busy} onClick={() => {
       setBusy(true);
       void fetch(`${apiConfig.baseUrl}/auth/mfa/enrollment/logout`, {
