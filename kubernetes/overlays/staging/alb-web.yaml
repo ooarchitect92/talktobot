@@ -4,7 +4,9 @@ metadata: {name: northstar-web, namespace: northstar}
 spec:
   template:
     spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 101, runAsGroup: 101, seccompProfile: {type: RuntimeDefault}}
       containers:
         - name: web
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
           env:
             - {name: TRUSTED_PROXY_CIDRS, value: "10.80.0.0/24,10.80.1.0/24,10.80.2.0/24"}
