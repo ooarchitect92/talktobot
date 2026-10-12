@@ -275,6 +275,16 @@ resource "aws_s3_bucket_public_access_block" "media" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+resource "aws_s3_bucket_cors_configuration" "media" {
+  bucket = aws_s3_bucket.media.id
+  cors_rule {
+    allowed_origins = ["https://staging.talktobot.com", "https://app.staging.talktobot.com", "https://api.staging.talktobot.com"]
+    allowed_methods = ["GET", "HEAD", "POST", "PUT"]
+    allowed_headers = ["*"]
+    expose_headers  = ["ETag", "x-amz-version-id"]
+    max_age_seconds = 600
+  }
+}
 resource "aws_s3_bucket_policy" "media" {
   bucket = aws_s3_bucket.media.id
   policy = jsonencode({ Version = "2012-10-17", Statement = [{ Effect = "Deny", Principal = "*", Action = "s3:*", Resource = [aws_s3_bucket.media.arn, "${aws_s3_bucket.media.arn}/*"], Condition = { Bool = { "aws:SecureTransport" = "false" } } }, { Effect = "Deny", Principal = "*", Action = "s3:DeleteObjectVersion", Resource = "${aws_s3_bucket.media.arn}/*" }] })

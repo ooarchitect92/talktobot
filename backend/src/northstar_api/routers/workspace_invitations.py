@@ -177,7 +177,7 @@ def _set_refresh_cookie(response: Response, token: str) -> None:
         token,
         max_age=settings.jwt_refresh_ttl_days * 86_400,
         httponly=True,
-        secure=settings.is_production,
+        secure=settings.app_env in {"staging", "production"},
         samesite="strict",
         path=f"{settings.app_api_prefix.rstrip('/')}/auth",
     )

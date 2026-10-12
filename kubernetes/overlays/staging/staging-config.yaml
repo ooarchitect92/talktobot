@@ -10,6 +10,7 @@ data:
   KAFKA_SASL_MECHANISM: SCRAM-SHA-512
   S3_BUCKET: talktobot-staging-media-510439383733
   S3_REGION: ap-south-1
+  S3_USE_WORKLOAD_IDENTITY: "true"
   APP_CORS_ORIGINS: '["https://staging.talktobot.com","https://app.staging.talktobot.com","https://api.staging.talktobot.com"]'
   MFA_REQUIRED: "true"
   HELP_CONTENT_SYNC_ON_STARTUP: "false"
