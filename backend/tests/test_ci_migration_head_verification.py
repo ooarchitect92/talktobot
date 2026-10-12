@@ -16,7 +16,8 @@ def _migration_head_gate() -> str:
 def test_ci_compares_database_and_repository_alembic_head_sets() -> None:
     gate = _migration_head_gate()
 
-    assert "docker compose exec -T api alembic current" in gate
+    assert "docker compose run --rm --no-deps --entrypoint alembic migrate current" in gate
+    assert "docker compose exec -T api alembic current" not in gate
     assert "docker compose exec -T api alembic heads" in gate
     assert 'if [ -z "$expected_heads" ]' in gate
     assert 'if [ "$current_heads" != "$expected_heads" ]' in gate

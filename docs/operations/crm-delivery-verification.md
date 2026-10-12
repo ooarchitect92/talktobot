@@ -70,7 +70,7 @@ The topology contains `crm-router`, `crm-delivery`, `crm-reconciliation`, `chann
 ```bash
 docker compose ps
 docker compose logs --tail=100 crm-router crm-delivery crm-reconciliation crm-webhook-consumer channel-event-consumer
-docker compose exec -T api alembic current
+docker compose run --rm --no-deps --entrypoint alembic migrate current
 ```
 
 The expected head for this release is `0010_crm_verification`. Investigate restarted/unhealthy workers and outstanding verification work; container presence alone does not prove broker consumption, remote delivery, or full operational readiness.
