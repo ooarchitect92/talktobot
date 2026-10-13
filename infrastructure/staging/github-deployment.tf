@@ -27,7 +27,7 @@ resource "aws_iam_role_policy" "github_staging_deploy" {
       { Effect = "Allow", Action = ["eks:DescribeCluster"], Resource = aws_eks_cluster.staging.arn },
       { Effect = "Allow", Action = ["rds:DescribeDBInstances"], Resource = aws_db_instance.staging.arn },
       { Effect = "Allow", Action = ["ecr:DescribeImages"], Resource = [for repo in aws_ecr_repository.application : repo.arn] },
-      { Effect = "Allow", Action = ["elasticloadbalancing:DescribeLoadBalancers"], Resource = "*" },
+      { Effect = "Allow", Action = ["elasticloadbalancing:DescribeLoadBalancers", "elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeRules"], Resource = "*" },
       { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = aws_route53_zone.staging_com.arn,
         Condition = { "ForAllValues:StringEquals" = {
           "route53:ChangeResourceRecordSetsNormalizedRecordNames" = ["staging.talktobot.com", "app.staging.talktobot.com", "api.staging.talktobot.com"]
