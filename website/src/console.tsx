@@ -212,9 +212,14 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
   const [resourceQuery, setResourceQuery] = useState(""),
     [showArchived, setShowArchived] = useState(false);
   const refresh = async () => {
-    if (canContent) setRows(
-      await api<Resource[]>("/platform-admin/website/resources", {}, true),
-    );
+    if (canContent) {
+      const [resources, guides] = await Promise.all([
+        api<Resource[]>("/platform-admin/website/resources", {}, true),
+        api<Resource[]>("/platform-admin/website/starter-guides", {}, true),
+      ]);
+      const configured = new Set(resources.filter(row => row.kind === "article_template").map(row => row.key));
+      setRows([...resources, ...guides.filter(guide => guide.builtin && !configured.has(guide.key))]);
+    }
     setOverview(await api("/platform-admin/website/overview", {}, true));
   };
   const run = async (work: () => Promise<void>) => {

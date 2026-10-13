@@ -714,11 +714,7 @@ async def manifest(session: DBSession, response: Response) -> dict[str, Any]:
 
 @admin.get("/resources")
 async def list_resources(session: DBSession, principal: EditorPrincipal) -> list[dict[str, Any]]:
-    rows = await resources(session)
-    existing = set(
-        await session.scalars(select(WebsiteResource.key).where(WebsiteResource.kind == "article_template"))
-    )
-    return [project(r) for r in rows] + [guide for guide in builtin_guides() if guide["key"] not in existing]
+    return [project(row) for row in await resources(session)]
 
 
 def builtin_guides() -> list[dict[str, Any]]:

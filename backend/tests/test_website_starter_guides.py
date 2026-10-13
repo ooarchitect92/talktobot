@@ -22,6 +22,8 @@ async def test_guides_are_distinct_private_and_owner_managed(client: AsyncClient
     assert response.status_code == 200
     originals = response.json()
     assert len({guide["data"]["body"] for guide in originals}) == 3
+    resources = (await client.get(f"{ADMIN}/resources", headers=auth_headers)).json()
+    assert all(resource.get("id") and resource.get("version") for resource in resources)
     assert (await client.get(f"{ADMIN}/starter-guides")).status_code == 401
     key = "qa-guide-" + uuid4().hex
     payload = {
