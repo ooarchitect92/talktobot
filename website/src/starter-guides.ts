@@ -9,7 +9,7 @@ export function copyStarterGuide(guide: StarterGuide, posts: Pick<Post, "slug">[
   let slug = base;
   for (let copy = 1; used.has(slug); copy += 1) {
     const suffix = copy === 1 ? "-copy" : `-copy-${copy}`;
-    slug = base.slice(0, 120 - suffix.length) + suffix;
+    slug = base.slice(0, 120 - suffix.length).replace(/-+$/, "") + suffix;
   }
   return { ...guide.data, title: guide.title, slug, tags: [...guide.data.tags] };
 }

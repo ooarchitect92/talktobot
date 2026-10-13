@@ -28,3 +28,12 @@ test('reusing a guide avoids an existing article slug and never overwrites it', 
   assert.equal(draft.slug, guide.data.slug + '-copy-2');
   assert.ok(draft.slug.length <= 120);
 });
+
+test('copying a maximum-length guide slug retains a valid URL at a word boundary', () => {
+  const slug = 'a'.repeat(114) + '-' + 'b'.repeat(5);
+  const guide = {...guides[0], data: {...guides[0].data, slug}};
+  const draft = copyStarterGuide(guide, [{slug}]);
+  assert.ok(draft.slug.length <= 120);
+  assert.match(draft.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+  assert.ok(draft.slug.endsWith('-copy'));
+});
