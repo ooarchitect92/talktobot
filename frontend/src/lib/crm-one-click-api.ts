@@ -38,6 +38,7 @@ export interface CRMReadiness {
 }
 
 export interface CRMOneClickStartRequest {
+  connection_id?: string;
   name?: string;
   environment?: 'production' | 'sandbox';
   region?: string;

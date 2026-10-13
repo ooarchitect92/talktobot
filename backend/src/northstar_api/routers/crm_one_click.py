@@ -48,6 +48,7 @@ def _active_workspace_id(principal: Principal) -> UUID:
 
 
 class OneClickCRMStart(LeadCRMModel):
+    connection_id: UUID | None = None
     name: str | None = Field(default=None, min_length=2, max_length=160)
     environment: Literal["production", "sandbox"] = "production"
     region: str | None = Field(default=None, max_length=16)
@@ -173,6 +174,7 @@ async def start_one_click_crm(
             environment=payload.environment,
             region=payload.region,
             configuration=configuration,
+            connection_id=payload.connection_id,
             client_credentials={
                 "client_id": payload.client_id,
                 "client_secret": payload.client_secret.get_secret_value(),

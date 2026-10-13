@@ -174,6 +174,22 @@ async def test_customer_oauth_credentials_are_encrypted_reused_rotated_and_works
         session, **{**arguments, "workspace_id": workspaces[1].id}, client_credentials=pair
     )
     assert same_other.id == other.id
+    updated_second = await ensure_managed_oauth_connection(
+        session,
+        **{**arguments, "region": "eu", "display_name": "Renamed second account"},
+        connection_id=separate_account.id,
+        client_credentials={"client_id": "second-client", "client_secret": "second-secret"},
+    )
+    assert updated_second.id == separate_account.id
+    assert connection.region == "in"
+    assert credential_store.decrypt(connection.credentials_encrypted)["client_id"] == pair["client_id"]
+    with pytest.raises(ValueError, match="not found in this workspace"):
+        await ensure_managed_oauth_connection(
+            session,
+            **{**arguments, "workspace_id": workspaces[1].id},
+            connection_id=separate_account.id,
+            client_credentials=pair,
+        )
 
 
 def test_customer_oauth_requires_a_complete_secret_pair() -> None:

@@ -440,6 +440,7 @@ async def ensure_managed_oauth_connection(
     configuration: dict[str, Any],
     settings: Settings | None = None,
     client_credentials: dict[str, str] | None = None,
+    connection_id: UUID | None = None,
 ) -> CRMConnection:
     if provider not in MANAGED_OAUTH_PROVIDERS:
         raise ValueError("Provider does not support one-click OAuth")
@@ -469,6 +470,10 @@ async def ensure_managed_oauth_connection(
         ),
         None,
     )
+    if connection_id is not None:
+        connection = next((item for item in scoped if item.id == connection_id), None)
+        if connection is None:
+            raise ValueError("Connection not found in this workspace")
     previous = (
         credential_store.decrypt(connection.credentials_encrypted)
         if connection is not None and connection.credentials_encrypted

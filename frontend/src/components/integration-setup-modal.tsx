@@ -112,6 +112,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
         popup.current = window.open('about:blank', `northstar-connect-${item.id}`, 'popup,width=720,height=760');
         if (!popup.current) throw new Error('Allow pop-ups for this site, then select Authorize account again.');
         const result = await crmOneClickApi.startOAuth(item.id as CRMProviderId, {
+          ...(connectionId ? { connection_id: connectionId } : {}),
           name: values.name, environment: values.environment === 'sandbox' ? 'sandbox' : 'production',
           region: values.region, resource_url: values.resourceUrl || undefined, azure_tenant_id: values.azureTenantId,
           ...(ownApp ? { client_id: values.clientId?.trim(), client_secret: values.clientSecret } : {}),
