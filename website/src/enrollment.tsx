@@ -3,7 +3,7 @@ import { useState, type FormEvent } from 'react';
 import { api } from './api';
 
 export interface Enrollment { enrollmentToken: string; expiresAt: string }
-interface Material { secret: string; otpauthUri: string; recoveryCodes: string[] }
+interface Material { secret: string; otpauthUri: string; recoveryCodesEmailed: boolean }
 export function AuthenticatorEnrollment({ enrollment, onComplete, onCancel }: {
   enrollment: Enrollment; onComplete: (token: string) => Promise<void>; onCancel: () => void;
 }) {
@@ -26,7 +26,7 @@ export function AuthenticatorEnrollment({ enrollment, onComplete, onCancel }: {
         try { setQr(await QRCode.toDataURL(next.otpauthUri, { width: 240, margin: 4 })); }
         catch { setError('QR unavailable. Enter the setup key manually.'); }
       } else {
-        if (!saved) throw new Error('Save your recovery codes first.');
+        if (!saved) throw new Error('Confirm that you received the recovery email first.');
         const session = await api<{ accessToken: string }>('/auth/mfa/confirm', { method: 'POST', headers, body: JSON.stringify({ code: fields.get('code') }) });
         setMaterial(null); setQr('');
         await onComplete(session.accessToken);
@@ -41,10 +41,8 @@ export function AuthenticatorEnrollment({ enrollment, onComplete, onCancel }: {
       <p>In Google Authenticator, choose Add account → Scan a QR code. In Microsoft Authenticator, choose Add account → Other account → Scan a QR code.</p>
       {qr ? <img src={qr} alt="Scan to add TalkToBot to your authenticator" width={240} height={240} /> : null}
       <p style={{ overflowWrap: 'anywhere' }}>Manual setup key: <code>{material.secret}</code></p>
-      <p>Save these ten recovery codes outside this browser. Each works once.</p>
-      {material.recoveryCodes.map(value => <div key={value}><code>{value}</code></div>)}
-      <button type="button" className="button" onClick={() => void navigator.clipboard.writeText(material.recoveryCodes.join('\n')).catch(() => setError('Copy unavailable. Save the codes manually.'))}>Copy recovery codes</button>
-      <label><input type="checkbox" checked={saved} onChange={event => setSaved(event.target.checked)} /> I saved my recovery codes.</label>
+        <p>Your recovery codes were sent to your account email. Check Inbox and Spam and keep them private.</p>
+        <label><input type="checkbox" checked={saved} onChange={event => setSaved(event.target.checked)} /> I received my recovery codes by email.</label>
       <label>Six-digit code<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></label>
     </>}
     {error ? <p className="error-message" role="alert">{error}</p> : null}

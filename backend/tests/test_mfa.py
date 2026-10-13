@@ -50,7 +50,9 @@ def auth(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
 
-async def test_mfa_full_lifecycle_rotates_sessions_and_uses_one_time_factors(client: AsyncClient) -> None:
+async def test_mfa_full_lifecycle_rotates_sessions_and_uses_one_time_factors(
+    client: AsyncClient, mfa_recovery_emails
+) -> None:
     email, password, original_access = await verified_signup(client)
 
     status_before = await client.get("/api/v1/auth/mfa/status", headers=auth(original_access))
@@ -81,7 +83,10 @@ async def test_mfa_full_lifecycle_rotates_sessions_and_uses_one_time_factors(cli
     assert setup.headers["pragma"] == "no-cache"
     setup_payload = setup.json()
     secret = setup_payload["secret"]
-    recovery_codes = setup_payload["recoveryCodes"]
+    assert "recoveryCodes" not in setup_payload
+    assert setup_payload["recoveryCodesEmailed"] is True
+    assert mfa_recovery_emails[-1][0] == email
+    recovery_codes = mfa_recovery_emails[-1][1]
     assert setup_payload["otpauthUri"].startswith("otpauth://totp/")
     assert len(recovery_codes) == 10
     assert len(set(recovery_codes)) == 10
@@ -170,7 +175,8 @@ async def test_mfa_full_lifecycle_rotates_sessions_and_uses_one_time_factors(cli
     assert regenerated.status_code == 200, regenerated.text
     assert regenerated.headers["cache-control"] == "no-store"
     assert regenerated.headers["pragma"] == "no-cache"
-    new_recovery_codes = regenerated.json()["recoveryCodes"]
+    assert "recoveryCodes" not in regenerated.json()
+    new_recovery_codes = mfa_recovery_emails[-1][1]
     stale_after_regeneration = await client.get("/api/v1/auth/mfa/status", headers=auth(mfa_access))
     assert stale_after_regeneration.status_code == 401
     mfa_access = regenerated.json()["session"]["accessToken"]
@@ -244,3 +250,24 @@ async def test_mfa_verify_requires_exactly_one_factor(client: AsyncClient) -> No
         json={"challengeToken": "x" * 48, "code": "123456", "recoveryCode": "ABCD-EFGH-JKLM"},
     )
     assert both_factors.status_code == 422
+
+
+async def test_recovery_email_failure_rolls_back_setup(client: AsyncClient, monkeypatch) -> None:
+    from northstar_api.routers import mfa as mfa_router
+
+    email, password, access = await verified_signup(client)
+    monkeypatch.setattr(
+        mfa_router, "send_mfa_recovery_codes", AsyncMock(side_effect=RuntimeError("SMTP unavailable"))
+    )
+    response = await client.post(
+        "/api/v1/auth/mfa/setup", headers=auth(access), json={"currentPassword": password}
+    )
+    assert response.status_code == 503
+    assert "recoveryCodes" not in response.json()
+    async with SessionFactory() as session:
+        user = await session.scalar(select(User).where(User.email == email))
+        assert user is not None
+        assert await session.get(MFASetting, user.id) is None
+        assert (
+            await session.scalar(select(MFARecoveryCode.id).where(MFARecoveryCode.user_id == user.id)) is None
+        )

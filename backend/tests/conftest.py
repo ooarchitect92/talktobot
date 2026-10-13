@@ -122,3 +122,16 @@ async def crm_test_plan(client, auth_headers):
     async with SessionFactory() as session:
         await set_subscription_state(session, tenant_id=tenant_id, plan=original[0], status=original[1])
         await session.commit()
+
+
+@pytest.fixture
+def mfa_recovery_emails(monkeypatch):
+    from northstar_api.routers import mfa as mfa_router
+
+    captured = []
+
+    async def deliver(user, codes):
+        captured.append((user.email, list(codes)))
+
+    monkeypatch.setattr(mfa_router, "send_mfa_recovery_codes", deliver)
+    return captured

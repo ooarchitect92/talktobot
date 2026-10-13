@@ -35,6 +35,7 @@ from northstar_api.services.mfa import (
     regenerate_recovery_codes,
     setup_mfa,
 )
+from northstar_api.services.mfa_email import send_mfa_recovery_codes
 from northstar_api.services.mfa_policy import EnrollmentPrincipal
 from northstar_api.services.password_reset import credential_version
 from northstar_api.services.rate_limit import SessionStoreUnavailable, redis_services
@@ -158,6 +159,16 @@ async def setup(
     _set_no_store(response)
     try:
         material = await setup_mfa(session, principal.user_id, payload.current_password)
+        user = await session.get(User, principal.user_id)
+        assert user is not None
+        try:
+            await send_mfa_recovery_codes(user, material.recovery_codes)
+        except Exception:
+            await session.rollback()
+            logger.error("mfa_recovery_email_failed", user_id=str(principal.user_id))
+            raise HTTPException(
+                status_code=503, detail="Unable to email recovery codes. Retry setup shortly."
+            ) from None
         await session.commit()
     except MFAError as exc:
         await session.rollback()
@@ -167,7 +178,7 @@ async def setup(
     return MFASetupOut(
         secret=material.secret,
         otpauth_uri=material.otpauth_uri,
-        recovery_codes=material.recovery_codes,
+        recovery_codes_emailed=True,
     )
 
 
@@ -322,6 +333,16 @@ async def regenerate_codes(
             code=payload.code,
             recovery_code=payload.recovery_code,
         )
+        user = await session.get(User, principal.user_id)
+        assert user is not None
+        try:
+            await send_mfa_recovery_codes(user, codes)
+        except Exception:
+            await session.rollback()
+            logger.error("mfa_recovery_email_failed", user_id=str(principal.user_id))
+            raise HTTPException(
+                status_code=503, detail="Unable to email recovery codes. Retry shortly."
+            ) from None
         rotated = await _issue_principal_session(
             session, response, principal, version=await credential_version(session, principal.user_id)
         )
@@ -330,7 +351,7 @@ async def regenerate_codes(
         await session.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from None
     logger.info("mfa_recovery_codes_regenerated", user_id=str(principal.user_id))
-    return MFARecoveryCodesOut(recovery_codes=codes, session=rotated)
+    return MFARecoveryCodesOut(recovery_codes_emailed=True, session=rotated)
 
 
 @router.delete("", response_model=AuthSessionOut)

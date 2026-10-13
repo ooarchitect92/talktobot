@@ -37,7 +37,7 @@ it('renders a scannable QR code and requires recovery-code acknowledgement befor
   expect(await screen.findByAltText('Scan to add TalkToBot to your authenticator')).toHaveAttribute('src', 'data:image/png;base64,qr');
   expect(mocks.qr).toHaveBeenCalledWith(uri);
   expect(screen.getByRole('button', { name: 'Confirm and continue' })).toBeDisabled();
-  await user.click(screen.getByLabelText('I saved my recovery codes.'));
+  await user.click(screen.getByLabelText('I received my recovery codes by email.'));
   expect(screen.getByRole('button', { name: 'Confirm and continue' })).toBeEnabled();
 });
 

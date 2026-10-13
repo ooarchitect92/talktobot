@@ -31,7 +31,7 @@ export interface MFAStatus {
 export interface MFASetupMaterial {
   secret: string;
   otpauthUri: string;
-  recoveryCodes: string[];
+  recoveryCodesEmailed: boolean;
 }
 
 export interface MFAFactor {
@@ -208,8 +208,8 @@ export const mfaApi = {
     }));
   },
 
-  async regenerateRecoveryCodes(input: MFAProtectedAction): Promise<{ recoveryCodes: string[] }> {
-    const result = await authenticated<{ recoveryCodes: string[]; session?: Session }>('/auth/mfa/recovery-codes', {
+  async regenerateRecoveryCodes(input: MFAProtectedAction): Promise<{ recoveryCodesEmailed: boolean }> {
+    const result = await authenticated<{ recoveryCodesEmailed: boolean; session?: Session }>('/auth/mfa/recovery-codes', {
       method: 'POST', body: JSON.stringify(input),
     });
     if (result.session) persistSession(result.session);

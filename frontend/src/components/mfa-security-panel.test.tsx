@@ -95,10 +95,10 @@ describe('MFASecurityPanel', () => {
 
     await waitFor(() => expect(mocks.setup).toHaveBeenCalledWith('Password-2026!'));
     expect(await screen.findByText('JBSWY3DPEHPK3PXP')).toBeInTheDocument();
-    expect(screen.getByText('AAAA-BBBB-CCCC')).toBeInTheDocument();
+    expect(screen.queryByText('AAAA-BBBB-CCCC')).not.toBeInTheDocument();
     expect(await screen.findByAltText('Authenticator setup QR code')).toBeInTheDocument();
 
-    await user.click(screen.getByLabelText(/I saved these recovery codes securely/));
+    await user.click(screen.getByLabelText(/I received my recovery codes by email/));
     await user.type(screen.getByLabelText('6-digit code'), '123456');
     await user.click(screen.getByRole('button', { name: 'Enable MFA' }));
 
@@ -120,19 +120,18 @@ describe('MFASecurityPanel', () => {
     await screen.findByText('Not enabled');
     await user.type(screen.getByLabelText('Current password'), 'Password-2026!');
     await user.click(screen.getByRole('button', { name: /Set up authenticator/ }));
-    await screen.findByText('AAAA-BBBB-CCCC');
+    await screen.findByText('2. Check your recovery email');
     await user.type(screen.getByLabelText('6-digit code'), '123456');
     await user.click(screen.getByRole('button', { name: 'Enable MFA' }));
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Save your recovery codes');
+    expect(screen.getByRole('alert')).toHaveTextContent('Confirm you received your recovery email');
     expect(mocks.confirm).not.toHaveBeenCalled();
   });
 
   it('regenerates recovery codes and can disable MFA with a recovery factor', async () => {
     const user = userEvent.setup();
-    const nextCodes = recoveryCodes.map((code) => `NEW-${code}`);
     mocks.status.mockResolvedValue(enabledStatus);
-    mocks.regenerateRecoveryCodes.mockResolvedValue({ recoveryCodes: nextCodes });
+    mocks.regenerateRecoveryCodes.mockResolvedValue({ recoveryCodesEmailed: true });
     mocks.disable.mockResolvedValue({ accessToken: 'disabled-rotated-access' });
 
     render(<MemoryRouter><MFASecurityPanel /></MemoryRouter>);
@@ -147,7 +146,7 @@ describe('MFASecurityPanel', () => {
       currentPassword: 'Password-2026!',
       recoveryCode: 'ABCD-EFGH-JKLM',
     }));
-    expect(await screen.findByText('NEW-AAAA-BBBB-CCCC')).toBeInTheDocument();
+    expect(await screen.findByRole('status')).toHaveTextContent('New recovery codes were emailed');
 
     await user.type(screen.getByLabelText('Current password'), 'Password-2026!');
     await user.type(screen.getByLabelText('Recovery code'), 'newa-newb-newc');

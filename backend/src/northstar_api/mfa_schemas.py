@@ -24,7 +24,7 @@ class MFASetupRequest(APIModel):
 class MFASetupOut(APIModel):
     secret: str
     otpauth_uri: str
-    recovery_codes: list[str]
+    recovery_codes_emailed: bool
 
 
 class MFAConfirmRequest(APIModel):
@@ -62,5 +62,5 @@ class MFAProtectedActionRequest(APIModel):
 
 
 class MFARecoveryCodesOut(APIModel):
-    recovery_codes: list[str]
+    recovery_codes_emailed: bool
     session: AuthSessionOut

@@ -38,7 +38,9 @@ async def account(client: AsyncClient):
     return email, password, response.json()
 
 
-async def test_required_enrollment_cannot_access_resources_or_refresh(client: AsyncClient, monkeypatch):
+async def test_required_enrollment_cannot_access_resources_or_refresh(
+    client: AsyncClient, monkeypatch, mfa_recovery_emails
+):
     email, password, old_session = await account(client)
     monkeypatch.setattr(get_settings(), "mfa_required", True)
     login = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
@@ -68,7 +70,9 @@ async def test_required_enrollment_cannot_access_resources_or_refresh(client: As
     assert setup.status_code == 200, setup.text
     material = setup.json()
     assert "issuer=TalkToBot" in material["otpauthUri"]
-    assert len(material["recoveryCodes"]) == 10
+    assert "recoveryCodes" not in material
+    assert material["recoveryCodesEmailed"] is True
+    assert len(mfa_recovery_emails[-1][1]) == 10
     code = totp_code(material["secret"], int(datetime.now(UTC).timestamp()) // 30)
     confirmed = await client.post("/api/v1/auth/mfa/confirm", headers=headers, json={"code": code})
     assert confirmed.status_code == 200, confirmed.text
@@ -85,7 +89,7 @@ async def test_required_enrollment_cannot_access_resources_or_refresh(client: As
         "DELETE",
         "/api/v1/auth/mfa",
         headers={"Authorization": "Bearer " + active["accessToken"]},
-        json={"currentPassword": password, "recoveryCode": material["recoveryCodes"][0]},
+        json={"currentPassword": password, "recoveryCode": mfa_recovery_emails[-1][1][0]},
     )
     assert disabled.status_code == 403
     refresh = await client.post("/api/v1/auth/refresh", json={"refreshToken": active["refreshToken"]})

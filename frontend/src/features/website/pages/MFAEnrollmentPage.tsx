@@ -72,7 +72,7 @@ export function MFAEnrollmentPage() {
         setMaterial(await enrollmentRequest<MFASetupMaterial>('setup', { currentPassword: password }));
         setPassword('');
       } else {
-        if (!saved || !/^\d{6}$/.test(code)) throw new Error('Save your recovery codes and enter a six-digit code.');
+        if (!saved || !/^\d{6}$/.test(code)) throw new Error('Check your recovery email and enter a six-digit code.');
         const session = await enrollmentRequest<Session>('confirm', { code });
         setMaterial(null); setQr('');
         api.auth.adopt(session);
@@ -91,10 +91,8 @@ export function MFAEnrollmentPage() {
         <p>In Google Authenticator, choose Add account → Scan a QR code. In Microsoft Authenticator, choose Add account → Other account → Scan a QR code.</p>
         {qr ? <img src={qr} alt="Scan to add TalkToBot to your authenticator" width={220} height={220} /> : <p role="status">Preparing your QR code. You can also use the manual setup key below.</p>}
         <p>Manual setup key: <code style={{ overflowWrap: 'anywhere' }}>{material.secret}</code></p>
-        <p>Save these ten recovery codes outside this browser. Each works once.</p>
-        <div>{material.recoveryCodes.map(value => <div key={value}><code>{value}</code></div>)}</div>
-        <Button type="button" variant="secondary" onClick={() => void navigator.clipboard.writeText(material.recoveryCodes.join('\n')).catch(() => setError('Copy unavailable. Save the codes manually.'))}>Copy recovery codes</Button>
-        <label><input type="checkbox" checked={saved} onChange={event => setSaved(event.target.checked)} /> I saved my recovery codes.</label>
+        <p>Your recovery codes were sent to your account email. Check Inbox and Spam and keep them private.</p>
+        <label><input type="checkbox" checked={saved} onChange={event => setSaved(event.target.checked)} /> I received my recovery codes by email.</label>
         <Field label="Six-digit authenticator code" htmlFor="enrollment-code"><input id="enrollment-code" inputMode="numeric" autoComplete="one-time-code" required pattern="[0-9]{6}" value={code} onChange={event => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} /></Field>
       </>}
       {error ? <p className="form-error" role="alert">{error}</p> : null}
