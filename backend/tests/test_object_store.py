@@ -131,6 +131,7 @@ async def test_presigned_post_is_staged_and_size_constrained(monkeypatch: pytest
     assert size == len(client.data)
     assert client.copied_to == permanent_key
     assert key in client.deleted
+    assert client.delete_arguments == [{"Key": key}]
 
 
 async def test_document_upload_allows_500_mb_and_rejects_one_byte_over(
@@ -206,7 +207,7 @@ async def test_promotion_size_mismatch_deletes_the_exact_copied_version(
         await store.promote_staged(tenant_id, staging_key)
 
     assert client.copied_to is not None
-    assert client.delete_arguments == [{"Key": client.copied_to, "VersionId": "copied-version-7"}]
+    assert client.delete_arguments == [{"Key": client.copied_to}]
 
 
 async def test_purge_exact_removes_all_versions_and_markers_across_pages(

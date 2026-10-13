@@ -91,7 +91,7 @@ resource "aws_iam_role_policy" "workload" {
   role = aws_iam_role.workload.id
   policy = jsonencode({ Version = "2012-10-17", Statement = [
     { Effect = "Allow", Action = ["s3:ListBucket"], Resource = aws_s3_bucket.media.arn },
-    { Effect = "Allow", Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], Resource = "${aws_s3_bucket.media.arn}/*" }
+    { Effect = "Allow", Action = ["s3:GetObject", "s3:GetObjectVersion", "s3:PutObject", "s3:DeleteObject"], Resource = "${aws_s3_bucket.media.arn}/*" }
     , { Effect = "Allow", Action = ["kms:Decrypt", "kms:GenerateDataKey"], Resource = aws_kms_key.staging.arn, Condition = { StringEquals = { "kms:ViaService" = "s3.ap-south-1.amazonaws.com" }, StringLike = { "kms:EncryptionContext:aws:s3:arn" = [aws_s3_bucket.media.arn, "${aws_s3_bucket.media.arn}/*"] } } }
   ] })
 }

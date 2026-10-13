@@ -165,19 +165,15 @@ class ObjectStore:
                 raise InvalidUpload("Uploaded object checksum does not match")
 
             permanent_key = key.replace("staging/", "knowledge/", 1)
-            copied_version_id: str | None = None
             try:
                 copy_source = {"Bucket": self.settings.s3_bucket, "Key": key, **source_version}
-                copy_result = client.copy_object(
+                client.copy_object(
                     Bucket=self.settings.s3_bucket,
                     Key=permanent_key,
                     CopySource=copy_source,
                     CopySourceIfMatch=etag,
                     MetadataDirective="COPY",
                 )
-                version_value = copy_result.get("VersionId")
-                if isinstance(version_value, str) and version_value:
-                    copied_version_id = version_value
                 copied = client.head_object(Bucket=self.settings.s3_bucket, Key=permanent_key)
             except (BotoCoreError, ClientError, AttributeError) as exc:
                 raise ObjectStoreUnavailable("Object storage could not promote the upload") from exc
@@ -187,20 +183,19 @@ class ObjectStore:
                 copied_size = -1
             if copied_size != size:
                 try:
-                    if copied_version_id is not None:
-                        client.delete_object(
-                            Bucket=self.settings.s3_bucket,
-                            Key=permanent_key,
-                            VersionId=copied_version_id,
-                        )
-                    else:
-                        self._purge_exact_sync(client, permanent_key)
+                    # Hide the invalid copy without destroying retained backup versions.
+                    client.delete_object(Bucket=self.settings.s3_bucket, Key=permanent_key)
                 except (BotoCoreError, ClientError, ObjectStoreUnavailable) as exc:
                     raise ObjectStoreUnavailable(
                         "Object storage could not clean up an invalid promoted upload"
                     ) from exc
                 raise ObjectStoreUnavailable("Object storage did not preserve the uploaded file")
-            client.delete_object(Bucket=self.settings.s3_bucket, Key=key, **source_version)
+            # A delete marker retires the upload; retained versions remain recoverable.
+            # Workload credentials deliberately cannot permanently delete S3 versions.
+            try:
+                client.delete_object(Bucket=self.settings.s3_bucket, Key=key)
+            except (BotoCoreError, ClientError) as exc:
+                raise ObjectStoreUnavailable("Object storage could not retire the staged upload") from exc
             return permanent_key, checksum, size
 
         return await asyncio.to_thread(promote)
