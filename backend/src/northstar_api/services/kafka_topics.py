@@ -10,6 +10,62 @@ from aiokafka.admin import AIOKafkaAdminClient, NewTopic  # type: ignore[import-
 from northstar_api.config import get_settings
 from northstar_api.services.kafka_transport import kafka_transport_options
 
+DYNAMIC_AUDIT_TOPICS = (
+    "education.knowledge.academic-review.updated.v1",
+    "education.knowledge.access.revoked.v1",
+    "education.knowledge.access.sync_applied.v1",
+    "education.knowledge.access.sync_revoke_applied.v1",
+    "education.knowledge.access.synced.v1",
+    "education.knowledge.access.updated.v1",
+    "education.knowledge.artifact.approved.v1",
+    "education.knowledge.artifact.generated.v1",
+    "education.knowledge.assignment.withdrawn.v1",
+    "education.knowledge.faq.approved.v1",
+    "education.knowledge.faq.created.v1",
+    "education.knowledge.faq.revised.v1",
+    "education.knowledge.faq.withdrawn.v1",
+    "education.knowledge.index.requested.v1",
+    "education.knowledge.mapping.approved.v1",
+    "education.knowledge.mapping.revised.v1",
+    "education.knowledge.mapping.saved.v1",
+    "education.knowledge.release.prepared.v1",
+    "education.knowledge.release.published.v1",
+    "education.knowledge.snapshot.prepared.v1",
+    "education.knowledge.source.withdrawn.v1",
+    "education.knowledge.test_conversation.started.v1",
+    "education.knowledge.upload.created.v1",
+    "organization.branding_choice.changed.v1",
+    "organization.profile.completed.v1",
+    "organization.profile.draft_saved.v1",
+    "workspace.BrandPublished.v1",
+    "workspace.BrandRolledBack.v1",
+    "workspace.BrandUpdated.v1",
+    "workspace.CustomDomainActivated.v1",
+    "workspace.CustomDomainCreated.v1",
+    "workspace.CustomDomainDisabled.v1",
+    "workspace.CustomDomainVerified.v1",
+    "workspace.WorkspaceAdministrativeChanged.v1",
+    "workspace.WorkspaceApiKeyCreated.v1",
+    "workspace.WorkspaceApiKeyRevoked.v1",
+    "workspace.WorkspaceDeveloperSettingsUpdated.v1",
+    "workspace.WorkspaceMemberInvited.v1",
+    "workspace.WorkspaceMemberReactivated.v1",
+    "workspace.WorkspaceMemberRoleChanged.v1",
+    "workspace.WorkspaceMemberSuspended.v1",
+    "workspace.WorkspaceNotificationsUpdated.v1",
+    "workspace.WorkspaceRoleUpdated.v1",
+    "workspace.WorkspaceSecurityUpdated.v1",
+    "workspace.WorkspaceTeamsUpdated.v1",
+    "workspace.WorkspaceUpdated.v1",
+    "workspace.member.invitation.resent.v1",
+    "workspace.member.invitation.revoked.v1",
+    "workspace.member.invited.v1",
+    "workspace.member.joined.v1",
+    "workspace.member.removed.v1",
+    "workspace.member.updated.v1",
+)
+
+
 EVENT_TOPICS = (
     "agent.channel.changed.v1",
     "agent.created.v1",
@@ -98,7 +154,7 @@ EVENT_TOPICS = (
     "workspace.conversation.assignment.cleared.v1",
     "workspace.conversation.assignment.updated.v1",
     "workspace.security.updated.v1",
-)
+) + DYNAMIC_AUDIT_TOPICS
 
 
 async def ensure_topics(admin: Any, *, replication_factor: int) -> int:
@@ -109,7 +165,7 @@ async def ensure_topics(admin: Any, *, replication_factor: int) -> int:
             [
                 NewTopic(
                     name,
-                    num_partitions=3,
+                    num_partitions=1 if name in DYNAMIC_AUDIT_TOPICS else 3,
                     replication_factor=replication_factor,
                     topic_configs={
                         "min.insync.replicas": str(2 if replication_factor > 1 else 1),
