@@ -1,0 +1,32 @@
+name: Staging public access smoke
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/set-staging-ingress-access.py
+      - scripts/prepare-staging-callback-access.py
+      - .github/workflows/staging-public-smoke.yml
+permissions:
+  contents: read
+jobs:
+  public-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify HTTPS pages from an independent network
+        shell: bash
+        run: |
+          set -euo pipefail
+          for url in https://staging.talktobot.com/ https://app.staging.talktobot.com/ https://app.staging.talktobot.com/login https://api.staging.talktobot.com/health/ready; do
+            status=$(curl --silent --show-error --max-time 30 --retry 2 --output /dev/null --write-out '%{http_code}' "$url")
+            test "$status" = 200 || { echo "$url returned $status"; exit 1; }
+            echo "$url: HTTPS 200"
+          done
+      - name: Verify customer data still requires authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=$(curl --silent --show-error --max-time 30 --output /dev/null --write-out '%{http_code}' https://app.staging.talktobot.com/api/v1/workspaces)
+          test "$status" = 401 || { echo "Protected endpoint returned $status instead of 401"; exit 1; }
+          echo 'Anonymous customer-data access rejected: 401'

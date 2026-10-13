@@ -10,6 +10,24 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_public_staging_requires_explicit_mode_and_known_hosts(tmp_path):
+    ingress = tmp_path / "ingress.yaml"
+    ingress.write_text((ROOT / "kubernetes/overlays/staging/ingress.yaml").read_text(encoding="utf-8"), encoding="utf-8")
+    subprocess.run([sys.executable, str(ROOT / "scripts/set-staging-ingress-access.py"), str(ingress), "--public"], check=True)
+    annotations = yaml.safe_load(ingress.read_text(encoding="utf-8"))["metadata"]["annotations"]
+    assert not any(key.startswith("alb.ingress.kubernetes.io/conditions.") for key in annotations)
+    spec = importlib.util.spec_from_file_location("callback_public", ROOT / "scripts/prepare-staging-callback-access.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    rules = [{"Actions": [{"Type": "forward"}], "Conditions": [{"Field": "host-header", "Values": [host]}]} for host in ("app.staging.talktobot.com", "staging.talktobot.com", "api.staging.talktobot.com")]
+    default = {"IsDefault": True, "Actions": [{"Type": "fixed-response", "FixedResponseConfig": {"StatusCode": "404"}}]}
+    assert module.public_staging_rules([*rules, default])
+    assert not module.public_staging_rules(rules)
+    assert not module.public_staging_rules([*rules, default, {"Actions": [{"Type": "forward"}], "Conditions": []}])
+    rules[0]["Conditions"].append({"Field": "source-ip", "SourceIpConfig": {"Values": ["1.1.1.1/32"]}})
+    assert not module.public_staging_rules([*rules, default])
+
+
 def test_live_listener_verification_rejects_any_unrestricted_application_rule():
     spec = importlib.util.spec_from_file_location(
         "callback_access", ROOT / "scripts/prepare-staging-callback-access.py"

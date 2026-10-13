@@ -116,7 +116,7 @@ jobs:
             kubectl kustomize . >/dev/null
             python ../../../scripts/pin-release-image.py kustomization.yaml "northstar/${component}" "$digest"
           done
-          python ../../../scripts/set-staging-ingress-access.py ingress.yaml --cidrs "$STAGING_ALLOWED_CIDRS"
+          python ../../../scripts/set-staging-ingress-access.py ingress.yaml --public
           kubectl kustomize . | awk 'BEGIN {RS="---"; ORS="---\n"} !/kind: Namespace/ && NF {print}' > "$RUNNER_TEMP/northstar.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} /kind: Job/ {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/migration.yaml"
           awk 'BEGIN {RS="---"; ORS="---\n"} /kind: (ConfigMap|ServiceAccount|NetworkPolicy)/ {print}' "$RUNNER_TEMP/northstar.yaml" > "$RUNNER_TEMP/prerequisites.yaml"
@@ -141,10 +141,8 @@ jobs:
           kubectl apply -f "$RUNNER_TEMP/migration.yaml"
           kubectl wait --for=condition=complete job/northstar-migrate --namespace northstar --timeout=15m
           kubectl wait --for=condition=complete job/northstar-kafka-topics --namespace northstar --timeout=5m
-      - name: Protect application routes before exposing provider callbacks
-        env:
-          STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
-        run: python scripts/prepare-staging-callback-access.py --cidrs "$STAGING_ALLOWED_CIDRS"
+      - name: Verify public staging host routing
+        run: python scripts/prepare-staging-callback-access.py --public
       - name: Roll out application workloads
         run: |
           kubectl apply --server-side -f "$RUNNER_TEMP/application.yaml"

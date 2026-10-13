@@ -11,8 +11,17 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", type=Path)
-    parser.add_argument("--cidrs", required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--cidrs")
+    mode.add_argument("--public", action="store_true", help="Allow public staging browsers; application authentication remains required")
     args = parser.parse_args()
+    if args.public:
+        source = args.path.read_text(encoding="utf-8")
+        updated = re.sub(r"(?m)^\s*alb\.ingress\.kubernetes\.io/conditions\.(?:api|northstar-web|website):[^\n]*\n", "", source)
+        if 'alb.ingress.kubernetes.io/inbound-cidrs: "0.0.0.0/0"' not in updated:
+            raise SystemExit("Expected public staging ingress declaration")
+        args.path.write_text(updated, encoding="utf-8")
+        return
     networks = [ipaddress.ip_network(value.strip()) for value in args.cidrs.split(",")]
     if not networks or any(network.version != 4 or network.prefixlen != 32 or not network.network_address.is_global for network in networks):
         raise SystemExit("Staging access requires explicit public IPv4 /32 operator/NAT addresses")
