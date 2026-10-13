@@ -1,6 +1,5 @@
 // Explicit, idempotent local content bootstrap. Credentials never leave memory.
 import { readFile } from "node:fs/promises";
-import { starterPosts } from "../src/content.ts";
 const settings = Object.fromEntries(
   (await readFile(new URL("../../.env", import.meta.url), "utf8"))
     .split(/\r?\n/)
@@ -33,6 +32,13 @@ const existingResponse = await fetch(
 if (!existingResponse.ok)
   throw new Error("Website editor access is not authorized.");
 const existing = await existingResponse.json();
+const guidesResponse = await fetch(
+  `${origin}/api/v1/platform-admin/website/starter-guides`,
+  { headers },
+);
+if (!guidesResponse.ok)
+  throw new Error("Unable to load active starter guides. No articles were created.");
+const starterPosts = (await guidesResponse.json()).map(({title, data}) => ({...data, title}));
 for (const article of starterPosts) {
   if (existing.some((p) => p.slug === article.slug)) {
     console.log(`Already exists: ${article.slug}`);
