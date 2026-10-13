@@ -12,7 +12,6 @@ from sqlalchemy import and_, func, select
 from northstar_api.access_policy import effective_permissions
 from northstar_api.branding_validation import normalize_raster
 from northstar_api.dependencies import CurrentPrincipal, DBSession, require_permissions
-from northstar_api.entitlements import entitlement_for_plan
 from northstar_api.lead_crm.audit import record_audit_event
 from northstar_api.models import (
     Role,
@@ -27,6 +26,7 @@ from northstar_api.models import (
 from northstar_api.modules.workspace.repositories.workspace_write_lock import lock_workspace_settings
 from northstar_api.schemas import APIModel
 from northstar_api.security import Principal
+from northstar_api.services.entitlements import effective_policy_for_tenant
 from northstar_api.services.outbox import enqueue_event
 from northstar_api.workspace_contract import (
     WhiteLabelSettings,
@@ -280,7 +280,7 @@ async def update_workspace(
                 status_code=403, detail="Interactive branding publication permission required"
             )
         brand = payload.white_label.model_dump(by_alias=True, mode="json")
-        policy = entitlement_for_plan(tenant.plan)
+        policy = effective_policy_for_tenant(tenant.id, tenant.plan)
         if not policy.white_label_enabled:
             raise HTTPException(status_code=403, detail="White label branding is not available on your plan")
         previous = workspace.branding_json or {}

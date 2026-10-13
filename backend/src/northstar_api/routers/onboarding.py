@@ -57,7 +57,7 @@ async def bootstrap(principal: CurrentPrincipal, session: DBSession, response: R
         if principal.can("starter_content.read")
         else [],
         "plan": {
-            "name": context.subscription.plan,
+            "name": context.effective_plan,
             "status": context.subscription.status.value,
             "workspaceLimit": policy.workspace_limit,
             "agentLimit": policy.agent_limit,

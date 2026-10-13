@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     telegram_manager_webhook_secret: SecretStr | None = None
     telegram_public_base_url: str = ""
     app_env: Literal["development", "test", "staging", "production"] = "development"
+    staging_full_access_tenant_ids: list[UUID] = Field(default_factory=list)
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     app_api_prefix: str = "/api/v1"

@@ -10,7 +10,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from northstar_api.config import get_settings
-from northstar_api.entitlements import PlanEntitlement, entitlement_for_plan
+from northstar_api.entitlements import PLAN_ENTITLEMENTS, PlanEntitlement, entitlement_for_plan
 from northstar_api.models import (
     Agent,
     Conversation,
@@ -60,7 +60,19 @@ class EntitlementContext:
 
     @property
     def effective_plan(self) -> str:
-        return self.subscription.plan if capability_enabled("billing") else "free"
+        return effective_plan_for_tenant(self.tenant.id, self.subscription.plan)
+
+
+def effective_plan_for_tenant(tenant_id: UUID, subscription_plan: str) -> str:
+    settings = get_settings()
+    if settings.app_env == "staging" and tenant_id in settings.staging_full_access_tenant_ids:
+        return "enterprise_test"
+    return subscription_plan if capability_enabled("billing") else "free"
+
+
+def effective_policy_for_tenant(tenant_id: UUID, subscription_plan: str) -> PlanEntitlement:
+    plan = effective_plan_for_tenant(tenant_id, subscription_plan)
+    return PLAN_ENTITLEMENTS["enterprise"] if plan == "enterprise_test" else entitlement_for_plan(plan)
 
 
 def _month_start(now: datetime | None = None) -> datetime:
@@ -197,7 +209,7 @@ async def entitlement_context(session: AsyncSession, *, tenant_id: UUID) -> Enti
     return EntitlementContext(
         tenant=tenant,
         subscription=subscription,
-        policy=entitlement_for_plan(subscription.plan if capability_enabled("billing") else "free"),
+        policy=effective_policy_for_tenant(tenant_id, subscription.plan),
         usage=await entitlement_usage(session, tenant_id=tenant_id),
     )
 

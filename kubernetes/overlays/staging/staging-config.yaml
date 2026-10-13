@@ -16,7 +16,9 @@ data:
   APP_CORS_ORIGINS: '["https://staging.talktobot.com","https://app.staging.talktobot.com","https://api.staging.talktobot.com"]'
   MFA_REQUIRED: "true"
   HELP_CONTENT_SYNC_ON_STARTUP: "false"
-  WEBSITE_EDITOR_EMAILS: "tech@northstaracad.com,ooarchitect92@gmail.com"
+  WEBSITE_EDITOR_EMAILS: "tech@northstaracad.com,ooarchitect92@gmail.com,m.irfat@gmail.com"
+  STAGING_FULL_ACCESS_TENANT_IDS: '["afbd7eee-76fb-44ba-ba2f-dc8d8cc3c8a7"]'
+  WEBSITE_EDITOR_ROLES: '{"tech@northstaracad.com":["editor","publisher","lead_operator"],"ooarchitect92@gmail.com":["editor","publisher","lead_operator"],"m.irfat@gmail.com":["editor","publisher","lead_operator"]}'
   PGSSLROOTCERT: /etc/northstar/rds-ca-bundle.crt
   PRODUCTION_VERIFIED_CAPABILITIES: '[]'
   WEBSITE_PUBLIC_URL: https://staging.talktobot.com

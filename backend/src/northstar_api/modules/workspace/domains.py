@@ -7,12 +7,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.exc import IntegrityError
 
 from northstar_api.dependencies import DBSession, require_permissions
-from northstar_api.entitlements import entitlement_for_plan
 from northstar_api.models import Workspace
 from northstar_api.modules.branding.repositories import persist_branding_document
 from northstar_api.modules.branding.services.domain_dispatch import mark_dispatch_failed
 from northstar_api.modules.branding.services.domain_service import TLS_ELIGIBLE_DOMAIN_STATUSES
 from northstar_api.security import Principal
+from northstar_api.services.entitlements import effective_policy_for_tenant
 from northstar_api.workers.celery_app import celery_app
 
 from .brand_cache import invalidate_brand_cache
@@ -79,7 +79,7 @@ async def create_domain(
 ) -> DomainRecord:
     _interactive_only(principal)
     tenant, workspace = await load_workspace(principal, session)
-    if not entitlement_for_plan(tenant.plan).custom_domain_enabled:
+    if not effective_policy_for_tenant(tenant.id, tenant.plan).custom_domain_enabled:
         raise HTTPException(status_code=403, detail="Your plan does not include custom domains")
     try:
         normalized = normalize_new_custom_domain_hostname(payload.hostname)

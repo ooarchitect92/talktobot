@@ -5,10 +5,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from northstar_api.dependencies import DBSession, require_permissions
-from northstar_api.entitlements import entitlement_for_plan
 from northstar_api.modules.branding.services import resolve_published_workspace_brand
 from northstar_api.onboarding_contract import SetupContract
 from northstar_api.security import Principal
+from northstar_api.services.entitlements import effective_policy_for_tenant
 
 from .contracts import DashboardAppearance, DashboardSettings
 from .store import load_workspace, settings_document
@@ -38,7 +38,7 @@ async def get_runtime_dashboard(
     # Preserve the existing live dashboard settings until a brand is published,
     # but never expose unpublished appearance settings to regular viewers.
     appearance = published.appearance if published is not None else DashboardAppearance()
-    entitlement = entitlement_for_plan(tenant.plan)
+    entitlement = effective_policy_for_tenant(tenant.id, tenant.plan)
     features = {f"channel:{name}" for name in entitlement.allowed_channels}
     if entitlement.crm_enabled:
         features.add("crm")

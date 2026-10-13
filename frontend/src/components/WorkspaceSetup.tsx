@@ -103,7 +103,7 @@ export function WorkspaceStarterPanel() {
   const canCustomize = data.capabilities.workspace.includes('branding.edit') && data.plan.dashboardCustomize;
   const limit = (value: number | null) => value === null ? 'Contract allowance' : value.toLocaleString();
   return <section className="setup-starter" aria-labelledby="starter-content-heading">
-    <header><h2 id="starter-content-heading">Start with your workspace</h2><p>Plan: <strong>{data.plan.name}</strong> · {data.plan.status}. Starter material is separate from your private knowledge and student enrollments.</p></header>
+    <header><h2 id="starter-content-heading">Start with your workspace</h2><p>Plan: <strong>{data.plan.name === 'enterprise_test' ? 'Enterprise (staging test)' : data.plan.name}</strong> · {data.plan.status}. Starter material is separate from your private knowledge and student enrollments.</p></header>
     {data.usage ? <div className="setup-usage"><span>Workspaces: {data.usage.workspaces} / {limit(data.plan.workspaceLimit)}</span>
       <span>Staff: {data.usage.members} / {limit(data.plan.memberLimit)}</span><span>Monthly tokens: {data.usage.tokensMonthly.toLocaleString()} / {limit(data.plan.monthlyTokenLimit)}</span></div> : null}
     <div className="setup-grid">{data.starterContent.map((item) => <article className="setup-resource" key={`${item.id}:${item.version}`}>
