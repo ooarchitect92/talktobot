@@ -80,6 +80,7 @@ class HardenedOAuthJSONConnector(OAuthJSONConnector):
                 form_data=data,
                 headers=headers,
                 timeout_seconds=20,
+                provider=self.provider.value,
             )
         except UnsafeOutboundCRMURL as exc:
             raise CRMError(
@@ -149,6 +150,7 @@ class HardenedOAuthJSONConnector(OAuthJSONConnector):
                     "Content-Type": "application/json",
                 },
                 timeout_seconds=20,
+                provider=self.provider.value,
             )
         except UnsafeOutboundCRMURL as exc:
             raise CRMError(
@@ -218,6 +220,7 @@ class SecureFreshsalesConnector(FreshsalesConnector):
                     "Content-Type": "application/json",
                 },
                 timeout_seconds=20,
+                provider=self.provider.value,
             )
         except UnsafeOutboundCRMURL as exc:
             raise CRMError(
@@ -253,6 +256,7 @@ class SecureZohoCRMConnector(ZohoCRMConnector):
                 form_data=data,
                 headers={"Accept": "application/json"},
                 timeout_seconds=timeout_seconds,
+                provider=self.provider.value,
             )
         except UnsafeOutboundCRMURL as exc:
             raise CRMError(
@@ -397,6 +401,7 @@ class SecureZohoCRMConnector(ZohoCRMConnector):
                 json_body=payload,
                 headers=headers,
                 timeout_seconds=20,
+                provider=self.provider.value,
             )
         except UnsafeOutboundCRMURL as exc:
             raise CRMError(

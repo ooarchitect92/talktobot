@@ -162,6 +162,18 @@ async def test_customer_oauth_credentials_are_encrypted_reused_rotated_and_works
     assert other.id != connection.id
     assert other.name != connection.name
     assert credential_store.decrypt(other.credentials_encrypted)["client_secret"] == pair["client_secret"]
+    separate_account = await ensure_managed_oauth_connection(
+        session,
+        **{**arguments, "display_name": "Second Zoho account"},
+        client_credentials={"client_id": "second-client", "client_secret": "second-secret"},
+    )
+    assert separate_account.id != connection.id
+    assert credential_store.decrypt(connection.credentials_encrypted)["client_id"] == pair["client_id"]
+    assert credential_store.decrypt(separate_account.credentials_encrypted)["client_id"] == "second-client"
+    same_other = await ensure_managed_oauth_connection(
+        session, **{**arguments, "workspace_id": workspaces[1].id}, client_credentials=pair
+    )
+    assert same_other.id == other.id
 
 
 def test_customer_oauth_requires_a_complete_secret_pair() -> None:

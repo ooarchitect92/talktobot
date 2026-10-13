@@ -27,7 +27,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
   const connection = connections.find(value => value.id === connectionId) ?? channelResult;
   const [editing, setEditing] = useState(!connection || connection.status === 'disabled');
   const [values, setValues] = useState<Record<string, string>>({ name: connection?.name ?? item.name, environment: connection && 'environment' in connection ? connection.environment : 'production', region: connection && 'region' in connection ? connection.region ?? 'us' : 'us', azureTenantId: 'common', authType: 'BEARER', apiKeyHeader: 'X-API-Key', agentId: connection && 'agent_id' in connection ? connection.agent_id ?? '' : '' });
-  const [ownApp, setOwnApp] = useState(!provider?.configured);
+  const [ownApp, setOwnApp] = useState(item.id === 'zoho' || !provider?.configured);
   const [busy, setBusy] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [error, setError] = useState('');
@@ -106,6 +106,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
     if (!canManage || busy || waiting) return;
     setBusy(true); setError(''); setMessage('');
     try {
+      if (!connectionId && connections.some(value => value.status !== 'disabled' && value.name === (values.name ?? '').trim())) throw new Error('Choose a different connection name for this account.');
       if (oauth) {
         if (!callbackUrl) throw new Error('Connection settings are unavailable. Refresh the catalogue and try again.');
         popup.current = window.open('about:blank', `northstar-connect-${item.id}`, 'popup,width=720,height=760');
@@ -155,6 +156,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
 
       {message && <div role="status" className="catalog-notice catalog-notice--success"><CheckCircle2 size={20} /><span>{message}</span></div>}
       {waiting && <p role="status" className="catalog-notice">Complete authorization in the provider window. This dialog will update when you return.</p>}
+      {!!connections.length && <Button variant="secondary" disabled={!canManage || busy || waiting} onClick={() => { setConnectionId(''); setChannelResult(null); setEditing(true); setValues({ name: '', environment: 'production', region: 'us', azureTenantId: 'common', authType: 'BEARER', apiKeyHeader: 'X-API-Key', agentId: '' }); setOwnApp(item.id === 'zoho' || !provider?.configured); setError(''); setMessage(''); }}>Connect another account</Button>}
       {editing ? <form id="integration-connect-form" onSubmit={event => void submit(event)} className="connection-form">
         {entitlements.loading ? <p role="status">Checking available connections…</p> : entitlements.error ? <div role="alert" className="catalog-notice catalog-notice--error">Could not check plan access. <Button variant="ghost" onClick={entitlements.reload}>Try again</Button></div> : !planAllowed && <div className="catalog-notice">Your {entitlements.data?.plan} plan does not include {isChannel ? item.name : 'CRM connections'}. <Link to="/workspace?section=billing" onClick={onClose}>Review plans</Link> to enable this connection.</div>}
         <fieldset disabled={busy || waiting || !canManage}>
@@ -172,7 +174,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
         {!isChannel && <p className="catalog-notice">Connecting enables lead sync for this workspace and prepares default field mapping. Review mapping and routing after authorization.</p>}
         <p className="connection-security"><LockKeyhole size={16} />Credentials are encrypted and are never displayed after saving.</p>
       </form> : <div className="connection-manage">
-        {connections.length > 1 && <Field label="Connection" htmlFor="manage-connection"><select id="manage-connection" value={connectionId} onChange={event => { setConnectionId(event.target.value); setMessage(''); setError(''); }}>{connections.map(value => <option key={value.id} value={value.id}>{value.name}</option>)}</select></Field>}
+        {connections.length > 1 && <Field label="Connection" htmlFor="manage-connection"><select id="manage-connection" value={connectionId} onChange={event => { setConnectionId(event.target.value); const next = connections.find(value => value.id === event.target.value); if (next) setValues(previous => ({ ...previous, name: next.name, environment: 'environment' in next ? next.environment : 'production', region: 'region' in next ? next.region ?? 'us' : 'us' })); setMessage(''); setError(''); }}>{connections.map(value => <option key={value.id} value={value.id}>{value.name}</option>)}</select></Field>}
         <div className="connection-details"><span>Account</span><strong>{connection?.name ?? values.name}</strong><span>Status</span><strong>{connection?.status.replaceAll('_', ' ') ?? 'Saved'}</strong></div>
         {isChannel && webhookUrl && <div className="connection-app-fields"><h3>Finish message setup</h3><p>{item.id === 'slack' ? 'Enable Events in your Slack app, enter this Request URL and subscribe to the message events your agent should answer.' : item.id === 'telegram' ? 'Register this URL with Telegram setWebhook, using the webhook secret you provided as secret_token.' : 'Enter this callback URL in your Meta app webhook settings, use the verify token you provided, and subscribe your account to messaging events.'}</p><Field label="Webhook URL" htmlFor="connect-webhook"><input id="connect-webhook" value={webhookUrl} readOnly onFocus={event => event.target.select()} /></Field>{localWebhook && <p className="catalog-notice">Your app is running locally. Configure a public HTTPS address before the platform can deliver customer messages to this endpoint.</p>}<p>Send a message from the platform, then refresh the connection status to confirm messages are arriving.</p></div>}
         {!isChannel && <Link className="button button--secondary button--md" to={`/integrations/advanced?connection=${connectionId}`} onClick={onClose}>Review field mapping and routing</Link>}

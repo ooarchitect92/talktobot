@@ -462,6 +462,10 @@ async def ensure_managed_oauth_connection(
             for item in scoped
             if bool((item.configuration_json or {}).get("managedOAuth"))
             and item.status != CRMConnectionStatus.DISABLED.value
+            and (item.configuration_json or {}).get("displayName", item.name)
+            == (display_name or PROVIDER_NAMES[provider]).strip()[:160]
+            and item.environment == environment
+            and item.region == region
         ),
         None,
     )
@@ -480,7 +484,11 @@ async def ensure_managed_oauth_connection(
     )
     if not all(managed_credentials.get(key) for key in ("client_id", "client_secret")):
         raise ValueError("OAuth client ID and client secret are required")
-    configuration = {**configuration, "credentialSource": "customer" if customer_app else "platform"}
+    configuration = {
+        **configuration,
+        "credentialSource": "customer" if customer_app else "platform",
+        "displayName": (display_name or PROVIDER_NAMES[provider]).strip()[:160],
+    }
     stored_credentials: dict[str, Any] = dict(managed_credentials)
     if connection is None:
         base_name = (display_name or PROVIDER_NAMES[provider]).strip()[:160]

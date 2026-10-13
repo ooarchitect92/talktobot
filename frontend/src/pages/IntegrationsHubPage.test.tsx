@@ -45,14 +45,13 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe('integration catalogue and real setup', () => {
-  it('opens platform-managed Zoho setup without asking customers for OAuth secrets', async () => {
-    render(<MemoryRouter><IntegrationsHubPage /></MemoryRouter>);
-    const button = await screen.findByRole('button', { name: 'Connect Zoho CRM' });
-    await waitFor(() => expect(button).toBeEnabled());
-    await userEvent.click(button);
-    expect(await screen.findByText('The platform Zoho OAuth application must be configured by the deployment owner.')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Client secret')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Connect Zoho' })).toBeDisabled();
+  it('opens Zoho credential setup without requiring a platform OAuth app', async () => {
+    const dialog = await open('Zoho CRM');
+    expect(within(dialog).getByLabelText('Client ID')).toBeInTheDocument();
+    expect(within(dialog).getByLabelText('Client secret')).toHaveAttribute('type', 'password');
+    expect(within(dialog).getByLabelText('Authorized redirect URL')).toHaveValue('http://localhost:8100/api/v1/crm/oauth/zoho/callback');
+    expect(within(dialog).getByRole('button', { name: 'Authorize account' })).toBeInTheDocument();
+    expect(mocks.zohoStatus).not.toHaveBeenCalled();
   });
   it('puts CRM first and filters by category and search', async () => {
     render(<MemoryRouter><IntegrationsHubPage /></MemoryRouter>);
@@ -160,4 +159,29 @@ it('resumes authorization on the existing saved CRM connection', async () => {
   await waitFor(() => expect(mocks.resume).toHaveBeenCalledWith('zoho-existing'));
   expect(mocks.start).not.toHaveBeenCalled();
   expect(popup.location.replace).toHaveBeenCalledWith('https://accounts.zoho.com/oauth/v2/auth');
+});
+
+
+it('connects another Zoho account without replacing the selected account', async () => {
+  mocks.crm.mockResolvedValue([
+    { id: 'zoho-first', provider: 'zoho', name: 'First account', status: 'healthy', environment: 'production', region: 'us' },
+    { id: 'zoho-second', provider: 'zoho', name: 'Second account', status: 'healthy', environment: 'production', region: 'in' },
+  ]);
+  const popup = { closed: false, close: vi.fn(), location: { replace: vi.fn() } };
+  vi.spyOn(window, 'open').mockReturnValue(popup as unknown as Window);
+  mocks.start.mockResolvedValue({ connectionId: 'zoho-third', authorizationUrl: 'https://accounts.zoho.com/oauth/v2/auth' });
+  await openLegacyZoho();
+  await userEvent.selectOptions(screen.getByLabelText('Connection'), 'zoho-second');
+  await userEvent.click(screen.getByRole('button', { name: 'Update credentials' }));
+  expect(screen.getByLabelText('Connection name')).toHaveValue('Second account');
+  expect(screen.getByLabelText('Zoho data center')).toHaveValue('in');
+  await userEvent.click(screen.getByRole('button', { name: 'Connect another account' }));
+  expect(screen.getByLabelText('Connection name')).toHaveValue('');
+  await userEvent.type(screen.getByLabelText('Connection name'), 'Third account');
+  await userEvent.type(screen.getByLabelText('Client ID'), 'third-client');
+  await userEvent.type(screen.getByLabelText('Client secret'), 'third-secret');
+  await userEvent.click(screen.getByRole('button', { name: 'Authorize account' }));
+  await waitFor(() => expect(mocks.start).toHaveBeenCalledWith('zoho', expect.objectContaining({ name: 'Third account', client_id: 'third-client' })));
+  expect(mocks.resume).not.toHaveBeenCalled();
+  expect(screen.queryByDisplayValue('third-secret')).not.toBeInTheDocument();
 });

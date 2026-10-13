@@ -5,6 +5,7 @@ resources:
   - ingress.yaml
   - alb-network-policy.yaml
   - smtp-network-policy.yaml
+  - public-callback-service.yaml
 patches:
   - path: staging-config.yaml
   - path: alb-service.yaml
@@ -24,12 +25,12 @@ images:
     newName: 510439383733.dkr.ecr.ap-south-1.amazonaws.com/talktobot-staging/website
     newTag: replace-with-release-sha
 
-# Provider qualification is absent: external delivery workers must remain stopped.
+# Provider checks in API and workers restrict this deployment to Telegram and Zoho.
 replicas:
-  - {name: northstar-crm-router, count: 0}
-  - {name: northstar-crm-delivery, count: 0}
-  - {name: northstar-crm-reconciliation, count: 0}
-  - {name: northstar-crm-health-monitor, count: 0}
+  - {name: northstar-crm-router, count: 1}
+  - {name: northstar-crm-delivery, count: 1}
+  - {name: northstar-crm-reconciliation, count: 1}
+  - {name: northstar-crm-health-monitor, count: 1}
   - {name: northstar-crm-webhook-consumer, count: 0}
-  - {name: northstar-channel-event-consumer, count: 0}
-  - {name: northstar-channel-health-monitor, count: 0}
+  - {name: northstar-channel-event-consumer, count: 1}
+  - {name: northstar-channel-health-monitor, count: 1}

@@ -53,7 +53,7 @@ from northstar_api.services.education_runtime_authorization import (
 from northstar_api.services.entitlements import EntitlementError, require_capacity, require_channel
 from northstar_api.services.kafka_transport import kafka_transport_options
 from northstar_api.services.outbox import enqueue_event
-from northstar_api.services.release_capabilities import require_capability
+from northstar_api.services.release_capabilities import provider_enabled, require_provider
 from northstar_api.workers.event_utils import EventEnvelope, parse_envelope, quarantine_event
 from northstar_api.workers.telegram_tasks import send_telegram_message
 
@@ -687,6 +687,11 @@ async def _process_event(session: AsyncSession, event: EventEnvelope) -> None:
     )
     if not connection:
         raise ValueError("channel connection is unavailable")
+    if not provider_enabled(connection.provider):
+        raw.processing_status = "ignored"
+        raw.processed_at = datetime.now(UTC)
+        await session.commit()
+        return
     canonical = await _canonical_event(session, raw=raw, connection=connection)
     if canonical is None or canonical.event_type != "message.received":
         raw.processing_status = "ignored"
@@ -991,7 +996,7 @@ async def _process_event(session: AsyncSession, event: EventEnvelope) -> None:
 
 
 async def consume_forever() -> None:
-    require_capability("channels")
+    require_provider("telegram")
     engine = build_engine(settings)
     factory = async_sessionmaker(engine, expire_on_commit=False)
     consumer = AIOKafkaConsumer(

@@ -287,10 +287,19 @@ async def release_activation_gate(request: Request, call_next: RequestResponseEn
 
 @app.get("/api/v1/release/capabilities", include_in_schema=False)
 async def release_capabilities() -> JSONResponse:
-    from northstar_api.services.release_capabilities import CAPABILITIES, capability_enabled
+    from northstar_api.services.release_capabilities import (
+        CAPABILITIES,
+        PROVIDER_CAPABILITIES,
+        capability_enabled,
+        provider_enabled,
+    )
 
     return JSONResponse(
-        {key: capability_enabled(key) for key in CAPABILITIES}, headers={"Cache-Control": "no-store"}
+        {
+            **{key: capability_enabled(key) for key in CAPABILITIES},
+            "providers": {key: provider_enabled(key) for key in PROVIDER_CAPABILITIES},
+        },
+        headers={"Cache-Control": "no-store"},
     )
 
 

@@ -442,3 +442,56 @@ async def test_multiple_accounts_are_independent_and_workspace_scoped(client, au
     assert reconnect.status_code == 200
     assert reconnect.json()["connectionId"] == connections[0]
     assert reconnect.json()["status"] == "connected"
+
+
+async def test_normal_bot_multiple_accounts_and_failed_connect_are_independent(
+    client, auth_headers, telegram
+):
+    ids = []
+    registered = {}
+
+    async def register(token, **kwargs):
+        registered[token] = kwargs["url"]
+
+    telegram["set_webhook"].side_effect = register
+    telegram["get_webhook_info"].side_effect = lambda token: {"url": registered.get(token, "")}
+    for number in (880001, 880002):
+        aid = await agent(client, auth_headers)
+        telegram["get_me"].return_value = {"id": number, "is_bot": True, "username": f"normal_{number}_bot"}
+        result = await client.post(
+            "/api/v1/channels/telegram/connect",
+            headers=auth_headers,
+            json={"agentId": aid, "name": f"Normal {number}", "botToken": f"{number}:synthetic-token"},
+        )
+        assert result.status_code == 201, result.text
+        assert "synthetic-token" not in result.text
+        assert result.json()["status"] == "healthy"
+        ids.append(result.json()["id"])
+    assert ids[0] != ids[1]
+    aid = await agent(client, auth_headers)
+    telegram["get_me"].side_effect = TelegramAPIError("Unavailable", status_code=500, retryable=True)
+    failed = await client.post(
+        "/api/v1/channels/telegram/connect",
+        headers=auth_headers,
+        json={"agentId": aid, "name": "Failing bot", "botToken": "880003:synthetic-token"},
+    )
+    assert failed.status_code == 503, failed.text
+    existing = (await client.get("/api/v1/channels/connections", headers=auth_headers)).json()
+    assert all(
+        next(item for item in existing if item["id"] == identifier)["status"] == "healthy"
+        for identifier in ids
+    )
+    assert not any(item["name"] == "Failing bot" for item in existing)
+
+
+async def test_normal_bot_does_not_replace_another_app_webhook(client, auth_headers, telegram):
+    aid = await agent(client, auth_headers)
+    telegram["get_me"].return_value = {"id": 880099, "is_bot": True, "username": "already_connected_bot"}
+    telegram["get_webhook_info"].side_effect = lambda _: {"url": "https://another-app.example/webhook"}
+    result = await client.post(
+        "/api/v1/channels/telegram/connect",
+        headers=auth_headers,
+        json={"agentId": aid, "name": "Foreign webhook", "botToken": "880099:synthetic-token"},
+    )
+    assert result.status_code == 409, result.text
+    telegram["set_webhook"].assert_not_called()

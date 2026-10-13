@@ -14,7 +14,7 @@ from uuid import UUID
 
 import structlog
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from northstar_api.config import get_settings
@@ -195,6 +195,16 @@ async def connect_normal_bot(
     if not bot_id or not identity.get("is_bot") or not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username):
         raise HTTPException(422, "Telegram returned an invalid bot identity")
 
+    # A bot has one webhook globally. Serialize registration across tenants as
+    # well as workspaces, while keeping connection lookup subject to RLS.
+    if session.get_bind().dialect.name == "postgresql":
+        lock_key = int.from_bytes(
+            hashlib.blake2b(bot_id.encode(), digest_size=8, person=b"telegram-bot").digest(),
+            "big",
+            signed=True,
+        )
+        await session.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": lock_key})
+
     all_rows = (
         await session.execute(
             select(ChannelConnection, WorkspaceChannelConnection)
@@ -227,6 +237,13 @@ async def connect_normal_bot(
         stored_name = f"{name} [{str(principal.workspace_id)[:8]}]"
 
     secret = secrets.token_urlsafe(32)
+    if same_bot and same_bot[0].credentials_encrypted:
+        try:
+            saved_secret = credential_store.decrypt(same_bot[0].credentials_encrypted).get("webhook_secret")
+            if isinstance(saved_secret, str) and saved_secret:
+                secret = saved_secret
+        except CredentialStoreError:
+            raise HTTPException(409, "Saved bot credentials require administrator recovery") from None
     try:
         encrypted = credential_store.encrypt({"bot_token": token, "webhook_secret": secret})
     except CredentialStoreError:
@@ -256,6 +273,17 @@ async def connect_normal_bot(
         )
 
     url = webhook_url(connection)
+    try:
+        existing_webhook = await telegram_client.get_webhook_info(token)
+    except TelegramAPIError:
+        raise HTTPException(503, "Telegram webhook status could not be checked. Try again shortly.") from None
+    existing_url = str(existing_webhook.get("url") or "")
+    previous_url = str((connection.configuration_json or {}).get("telegram", {}).get("webhookUrl") or "")
+    if existing_url and existing_url not in {url, previous_url}:
+        raise HTTPException(
+            409,
+            "This bot already has another webhook. Disconnect it from the previous application before connecting it here.",
+        )
     connection.status = "configuring"
     connection.credentials_encrypted = encrypted
     connection.credentials_ref = None

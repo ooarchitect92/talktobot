@@ -21,7 +21,7 @@ from northstar_api.lead_crm.domain import (
     IntegrationHealthStatus,
     NormalizedCRMErrorCode,
 )
-from northstar_api.services.release_capabilities import require_capability
+from northstar_api.services.release_capabilities import require_provider
 
 
 class ZohoCRMConnector(CRMConnector):
@@ -104,7 +104,7 @@ class ZohoCRMConnector(CRMConnector):
                 "Zoho OAuth client credentials are incomplete",
             )
         try:
-            require_capability("crm")
+            require_provider("zoho")
             async with httpx.AsyncClient(timeout=20, follow_redirects=False) as client:
                 response = await client.post(
                     f"{self._accounts_url(context)}/oauth/v2/token",
@@ -163,7 +163,7 @@ class ZohoCRMConnector(CRMConnector):
             )
         url = f"{self._accounts_url(context)}/oauth/v2/token"
         try:
-            require_capability("crm")
+            require_provider("zoho")
             async with httpx.AsyncClient(timeout=15, follow_redirects=False) as client:
                 response = await client.post(
                     url,
@@ -235,7 +235,7 @@ class ZohoCRMConnector(CRMConnector):
             "Content-Type": "application/json",
         }
         try:
-            require_capability("crm")
+            require_provider("zoho")
             async with httpx.AsyncClient(timeout=20, follow_redirects=False) as client:
                 response = await client.request(method, url, params=params, json=payload, headers=headers)
         except httpx.TimeoutException as exc:

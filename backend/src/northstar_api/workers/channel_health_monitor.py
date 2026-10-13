@@ -22,6 +22,7 @@ from northstar_api.lead_crm.models import RawWebhookEvent
 from northstar_api.logging import configure_logging
 from northstar_api.notifications import Notification
 from northstar_api.services.notifications import notify_workspace_admins
+from northstar_api.services.release_capabilities import provider_enabled
 from northstar_api.workers.channel_webhook_failure_notifications import notify_failed_webhook_events
 
 settings = get_settings()
@@ -68,7 +69,7 @@ def _aware(value: datetime) -> datetime:
 
 
 def _is_due(connection: ChannelConnection, *, now: datetime) -> bool:
-    if connection.status not in _ELIGIBLE_STATUSES:
+    if not provider_enabled(connection.provider) or connection.status not in _ELIGIBLE_STATUSES:
         return False
     if connection.last_health_at is None:
         return True

@@ -12,6 +12,7 @@ from northstar_api.lead_crm.connectors import CRMConnectionContext, CRMError, cr
 from northstar_api.lead_crm.domain import CRMProvider, NormalizedCRMErrorCode
 from northstar_api.lead_crm.models import CRMConnection, CRMDelivery, IntegrationDeadLetter, LeadActivityEvent
 from northstar_api.services.outbox import enqueue_event
+from northstar_api.services.release_capabilities import provider_enabled
 
 
 def as_utc(value: datetime) -> datetime:
@@ -169,6 +170,8 @@ async def verify_delivery(session: AsyncSession, delivery: CRMDelivery) -> bool:
 
     A crash after GET safely replays a GET, never the already-acknowledged write.
     """
+    if not provider_enabled(delivery.provider):
+        return False
     if delivery.acknowledged_at is None or delivery.status not in {"acknowledged", "verifying"}:
         return False
     if delivery.verification_status not in {"pending", "retrying"}:

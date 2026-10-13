@@ -12,6 +12,7 @@ from northstar_api.lead_crm.connectors import CRMConnectionContext, CRMError, cr
 from northstar_api.lead_crm.credentials import CredentialStoreError, credential_store
 from northstar_api.lead_crm.domain import CRMProvider, NormalizedCRMErrorCode
 from northstar_api.lead_crm.models import CRMConnection
+from northstar_api.services.release_capabilities import provider_enabled
 
 
 async def load_connection_context(
@@ -29,6 +30,8 @@ async def load_connection_context(
     )
     if connection is None or connection.status == "disabled":
         raise CRMError(NormalizedCRMErrorCode.CONFIGURATION_ERROR, "CRM connection is unavailable")
+    if not provider_enabled(connection.provider):
+        raise CRMError(NormalizedCRMErrorCode.CONFIGURATION_ERROR, "CRM provider is disabled in this release")
     credentials: dict[str, Any] = {}
     if connection.credentials_encrypted:
         try:

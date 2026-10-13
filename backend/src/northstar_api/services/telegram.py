@@ -6,7 +6,7 @@ from typing import Any
 
 import httpx
 
-from northstar_api.services.release_capabilities import require_capability
+from northstar_api.services.release_capabilities import require_provider
 
 TELEGRAM_API_BASE = "https://api.telegram.org"
 TELEGRAM_TEXT_LIMIT = 4096
@@ -61,7 +61,7 @@ class TelegramBotClient:
         return f"{TELEGRAM_API_BASE}/bot{token}/{method}"
 
     async def _request(self, bot_token: str, method: str, payload: dict[str, Any] | None = None) -> Any:
-        require_capability("channels")
+        require_provider("telegram")
         try:
             async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
                 response = await client.post(self._method_url(bot_token, method), json=payload or {})

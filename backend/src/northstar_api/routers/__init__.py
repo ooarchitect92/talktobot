@@ -81,12 +81,15 @@ from northstar_api.routers import (
 )
 from northstar_api.modules.super_admin.api.runtime import router as platform_runtime_router
 from northstar_api.services.entitlement_guard import enforce_plan_entitlements
+from northstar_api.services.integration_release_guard import enforce_integration_release
 from northstar_api.website import admin as website_admin_router
 from northstar_api.website import public as website_public_router
 from northstar_api.website_operations import admin as website_operations_admin
 from northstar_api.website_operations import public as website_operations_public
 
-api_router = APIRouter(dependencies=[Depends(enforce_plan_entitlements)])
+api_router = APIRouter(
+    dependencies=[Depends(enforce_plan_entitlements), Depends(enforce_integration_release)]
+)
 api_router.include_router(website_public_router)
 api_router.include_router(website_admin_router)
 api_router.include_router(website_operations_admin)

@@ -23,6 +23,7 @@ from northstar_api.lead_crm.workspace_scope import WorkspaceCRMConnection, Works
 from northstar_api.models import Conversation, ConversationState, Lead
 from northstar_api.services.education_conversation_policy import is_education_lead
 from northstar_api.services.outbox import enqueue_event
+from northstar_api.services.release_capabilities import provider_enabled
 
 
 class WorkspaceCRMRouteService:
@@ -184,7 +185,7 @@ class WorkspaceCRMRouteService:
                 )
                 .where(*connection_conditions)
             )
-            if not connection:
+            if not connection or not provider_enabled(connection.provider):
                 continue
 
             mapping = await session.scalar(

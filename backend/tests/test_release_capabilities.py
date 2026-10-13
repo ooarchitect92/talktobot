@@ -2,6 +2,52 @@ from northstar_api.config import get_settings
 from northstar_api.services.release_capabilities import capability_enabled, disabled_request_capability
 
 
+def test_provider_activation_does_not_enable_categories_or_other_providers(monkeypatch):
+    from northstar_api.services.release_capabilities import provider_enabled
+
+    monkeypatch.setattr(get_settings(), "app_env", "staging")
+    monkeypatch.setattr(get_settings(), "production_verified_capabilities", [])
+    monkeypatch.setattr(get_settings(), "enabled_integration_providers", ["telegram", "zoho"])
+    assert provider_enabled("telegram") and provider_enabled("zoho")
+    assert not provider_enabled("hubspot") and not provider_enabled("whatsapp")
+    assert not capability_enabled("crm") and not capability_enabled("channels")
+    assert disabled_request_capability("/api/v1/channels/telegram/connect", "POST") is None
+    assert disabled_request_capability("/api/v1/channels/telegram/connect/start", "POST") == "channels"
+    assert disabled_request_capability("/api/v1/crm/one-click/zoho/start", "POST") is None
+    assert disabled_request_capability("/api/v1/crm/one-click/hubspot/start", "POST") == "crm"
+    assert disabled_request_capability("/api/v1/crm/oauth/zoho/callback", "GET") is None
+    assert disabled_request_capability("/api/v1/crm/oauth/hubspot/callback", "GET") == "crm"
+    assert disabled_request_capability("/api/v1/webhooks/channels/tenant/telegram/id", "POST") is None
+    assert disabled_request_capability("/api/v1/webhooks/channels/tenant/instagram/id", "POST") == "channels"
+    assert disabled_request_capability("/api/v1/crm/connections", "POST") == "crm"
+
+
+async def test_provider_guard_checks_connection_scope_before_mutation(client, auth_headers, monkeypatch):
+    from uuid import uuid4
+
+    ids = {}
+    for provider in ("zoho", "hubspot"):
+        response = await client.post(
+            "/api/v1/crm/connections",
+            headers=auth_headers,
+            json={"provider": provider, "name": f"gate-{provider}-{uuid4().hex}"},
+        )
+        assert response.status_code == 201, response.text
+        ids[provider] = response.json()["id"]
+    monkeypatch.setattr(get_settings(), "app_env", "staging")
+    monkeypatch.setattr(get_settings(), "mfa_required", False)
+    monkeypatch.setattr(get_settings(), "production_verified_capabilities", [])
+    monkeypatch.setattr(get_settings(), "enabled_integration_providers", ["telegram", "zoho"])
+    denied = await client.delete(f"/api/v1/crm/connections/{ids['hubspot']}", headers=auth_headers)
+    assert denied.status_code == 503, denied.text
+    missing = await client.delete(f"/api/v1/crm/connections/{uuid4()}", headers=auth_headers)
+    assert missing.status_code == 404, missing.text
+    anonymous = await client.delete(f"/api/v1/crm/connections/{ids['zoho']}")
+    assert anonymous.status_code == 401, anonymous.text
+    allowed = await client.delete(f"/api/v1/crm/connections/{ids['zoho']}", headers=auth_headers)
+    assert allowed.status_code == 204, allowed.text
+
+
 def test_production_capabilities_fail_closed(monkeypatch):
     monkeypatch.setattr(get_settings(), "app_env", "production")
     monkeypatch.setattr(get_settings(), "production_verified_capabilities", [])

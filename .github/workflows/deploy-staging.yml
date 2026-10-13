@@ -108,6 +108,7 @@ jobs:
         working-directory: kubernetes/overlays/staging
         env:
           RELEASE_SHA: ${{ inputs.release_sha }}
+          STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
         run: |
           for component in api web website; do
             digest=$(awk -F= -v key="talktobot-${component}" '$1 == key {print $2}' "$RUNNER_TEMP/release-digests.env")
@@ -138,6 +139,10 @@ jobs:
           kubectl delete job northstar-migrate --namespace northstar --ignore-not-found --wait=true
           kubectl apply -f "$RUNNER_TEMP/migration.yaml"
           kubectl wait --for=condition=complete job/northstar-migrate --namespace northstar --timeout=15m
+      - name: Protect application routes before exposing provider callbacks
+        env:
+          STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}
+        run: python scripts/prepare-staging-callback-access.py --cidrs "$STAGING_ALLOWED_CIDRS"
       - name: Roll out application workloads
         run: |
           kubectl apply --server-side -f "$RUNNER_TEMP/application.yaml"

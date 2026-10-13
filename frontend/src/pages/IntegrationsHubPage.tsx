@@ -6,7 +6,6 @@ import { Badge, Button, Card } from '@/components/ui';
 import { IntegrationSetupModal } from '@/components/integration-setup-modal';
 import { WhatsAppIntegrationModal } from '@/components/whatsapp-integration-modal';
 import { TelegramSetupModal } from '@/components/telegram-setup-modal';
-import { ZohoOneClickIntegration } from '@/components/ZohoOneClickIntegration';
 import { api } from '@/lib/api';
 import { crmOneClickApi } from '@/lib/crm-one-click-api';
 import { leadCrmApi } from '@/lib/lead-crm-api';
@@ -25,8 +24,7 @@ function IntegrationCatalogPage() {
   const [params] = useSearchParams();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<IntegrationCategory>('All integrations');
-  const [selected, setSelected] = useState<CatalogIntegration | null>(() => params.get('provider') === 'telegram' ? integrationCatalog.find(item => item.id === 'telegram') ?? null : null);
-  const [zohoOpen, setZohoOpen] = useState(() => params.get('provider') === 'zoho');
+  const [selected, setSelected] = useState<CatalogIntegration | null>(() => ['telegram', 'zoho'].includes(params.get('provider') ?? '') ? integrationCatalog.find(item => item.id === params.get('provider')) ?? null : null);
   const [whatsAppOpen, setWhatsAppOpen] = useState(false);
   const canManage = session?.user.role === 'owner' || session?.user.role === 'admin';
   const providers = useApi(() => crmOneClickApi.providers());
@@ -44,14 +42,13 @@ function IntegrationCatalogPage() {
     const connection = connectionFor(item);
     return connection?.status;
   };
-  const canActivate = (item: CatalogIntegration) => item.id === 'widget' || (capabilities.integrations &&
+  const canActivate = (item: CatalogIntegration) => item.id === 'widget' || capabilities.providers?.[item.id as 'telegram' | 'zoho'] === true || (capabilities.integrations &&
     (item.category === 'Channels' ? capabilities.channels : capabilities.crm));
   const open = (item: CatalogIntegration) => {
     if (!canActivate(item)) return;
     if (item.id === 'widget') navigate('/deploy');
     else if (item.id === 'whatsapp') setWhatsAppOpen(true);
     else if (item.id === 'telegram') setSelected(item);
-    else if (item.id === 'zoho') setZohoOpen(true);
     else setSelected(item);
   };
 
@@ -61,7 +58,6 @@ function IntegrationCatalogPage() {
     {error && <div className="catalog-notice catalog-notice--error" role="alert">Connection information could not be loaded: {error} <Button variant="ghost" onClick={refresh}>Try again</Button></div>}
     {!canManage && <p className="catalog-notice">An owner or administrator can connect platforms for this workspace.</p>}
     {loading && <p role="status" className="catalog-loading">Refreshing connection status…</p>}
-    {zohoOpen && canManage && capabilities.integrations && capabilities.crm && <section aria-label="Zoho CRM connection"><div className="catalog-section-heading"><div><h2>Zoho CRM</h2><p>Platform-managed authorization for this workspace.</p></div><Button variant="ghost" onClick={() => setZohoOpen(false)}>Close</Button></div><ZohoOneClickIntegration /></section>}
     {(['Connected', 'CRM', 'Channels', 'Developer'] as const).map(group => {
       const groupItems = items.filter(item => group === 'Connected' ? statusFor(item) === 'healthy' : item.category === group && statusFor(item) !== 'healthy');
       if (!groupItems.length) return null;
@@ -70,7 +66,7 @@ function IntegrationCatalogPage() {
         const status = statusFor(item);
         const connected = status === 'healthy';
         const hasConnection = !!connectionFor(item) || connected;
-        return <Card className="catalog-card" key={item.id}><div className="catalog-card__top"><span className={`catalog-icon catalog-icon--${item.accent}`}><Icon size={26} /></span><div><h3>{item.name}</h3>{connected ? <Badge tone="success"><Check size={14} />Connected</Badge> : status === 'webhook_pending' ? <Badge tone="warning">Finish webhook setup</Badge> : status && status !== 'available' ? <Badge tone="warning">{status === 'connecting' ? 'Authorization pending' : 'Needs attention'}</Badge> : <span className="catalog-card__category">{item.category}</span>}</div></div><p>{item.description}</p><div className="catalog-card__footer"><Button variant={hasConnection || item.id === 'widget' ? 'secondary' : 'primary'} disabled={!canActivate(item) || loading || !!error || (!canManage && item.id !== 'widget')} aria-label={`${hasConnection || item.id === 'widget' ? 'Manage' : 'Connect'} ${item.name}`} onClick={() => open(item)}>{hasConnection || item.id === 'widget' ? 'Manage' : 'Connect'}<span className="sr-only"> {item.name}</span></Button>{item.id === 'zoho' && !hasConnection && <span className="catalog-recommended">Recommended</span>}{connected && item.category === 'CRM' && <Link to={`/integrations/advanced?connection=${connectionFor(item)?.id ?? ''}`} aria-label={`Manage ${item.name} mapping`}><ArrowRight size={18} /></Link>}</div></Card>;
+        return <Card className="catalog-card" key={item.id}><div className="catalog-card__top"><span className={`catalog-icon catalog-icon--${item.accent}`}><Icon size={26} /></span><div><h3>{item.name}</h3>{connected ? <Badge tone="success"><Check size={14} />Connected</Badge> : status === 'webhook_pending' ? <Badge tone="warning">Finish webhook setup</Badge> : status && status !== 'available' ? <Badge tone="warning">{status === 'connecting' ? 'Authorization pending' : 'Needs attention'}</Badge> : <span className="catalog-card__category">{item.category}</span>}</div></div><p>{item.description}</p>{!canActivate(item) && <p className="catalog-notice">This provider is not enabled yet.</p>}<div className="catalog-card__footer"><Button variant={hasConnection || item.id === 'widget' ? 'secondary' : 'primary'} disabled={!canActivate(item) || (item.category === 'Channels' ? channels.loading || !!channels.error : providers.loading || crm.loading || !!providers.error || !!crm.error) || (!canManage && item.id !== 'widget')} aria-label={`${hasConnection || item.id === 'widget' ? 'Manage' : 'Connect'} ${item.name}`} onClick={() => open(item)}>{hasConnection || item.id === 'widget' ? 'Manage' : 'Connect'}<span className="sr-only"> {item.name}</span></Button>{item.id === 'zoho' && !hasConnection && <span className="catalog-recommended">Recommended</span>}{connected && item.category === 'CRM' && <Link to={`/integrations/advanced?connection=${connectionFor(item)?.id ?? ''}`} aria-label={`Manage ${item.name} mapping`}><ArrowRight size={18} /></Link>}</div></Card>;
       })}</div></section>;
     })}
     {!items.length && <Card className="catalog-empty"><Search size={28} /><h2>No integrations found</h2><p>Try another name or category.</p><Button variant="secondary" onClick={() => { setSearch(''); setCategory('All integrations'); }}>Clear filters</Button></Card>}

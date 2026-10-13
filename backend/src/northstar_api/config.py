@@ -101,6 +101,7 @@ class Settings(BaseSettings):
     production_verified_capabilities: list[Literal["billing", "crm", "channels", "integrations"]] = Field(
         default_factory=list
     )
+    enabled_integration_providers: list[Literal["telegram", "zoho"]] = Field(default_factory=list)
     jwt_algorithm: str = "HS256"
     jwt_issuer: str = "northstar-api"
     jwt_audience: str = "northstar-web"

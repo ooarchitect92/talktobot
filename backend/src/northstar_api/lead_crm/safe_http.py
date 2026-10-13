@@ -6,7 +6,7 @@ from typing import Any
 import httpx
 
 from northstar_api.services import safe_fetch
-from northstar_api.services.release_capabilities import require_capability
+from northstar_api.services.release_capabilities import require_capability, require_provider
 
 
 class UnsafeOutboundCRMURL(ValueError):
@@ -23,6 +23,7 @@ async def request_public(
     json_body: Any = None,
     content: bytes | None = None,
     timeout_seconds: float = 20,
+    provider: str | None = None,
 ) -> httpx.Response:
     """Send one non-redirecting request to a validated, DNS-pinned public target.
 
@@ -34,7 +35,10 @@ async def request_public(
     Native CRM OAuth and API clients use the same helper as generic connectors,
     so configured provider domains cannot bypass the public-HTTPS boundary.
     """
-    require_capability("crm")
+    if provider is None:
+        require_capability("crm")
+    else:
+        require_provider(provider)
     try:
         target = await safe_fetch._resolve_public_target(url)
     except safe_fetch.UnsafeURL as exc:

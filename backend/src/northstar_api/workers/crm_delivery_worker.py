@@ -40,7 +40,7 @@ from northstar_api.logging import configure_logging
 from northstar_api.models import Lead
 from northstar_api.services.education_conversation_policy import is_education_lead
 from northstar_api.services.outbox import enqueue_event
-from northstar_api.services.release_capabilities import capability_enabled
+from northstar_api.services.release_capabilities import provider_enabled
 
 settings = get_settings()
 configure_logging(settings)
@@ -194,11 +194,11 @@ async def _mark_failure(
 
 
 async def process_delivery(session: AsyncSession, delivery_id: UUID) -> None:
-    if not capability_enabled("crm"):
-        return
     delivery = await session.scalar(
         select(CRMDelivery).where(CRMDelivery.id == delivery_id).with_for_update()
     )
+    if delivery is not None and not provider_enabled(delivery.provider):
+        return
     if delivery is not None and delivery.acknowledged_at is not None:
         if delivery.status != CRMDeliveryStatus.VERIFIED.value:
             delivery.status = CRMDeliveryStatus.ACKNOWLEDGED.value
@@ -226,7 +226,7 @@ async def process_delivery(session: AsyncSession, delivery_id: UUID) -> None:
             CRMConnection.tenant_id == delivery.tenant_id,
         )
     )
-    if connection is None:
+    if connection is None or connection.status == CRMConnectionStatus.DISABLED.value:
         return
     if not await allow_request(
         session,
