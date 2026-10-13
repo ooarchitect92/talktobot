@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "repository": "ooarchitect92/talktobot",
+  "base_branch": "main",
+  "tracking_pr": 15,
+  "method": "Weighted workstream estimate, updated only from reviewed code/test evidence. Not a certified production-readiness score.",
+  "production_release_authorized": false,
+  "workstreams": [
+    {
+      "id": "discovery",
+      "label": "Repository discovery & baseline",
+      "weight": 10,
+      "estimated_completion": 55,
+      "status": "in_progress",
+      "evidence": [
+        "docs/architecture/current-state.md",
+        "docs/audit/repository-gap-analysis.md"
+      ]
+    },
+    {
+      "id": "tenancy",
+      "label": "Tenant lifecycle & isolation",
+      "weight": 15,
+      "estimated_completion": 60,
+      "status": "unverified",
+      "evidence": [
+        "backend/src/northstar_api/routers/platform_admin.py",
+        "backend/src/northstar_api/modules/workspace/services/role_service.py"
+      ]
+    },
+    {
+      "id": "plans",
+      "label": "Versioned subscriptions & owner pricing",
+      "weight": 20,
+      "estimated_completion": 20,
+      "status": "in_progress",
+      "evidence": [
+        "backend/src/northstar_api/subscriptions.py",
+        "backend/src/northstar_api/entitlements.py"
+      ]
+    },
+    {
+      "id": "authorization",
+      "label": "Roles and permissions",
+      "weight": 10,
+      "estimated_completion": 60,
+      "status": "unverified",
+      "evidence": [
+        "backend/src/northstar_api/modules/workspace/services/role_service.py"
+      ]
+    },
+    {
+      "id": "billing",
+      "label": "Billing and reconciliation",
+      "weight": 10,
+      "estimated_completion": 45,
+      "status": "unverified",
+      "evidence": [
+        "backend/src/northstar_api/routers/billing.py"
+      ]
+    },
+    {
+      "id": "audit",
+      "label": "Activity and audit",
+      "weight": 10,
+      "estimated_completion": 45,
+      "status": "unverified",
+      "evidence": [
+        "backend/src/northstar_api/lead_crm/audit.py"
+      ]
+    },
+    {
+      "id": "product",
+      "label": "Dashboards AI governance and integrations",
+      "weight": 10,
+      "estimated_completion": 50,
+      "status": "unverified",
+      "evidence": [
+        "frontend/src/features/dashboard/DashboardPage.tsx"
+      ]
+    },
+    {
+      "id": "release",
+      "label": "Security CI/CD recovery and load qualification",
+      "weight": 15,
+      "estimated_completion": 25,
+      "status": "blocked",
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docs/releases/release-readiness.md"
+      ]
+    }
+  ],
+  "release_gates": {
+    "ci": "unverified",
+    "security": "unverified",
+    "tenant_isolation": "unverified",
+    "billing_reconciliation": "unverified",
+    "load_test": "unverified",
+    "backup_restore": "unverified",
+    "human_approval": "pending"
+  },
+  "estimated_overall_completion_percent": 42.25
+}
