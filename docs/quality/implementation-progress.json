@@ -32,13 +32,16 @@
       "id": "plans",
       "label": "Versioned subscriptions & owner pricing",
       "weight": 20,
-      "estimated_completion": 24,
+      "estimated_completion": 29,
       "status": "in_progress",
       "evidence": [
         "backend/src/northstar_api/subscriptions.py",
         "backend/src/northstar_api/entitlements.py",
         "backend/src/northstar_api/services/plan_drafts.py",
-        "backend/tests/test_plan_drafts.py"
+        "backend/tests/test_plan_drafts.py",
+        "backend/migrations/versions/0084_versioned_plan_catalog.py",
+        "backend/src/northstar_api/saas_plan_models.py",
+        "backend/tests/test_saas_plan_schema.py"
       ]
     },
     {
@@ -94,13 +97,13 @@
     }
   ],
   "release_gates": {
-    "ci": "pending latest branch workflow",
-    "security": "pending latest branch workflow",
+    "ci": "pending migration/schema tests",
+    "security": "unverified on latest commit",
     "tenant_isolation": "unverified",
     "billing_reconciliation": "unverified",
     "load_test": "unverified",
     "backup_restore": "unverified",
     "human_approval": "pending"
   },
-  "estimated_overall_completion_percent": 43.05
+  "estimated_overall_completion_percent": 44.05
 }
