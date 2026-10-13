@@ -137,8 +137,10 @@ jobs:
       - name: Run migration release gate
         run: |
           kubectl delete job northstar-migrate --namespace northstar --ignore-not-found --wait=true
+          kubectl delete job northstar-kafka-topics --namespace northstar --ignore-not-found --wait=true
           kubectl apply -f "$RUNNER_TEMP/migration.yaml"
           kubectl wait --for=condition=complete job/northstar-migrate --namespace northstar --timeout=15m
+          kubectl wait --for=condition=complete job/northstar-kafka-topics --namespace northstar --timeout=5m
       - name: Protect application routes before exposing provider callbacks
         env:
           STAGING_ALLOWED_CIDRS: ${{ vars.STAGING_ALLOWED_CIDRS }}

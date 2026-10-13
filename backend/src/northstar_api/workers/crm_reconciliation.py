@@ -15,7 +15,7 @@ from northstar_api.lead_crm.domain import CRMDeliveryStatus, NormalizedCRMErrorC
 from northstar_api.lead_crm.models import CRMConnection, CRMDelivery, CRMDeliveryAttempt, LeadActivityEvent
 from northstar_api.lead_crm.verification import verify_delivery
 from northstar_api.logging import configure_logging
-from northstar_api.services.release_capabilities import provider_enabled
+from northstar_api.services.release_capabilities import enabled_providers, provider_enabled
 from northstar_api.workers.crm_delivery_worker import _mark_failure
 
 settings = get_settings()
@@ -31,6 +31,7 @@ async def recover_stale_processing(session: AsyncSession, now: datetime) -> int:
         await session.scalars(
             select(CRMDelivery)
             .where(
+                CRMDelivery.provider.in_(enabled_providers("crm")),
                 CRMDelivery.status == CRMDeliveryStatus.PROCESSING.value,
                 CRMDelivery.processing_at.is_not(None),
                 CRMDelivery.processing_at <= now - STALE_PROCESSING_AGE,
@@ -91,6 +92,7 @@ async def reconcile_verified_records(session: AsyncSession) -> tuple[int, int]:
         await session.scalars(
             select(CRMDelivery)
             .where(
+                CRMDelivery.provider.in_(enabled_providers("crm")),
                 CRMDelivery.status.in_(
                     (CRMDeliveryStatus.ACKNOWLEDGED.value, CRMDeliveryStatus.VERIFYING.value)
                 ),

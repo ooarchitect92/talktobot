@@ -6,6 +6,36 @@ from northstar_api.config import get_settings
 
 CAPABILITIES = ("billing", "crm", "channels", "integrations")
 PROVIDER_CAPABILITIES = {"telegram": "channels", "zoho": "crm"}
+PROVIDERS_BY_CATEGORY = {
+    "channels": {
+        "telegram",
+        "slack",
+        "facebook_messenger",
+        "instagram",
+        "whatsapp",
+        "widget",
+        "api",
+        "custom",
+    },
+    "crm": {
+        "zoho",
+        "salesforce",
+        "hubspot",
+        "dynamics365",
+        "pipedrive",
+        "freshsales",
+        "generic_rest",
+        "generic_webhook",
+    },
+}
+
+
+def enabled_providers(category: str) -> tuple[str, ...]:
+    return tuple(
+        sorted(
+            provider for provider in PROVIDERS_BY_CATEGORY.get(category, set()) if provider_enabled(provider)
+        )
+    )
 
 
 def provider_enabled(provider: str) -> bool:

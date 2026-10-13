@@ -17,6 +17,29 @@ from northstar_api.models import Tenant
 from northstar_api.workers import crm_health_monitor
 
 
+async def test_disabled_providers_cannot_starve_enabled_account_health_checks(monitor_case, monkeypatch):
+    from northstar_api.config import get_settings
+
+    factory, tenant_id, _ = monitor_case
+    monkeypatch.setattr(get_settings(), "app_env", "staging")
+    monkeypatch.setattr(get_settings(), "production_verified_capabilities", [])
+    monkeypatch.setattr(get_settings(), "enabled_integration_providers", ["zoho"])
+    async with factory() as session:
+        for number in range(crm_health_monitor.HEALTH_BATCH_SIZE + 1):
+            session.add(
+                CRMConnection(
+                    tenant_id=tenant_id, provider="hubspot", name=f"Disabled {number}", status="healthy"
+                )
+            )
+        enabled = CRMConnection(
+            tenant_id=tenant_id, provider="zoho", name="Enabled account", status="healthy"
+        )
+        session.add(enabled)
+        await session.commit()
+        due = await crm_health_monitor._due_connections(session, now=datetime.now(UTC))
+        assert due == [(enabled.id, tenant_id)]
+
+
 @pytest.fixture
 async def monitor_case() -> AsyncIterator[tuple[async_sessionmaker[AsyncSession], UUID, CRMConnection]]:
     engine = create_async_engine("sqlite+aiosqlite:///:memory:")

@@ -50,3 +50,9 @@ processing and health monitoring run on the existing staging nodes. Provider
 checks apply to background execution, token refresh and outbound HTTP requests.
 Automatic retries retain existing delivery idempotency and read-back checks;
 ambiguous provider acknowledgement is not blindly resent.
+
+The release also runs an idempotent Kafka topic job before starting workers.
+Staging topics use three replicas, at least two in-sync replicas and seven-day
+retention. Existing topics are never deleted by this job; missing or insufficiently
+replicated topics fail the release gate. Worker batches exclude disabled providers
+so their old records cannot prevent checks or deliveries for an enabled account.

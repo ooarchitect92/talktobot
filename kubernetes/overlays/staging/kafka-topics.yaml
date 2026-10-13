@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata: {name: northstar-kafka-topics, namespace: northstar}
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata: {labels: {app: northstar-outbox, app.kubernetes.io/part-of: northstar}}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: northstar-workload
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: kafka-topics
+          image: northstar/api:replace-with-immutable-tag
+          command: [python, -m, northstar_api.services.kafka_topics]
+          envFrom: [{configMapRef: {name: northstar-config}}, {secretRef: {name: northstar-secrets}}]
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: "1", memory: 512Mi}}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: tmp, mountPath: /tmp}]
+      volumes: [{name: tmp, emptyDir: {sizeLimit: 64Mi}}]

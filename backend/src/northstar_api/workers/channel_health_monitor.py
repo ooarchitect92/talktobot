@@ -22,7 +22,7 @@ from northstar_api.lead_crm.models import RawWebhookEvent
 from northstar_api.logging import configure_logging
 from northstar_api.notifications import Notification
 from northstar_api.services.notifications import notify_workspace_admins
-from northstar_api.services.release_capabilities import provider_enabled
+from northstar_api.services.release_capabilities import enabled_providers, provider_enabled
 from northstar_api.workers.channel_webhook_failure_notifications import notify_failed_webhook_events
 
 settings = get_settings()
@@ -561,6 +561,7 @@ async def _due_connections(session: AsyncSession, *, now: datetime) -> list[tupl
         await session.execute(
             select(ChannelConnection.id, ChannelConnection.tenant_id)
             .where(
+                ChannelConnection.provider.in_(enabled_providers("channels")),
                 ChannelConnection.status.in_(_ELIGIBLE_STATUSES),
                 or_(ChannelConnection.last_health_at.is_(None), ChannelConnection.last_health_at <= cutoff),
             )

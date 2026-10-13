@@ -6,6 +6,7 @@ resources:
   - alb-network-policy.yaml
   - smtp-network-policy.yaml
   - public-callback-service.yaml
+  - kafka-topics.yaml
 patches:
   - path: staging-config.yaml
   - path: alb-service.yaml

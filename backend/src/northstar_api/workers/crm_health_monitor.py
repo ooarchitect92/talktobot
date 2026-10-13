@@ -19,7 +19,7 @@ from northstar_api.lead_crm.models import CRMConnection, IntegrationHealthSnapsh
 from northstar_api.lead_crm.workspace_scope import WorkspaceCRMConnection
 from northstar_api.logging import configure_logging
 from northstar_api.services.notifications import notify_workspace_admins
-from northstar_api.services.release_capabilities import provider_enabled
+from northstar_api.services.release_capabilities import enabled_providers, provider_enabled
 
 settings = get_settings()
 configure_logging(settings)
@@ -196,6 +196,7 @@ async def _due_connections(session: AsyncSession, *, now: datetime) -> list[tupl
         await session.execute(
             select(CRMConnection.id, CRMConnection.tenant_id)
             .where(
+                CRMConnection.provider.in_(enabled_providers("crm")),
                 CRMConnection.status.in_(_ELIGIBLE_STATUSES),
                 or_(CRMConnection.last_health_at.is_(None), CRMConnection.last_health_at <= cutoff),
             )

@@ -40,7 +40,7 @@ from northstar_api.logging import configure_logging
 from northstar_api.models import Lead
 from northstar_api.services.education_conversation_policy import is_education_lead
 from northstar_api.services.outbox import enqueue_event
-from northstar_api.services.release_capabilities import provider_enabled
+from northstar_api.services.release_capabilities import enabled_providers, provider_enabled
 
 settings = get_settings()
 configure_logging(settings)
@@ -511,6 +511,10 @@ async def run_forever() -> None:
                     await session.scalars(
                         select(CRMDelivery)
                         .where(
+                            CRMDelivery.provider.in_(enabled_providers("crm")),
+                            CRMDelivery.connection_id.in_(
+                                select(CRMConnection.id).where(CRMConnection.status != "disabled")
+                            ),
                             CRMDelivery.status.in_(("queued", "retrying", "rate_limited")),
                             or_(CRMDelivery.next_retry_at.is_(None), CRMDelivery.next_retry_at <= now),
                         )
