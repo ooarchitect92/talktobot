@@ -28,6 +28,7 @@ export type Resource = {
   updated_at?: string;
   scheduled_at?: string | null;
   editorial_timezone?: string;
+  builtin?: boolean;
 };
 type Lead = {
   id: string;
@@ -50,6 +51,7 @@ const kinds: Record<string, string> = {
   workflow: "Workflows",
   experiment: "Experiments",
   brand: "Brand settings",
+  article_template: "Blog starter guides",
 };
 const download = (value: unknown, name: string) => {
   const href = URL.createObjectURL(
@@ -120,6 +122,7 @@ const initial = (kind: string): Resource => ({
         fields: [{ key: "description", label: "Description", type: "text" }],
       },
       entry: { collection_key: "", fields: {} },
+      article_template: { slug: "", excerpt: "", body: "# Your guide\n\nAdd useful content here.", author: "TalkToBot editorial", category: "Guides", tags: [], cover: "", cover_alt: "", seo_title: "", seo_description: "" },
       workflow: {
         trigger: "inquiry_accepted",
         action: "tag",
@@ -186,7 +189,10 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
   const canContent = roles.some(role => ['editor', 'publisher'].includes(role));
   const canLeads = roles.includes('lead_operator');
   const canPublish = roles.includes('publisher');
-  const [tab, setTab] = useState("overview"),
+  const [tab, setTab] = useState(() => {
+    const requested = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("type");
+    return requested && requested in kinds ? requested : "overview";
+  }),
     [rows, setRows] = useState<Resource[]>([]),
     [draft, setDraft] = useState<Resource | null>(null),
     [overview, setOverview] = useState<Record<string, any>>({}),
@@ -568,11 +574,11 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
               </label>
               {list.length ? (
                 list.map((row) => (
-                  <div className="console-list-row" key={row.id}>
+                  <div className="console-list-row" key={row.id || `${row.kind}:${row.key}`}>
                     <div>
                       <strong>{row.title}</strong>
                       <p>
-                        {row.key} · {row.status} · revision {row.version}
+                        {row.builtin ? "Built-in guide · customize and save" : `${row.key} · ${row.status} · revision ${row.version}`}
                       </p>
                     </div>
                     <button
@@ -954,6 +960,13 @@ export function OwnerConsole({ onLogout, roles }: { onLogout: () => void; roles:
                       </button>
                     </>
                   )}
+                  {draft.kind === "article_template" && <>
+                    <p>Each guide starts a separate blog draft. Save, review and publish guide changes to update the starter cards.</p>
+                    {["slug", "excerpt", "category", "author", "seo_title", "seo_description"].map(key => <TextField key={key} label={key.replaceAll("_", " ")} value={draft.data[key] || ""} onChange={value => field(key, value)} />)}
+                    <label>Guide content (Markdown)<textarea rows={16} value={draft.data.body || ""} onChange={event => field("body", event.target.value)} /></label>
+                    <label>Tags (comma separated)<input value={(draft.data.tags || []).join(", ")} onChange={event => field("tags", event.target.value.split(",").map(tag => tag.trim()).filter(Boolean))} /></label>
+                    <Markdown text={draft.data.body || ""} />
+                  </>}
                   {(draft.kind === "form" || draft.kind === "collection") && (
                     <>
                       {draft.data.fields.map((f: any, i: number) => (

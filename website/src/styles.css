@@ -2484,7 +2484,7 @@ textarea {
   border: 1px dashed #cedebf;
   border-radius: 7px;
   background: #f9fbf5;
-  color: #829c6c;
+  color: #425938;
   text-align: left;
 }
 .starter-guides button > span {
@@ -2495,6 +2495,10 @@ textarea {
 .starter-guides button > svg {
   flex-shrink: 0;
 }
+.starter-guides button > span > * { display: block; }
+.starter-guides button strong { font-size: 13px; line-height: 1.5; color: var(--ink, #171717); margin: 5px 0; }
+.starter-guides button small { font-size: 10px; }
+.starter-guides button > span > span { color: #65705e; font-size: 12px; line-height: 1.6; margin-bottom: 8px; }
 .notice-message {
   background: #eef4e6;
   border: 1px solid #d8e5ca;

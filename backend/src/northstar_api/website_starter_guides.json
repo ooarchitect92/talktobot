@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "build-a-bot-from-your-business-knowledge",
+    "title": "Start with your knowledge. Build a better bot.",
+    "excerpt": "A practical checklist for turning your documents and FAQs into a useful business assistant.",
+    "author": "TalkToBot editorial",
+    "category": "Getting started",
+    "tags": [
+      "Knowledge",
+      "AI bots"
+    ],
+    "cover": "",
+    "cover_alt": "",
+    "seo_title": "Build a bot from your business knowledge",
+    "seo_description": "Prepare your knowledge, configure your assistant, and test answers before deployment.",
+    "body": "# Start with a clear job\nDecide what your assistant should help people do. A useful first scope is answering product questions, explaining a service, or helping customers find the right next step.\n\n## Prepare reliable sources\nUse current documents and FAQs with clear ownership. Remove obsolete policies and conflicting answers before uploading. A bot is easier to review when every important answer has a recognizable source.\n\n## Test before you deploy\nAsk real questions your customers use. Include questions the assistant should not answer. Review citations, unclear responses, and the route to a human colleague.\n\n## Keep improving\nReview conversations regularly. Update your sources when your business changes, and re-test important journeys after each significant update."
+  },
+  {
+    "slug": "design-a-conversation-that-captures-leads",
+    "title": "Make lead capture feel like a conversation.",
+    "excerpt": "Ask for the information you need, at the moment it helps the customer move forward.",
+    "author": "TalkToBot editorial",
+    "category": "Conversations",
+    "tags": [
+      "Leads",
+      "CRM"
+    ],
+    "cover": "",
+    "cover_alt": "",
+    "seo_title": "",
+    "seo_description": "",
+    "body": "# Help first, ask second\nA useful conversation starts with the visitor’s question. Explain the next step before requesting contact details.\n\n## Collect only what you need\nA name, work email, and a short description may be enough to route an enquiry. Avoid requesting private information that your sales or support team does not need.\n\n## Confirm the details\nShow customers what will be submitted and how their team will respond. A model’s guess about someone’s contact information is not a confirmed lead.\n\n## Review the handoff\nCheck both the conversation and CRM delivery status. A recorded enquiry is different from a verified update in an external system."
+  },
+  {
+    "slug": "review-your-ai-assistant-before-launch",
+    "title": "Your before-launch AI assistant checklist.",
+    "excerpt": "Knowledge, boundaries, channels, and human handoffs: the checks worth doing before your first customer chat.",
+    "author": "TalkToBot editorial",
+    "category": "Guides",
+    "tags": [
+      "Launch",
+      "Testing"
+    ],
+    "cover": "",
+    "cover_alt": "",
+    "seo_title": "",
+    "seo_description": "",
+    "body": "# A considered launch\nStart with a small set of real customer tasks. Verify those tasks end to end before expanding the assistant’s responsibilities.\n\n## Check the knowledge\nConfirm that key policies and answers are current. Ask questions with missing evidence and check that the assistant communicates uncertainty.\n\n## Check the channel\nTest the actual website or messaging integration, including permissions, incoming messages, and outgoing delivery failures.\n\n## Check the human handoff\nMake it clear when and how a person can help. Confirm your team can find the conversation and act on it.\n\n## Review after launch\nKeep a regular review of unanswered questions and customer feedback. Treat your bot’s knowledge as an evolving business resource."
+  }
+]

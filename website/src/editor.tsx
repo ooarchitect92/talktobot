@@ -31,7 +31,7 @@ import {
   type Inquiry,
   type Post,
 } from "./api";
-import { starterPosts } from "./content";
+import { copyStarterGuide, type StarterGuide } from "./starter-guides";
 import { Logo, Markdown } from "./ui";
 
 type Draft = Omit<
@@ -107,6 +107,7 @@ export function Editor() {
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [starterGuides, setStarterGuides] = useState<StarterGuide[]>([]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [preview, setPreview] = useState(false);
   const [tab, setTab] = useState<"posts" | "trash" | "inquiries">("posts");
@@ -124,6 +125,7 @@ export function Editor() {
       setAuthenticated(false);
       setDraft(null);
       setPosts([]);
+      setStarterGuides([]);
       setInquiries([]);
       setHistory(null);
       setRecover(null);
@@ -164,12 +166,22 @@ export function Editor() {
     if (!nextRoles.includes('lead_operator')) setInquiries([]);
     if (!nextRoles.some(role => ['editor', 'publisher'].includes(role))) {
       setPosts([]); setDraft(null); setHistory(null); setRecover(null);
+      setStarterGuides([]);
       sessionStorage.removeItem(DRAFT_KEY);
       return;
     }
-    const values = await api<Post[]>("/platform-admin/website/posts", {}, true);
+    const [values, guides] = await Promise.all([
+      api<Post[]>("/platform-admin/website/posts", {}, true),
+      api<StarterGuide[]>("/platform-admin/website/starter-guides", {}, true),
+    ]);
     setPosts(values);
+    setStarterGuides(guides);
   }
+  useEffect(() => {
+    if (authenticated && location.pathname === "/admin") {
+      void refresh().catch(error => setError(error instanceof Error ? error.message : "Unable to load guides"));
+    }
+  }, [location.pathname]);
   useEffect(() => {
     document.title = "Website editor | TalkToBot";
     void (async () => {
@@ -268,6 +280,7 @@ export function Editor() {
       setDirty(false);
       setAuthenticated(false);
       setBusy(false);
+      setStarterGuides([]);
     }
   }
   function edit(value: Draft | null) {
@@ -277,13 +290,14 @@ export function Editor() {
         "Leave unsaved changes? A recovery copy remains in this tab.",
       )
     )
-      return;
+      return false;
     setDraft(value);
     setDirty(false);
     setPreview(false);
     setHistory(null);
     setError("");
     setNotice("");
+    return true;
   }
   function field<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => (current ? { ...current, [key]: value } : current));
@@ -933,7 +947,9 @@ export function Editor() {
                         maxLength={180}
                         onChange={(e) => {
                           field("title", e.target.value);
-                          if (!draft.id) field("slug", slugify(e.target.value));
+                          if (!draft.id && (!draft.slug || draft.slug === slugify(draft.title))) {
+                            field("slug", slugify(e.target.value));
+                          }
                         }}
                         placeholder="An idea worth sharing"
                       />
@@ -1298,24 +1314,26 @@ export function Editor() {
                 <div className="starter-guides">
                   <h3>Start with a useful guide.</h3>
                   <p>
-                    Original starter content. Review, customize, and publish
-                    when ready.
+                    Choose a starting article: prepare knowledge, capture leads,
+                    or plan your launch. Each guide creates its own editable draft.
                   </p>
+                  <Link className="text-link" to="/admin/console?type=article_template">Manage starter guides</Link>
                   <div>
-                    {starterPosts.map((p) => (
+                    {starterGuides.map((p) => (
                       <button
-                        key={p.slug}
+                        key={p.key}
+                        aria-label={`Use guide: ${p.title}`}
                         onClick={() => {
-                          edit({ ...p });
-                          setDirty(true);
+                          if (edit(copyStarterGuide(p, posts))) setDirty(true);
                         }}
                       >
                         <FileText size={18} />
-                        <span>{p.title}</span>
+                        <span><small>{p.data.category}</small><strong>{p.title}</strong><span>{p.data.excerpt}</span><small>Create an article draft</small></span>
                         <Plus size={16} />
                       </button>
                     ))}
                   </div>
+                  {!starterGuides.length && <p>No starter guides are active. Add or restore one in Manage starter guides.</p>}
                 </div>
               )}
             </>

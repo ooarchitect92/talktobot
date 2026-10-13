@@ -12,6 +12,7 @@ import io
 import json
 import re
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any, Literal
 from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -42,6 +43,7 @@ KINDS = (
     "workflow",
     "experiment",
     "brand",
+    "article_template",
 )
 
 
@@ -150,6 +152,7 @@ class ResourceInput(BaseModel):
         "workflow",
         "experiment",
         "brand",
+        "article_template",
     ]
     key: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$", max_length=120)
     title: str = Field(min_length=3, max_length=180)
@@ -161,7 +164,12 @@ class ResourceInput(BaseModel):
         if len(json.dumps(self.data)) > 150_000:
             raise ValueError("Resource is too large")
         d = self.data
-        if self.kind == "page":
+        if self.kind == "article_template":
+            if "title" in d or "version" in d:
+                raise ValueError("Use the guide title and resource revision fields")
+            post = PostInput.model_validate({**d, "slug": d.get("slug") or self.key, "title": self.title})
+            self.data = post.model_dump(exclude={"title", "version"})
+        elif self.kind == "page":
             safe_route(str(d.get("route", "")))
             if d["route"] == "/blog" or d["route"].startswith("/blog/"):
                 raise ValueError("Blog routes are owned by the article publishing workflow")
@@ -706,7 +714,62 @@ async def manifest(session: DBSession, response: Response) -> dict[str, Any]:
 
 @admin.get("/resources")
 async def list_resources(session: DBSession, principal: EditorPrincipal) -> list[dict[str, Any]]:
-    return [project(r) for r in await resources(session)]
+    rows = await resources(session)
+    existing = set(
+        await session.scalars(select(WebsiteResource.key).where(WebsiteResource.kind == "article_template"))
+    )
+    return [project(r) for r in rows] + [guide for guide in builtin_guides() if guide["key"] not in existing]
+
+
+def builtin_guides() -> list[dict[str, Any]]:
+    posts = json.loads(Path(__file__).with_name("website_starter_guides.json").read_text(encoding="utf-8"))
+    return [
+        {
+            "kind": "article_template",
+            "key": post["slug"],
+            "title": post["title"],
+            "data": {key: value for key, value in post.items() if key != "title"},
+            "status": "draft",
+            "builtin": True,
+        }
+        for post in posts
+    ]
+
+
+@admin.get("/starter-guides")
+async def starter_guides(session: DBSession, principal: EditorPrincipal) -> list[dict[str, Any]]:
+    defaults = {guide["key"]: guide for guide in builtin_guides()}
+    rows = await session.scalars(
+        select(WebsiteResource)
+        .where(WebsiteResource.kind == "article_template")
+        .order_by(WebsiteResource.key)
+    )
+    for row in rows:
+        if row.status == "archived":
+            defaults.pop(row.key, None)
+        elif row.published_document is not None:
+            defaults[row.key] = {
+                "key": row.key,
+                "title": row.published_document["title"],
+                "data": row.published_document["data"],
+            }
+        elif row.published_document is None:
+            defaults.pop(row.key, None)
+    return list(defaults.values())
+
+
+def default_guide_snapshot(kind: str, key: str) -> dict[str, Any] | None:
+    if kind != "article_template":
+        return None
+    original = next((guide for guide in builtin_guides() if guide["key"] == key), None)
+    if original is None:
+        return None
+    return {
+        "title": original["title"],
+        "data": original["data"],
+        "published_version": 1,
+        "published_updated_at": datetime.now(UTC).isoformat(),
+    }
 
 
 @admin.post("/resources", status_code=201)
@@ -720,6 +783,7 @@ async def create_resource(
         key=payload.key,
         document=payload.model_dump(exclude={"version", "kind", "key"}),
         version=1,
+        published_document=default_guide_snapshot(payload.kind, payload.key),
     )
     session.add(row)
     audit(session, str(row.id), row.kind, "create", 1, principal.user_id, row.document)
@@ -1184,6 +1248,7 @@ async def import_resources(
                 document={"title": item.title, "data": item.data},
                 status="draft",
                 version=1,
+                published_document=default_guide_snapshot(item.kind, item.key),
             )
             session.add(row)
             await session.flush()
