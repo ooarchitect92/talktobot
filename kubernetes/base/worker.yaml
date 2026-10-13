@@ -14,7 +14,9 @@ spec:
         - name: worker
           image: northstar/api:replace-with-immutable-tag
           # RabbitMQ 4.3 rejects transient nonexclusive control/event queues.
-          command: [celery, -A, northstar_api.workers.celery_app:celery_app, worker, --loglevel=INFO, --concurrency=2, control_queue_exclusive=True, event_queue_exclusive=True]
+          # Consume eight work queues, below the managed broker's per-channel limit.
+          # Dead-letter queues are retained for review and must not be executed automatically.
+          command: [celery, -A, northstar_api.workers.celery_app:celery_app, worker, --loglevel=INFO, --concurrency=2, "--queues=ingest.source,operations,whatsapp.inbound,whatsapp.outbound,telegram.outbound,instagram.outbound,facebook_messenger.outbound,slack.outbound", control_queue_exclusive=True, event_queue_exclusive=True]
           readinessProbe:
             exec:
               command: [python, -c, 'import socket; from northstar_api.workers.celery_app import celery_app; celery_app.conf.control_queue_exclusive = True; assert celery_app.control.inspect(destination=["celery@" + socket.gethostname()], timeout=4).ping()']
