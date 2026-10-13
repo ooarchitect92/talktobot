@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -23,6 +24,8 @@ def enqueue_event(
         aggregate_id=str(aggregate_id),
         event_type=event_type,
         payload=payload,
+        # PostgreSQL now() is identical for every event in one transaction.
+        occurred_at=datetime.now(UTC),
     )
     session.add(event)
     return event

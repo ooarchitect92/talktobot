@@ -52,6 +52,11 @@ class Settings(BaseSettings):
     kafka_sasl_username: str = ""
     kafka_sasl_password: SecretStr | None = None
     kafka_enabled: bool = False
+    outbox_publish_timeout_seconds: float = Field(default=8, ge=0.1, le=60)
+    outbox_max_attempts: int = Field(default=12, ge=1, le=100)
+    outbox_retry_base_seconds: float = Field(default=2, ge=0.1, le=60)
+    outbox_retry_max_seconds: float = Field(default=300, ge=60, le=3600)
+    outbox_batch_size: int = Field(default=25, ge=1, le=100)
     background_dispatch_enabled: bool = False
     education_multi_course_enabled: bool = True
     education_whatsapp_tutor_enabled: bool = True

@@ -63,10 +63,10 @@ async def require_platform_admin(
     principal: CurrentPrincipal,
     session: DBSession,
 ) -> Principal:
-    if principal.token_id.startswith("api_key:"):
+    if principal.token_id.startswith("api_key:") or principal.impersonation_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="API keys cannot access the platform control plane",
+            detail="API keys and impersonation sessions cannot access the platform control plane",
         )
     email = await session.scalar(
         select(User.email).where(

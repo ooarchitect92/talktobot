@@ -12,6 +12,7 @@ from northstar_api.routers import (
     auth,
     billing,
     bot_workflows,
+    outbox_operations,
     channel_deliveries,
     channel_health_history,
     channel_operations,
@@ -170,4 +171,5 @@ api_router.include_router(workspace_settings_router)
 api_router.include_router(billing.router)
 api_router.include_router(whatsapp_accounts.router)
 api_router.include_router(platform_admin.router)
+api_router.include_router(outbox_operations.router)
 api_router.include_router(platform_runtime_router)

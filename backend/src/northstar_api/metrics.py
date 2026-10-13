@@ -15,6 +15,9 @@ RETRIEVAL_EVIDENCE = Histogram("northstar_retrieval_evidence_count", "Selected e
 MODEL_ERRORS = Counter("northstar_model_errors_total", "Model errors", labelnames=("kind",))
 RATE_LIMITED = Counter("northstar_rate_limited_total", "Rate-limited requests", labelnames=("scope",))
 OUTBOX_BACKLOG = Gauge("northstar_outbox_backlog", "Unpublished outbox events")
+OUTBOX_DELIVERIES = Counter(
+    "northstar_outbox_delivery_total", "Durable outbox delivery outcomes", labelnames=("result",)
+)
 INGESTION_TASKS = Counter(
     "northstar_ingestion_tasks_total", "Ingestion task outcomes", labelnames=("result",)
 )
