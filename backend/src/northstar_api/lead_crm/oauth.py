@@ -31,6 +31,7 @@ class OAuthState:
     code_verifier: str
     workspace_id: UUID | None = None
     response_mode: OAuthResponseMode = "json"
+    credential_version: int | None = None
 
     @property
     def code_challenge(self) -> str:
@@ -52,6 +53,7 @@ class OAuthStateStore:
         redirect_uri: str,
         workspace_id: UUID | None = None,
         response_mode: OAuthResponseMode = "json",
+        credential_version: int | None = None,
     ) -> OAuthState:
         state = secrets.token_urlsafe(32)
         verifier = secrets.token_urlsafe(64)
@@ -65,6 +67,7 @@ class OAuthStateStore:
             redirect_uri=redirect_uri,
             code_verifier=verifier,
             response_mode=response_mode,
+            credential_version=credential_version,
         )
         payload = json.dumps(
             {
@@ -76,6 +79,7 @@ class OAuthStateStore:
                 "redirectUri": redirect_uri,
                 "codeVerifier": verifier,
                 "responseMode": response_mode,
+                "credentialVersion": credential_version,
             },
             separators=(",", ":"),
         )
@@ -121,6 +125,9 @@ class OAuthStateStore:
                 redirect_uri=str(value["redirectUri"]),
                 code_verifier=str(value["codeVerifier"]),
                 response_mode=cast(OAuthResponseMode, response_mode),
+                credential_version=int(value["credentialVersion"])
+                if value.get("credentialVersion") is not None
+                else None,
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise OAuthStateError("Stored OAuth state is corrupt") from exc

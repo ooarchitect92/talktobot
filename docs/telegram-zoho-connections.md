@@ -35,6 +35,10 @@ mapping and disconnect actions scoped to the selected connection. Starting a
 second named connection does not replace the first connection's credentials.
 Credentials are encrypted; secret fields clear after a successful OAuth start.
 Expired or rejected authorization can be restarted on the saved connection.
+Catalogue refreshes retain the active modal's callback metadata, so an OAuth
+window stays open while connection status reloads. The callback rechecks current
+workspace access, CRM permission, MFA and credential version, and rejects
+disconnected connections or authorization attempts superseded by a newer start.
 
 ## AWS callback access and delivery
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import secrets
@@ -15,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from northstar_api.config import get_settings
 from northstar_api.database import get_session, set_tenant_context
-from northstar_api.dependencies import AdminPrincipal
+from northstar_api.dependencies import AdminPrincipal, _custom_role_context
 from northstar_api.lead_crm.audit import record_audit_event
 from northstar_api.lead_crm.connectors import CRMConnectionContext, CRMError, crm_registry
 from northstar_api.lead_crm.credentials import CredentialStoreError, credential_store
@@ -24,6 +25,12 @@ from northstar_api.lead_crm.domain import CRMConnectionStatus, CRMProvider
 from northstar_api.lead_crm.models import CRMConnection
 from northstar_api.lead_crm.oauth import OAuthResponseMode, OAuthState, OAuthStateError, oauth_state_store
 from northstar_api.lead_crm.workspace_scope import WorkspaceCRMConnection
+from northstar_api.models import TenantMembership, User, Workspace, WorkspaceMembership, WorkspaceStatus
+from northstar_api.modules.workspace.member_state import is_member_suspended
+from northstar_api.security import TENANT_ROLE_PERMISSIONS, WORKSPACE_ROLE_PERMISSIONS, Principal
+from northstar_api.services.email_verification import email_is_verified
+from northstar_api.services.entitlements import EntitlementError, require_feature
+from northstar_api.services.password_reset import credential_version
 
 router = APIRouter(prefix="/crm", tags=["crm-oauth"])
 DB = Annotated[AsyncSession, Depends(get_session)]
@@ -184,6 +191,7 @@ async def _start_oauth(
             provider=provider.value,
             redirect_uri=redirect_uri,
             response_mode=mode,
+            credential_version=await credential_version(session, principal.user_id),
         )
         context = CRMConnectionContext(
             tenant_id=principal.tenant_id,
@@ -208,6 +216,10 @@ async def _start_oauth(
 
     connection.status = CRMConnectionStatus.CONNECTING.value
     connection.last_error = None
+    connection.configuration_json = {
+        **dict(connection.configuration_json or {}),
+        "oauthAttemptId": hashlib.sha256(state.state.encode()).hexdigest(),
+    }
     await session.commit()
     return {
         "authorizationUrl": authorization_url,
@@ -245,10 +257,65 @@ async def _callback_connection(
     saved: OAuthState,
     provider: str,
 ) -> tuple[CRMConnection, UUID]:
+    # OAuth state grants only a short-lived callback capability. Current account
+    # and workspace permissions must still authorize connecting a CRM.
+    if saved.workspace_id is None:
+        raise HTTPException(403, "An active workspace is required for authorization")
+    workspace = await session.get(Workspace, saved.workspace_id)
+    user = await session.get(User, saved.user_id)
+    membership = await session.scalar(
+        select(WorkspaceMembership).where(
+            WorkspaceMembership.workspace_id == saved.workspace_id,
+            WorkspaceMembership.tenant_id == saved.tenant_id,
+            WorkspaceMembership.user_id == saved.user_id,
+        )
+    )
+    tenant_member = await session.scalar(
+        select(TenantMembership).where(
+            TenantMembership.tenant_id == saved.tenant_id,
+            TenantMembership.user_id == saved.user_id,
+        )
+    )
+    if (
+        workspace is None
+        or workspace.tenant_id != saved.tenant_id
+        or workspace.status != WorkspaceStatus.ACTIVE
+        or user is None
+        or not user.is_active
+        or membership is None
+        or tenant_member is None
+        or is_member_suspended(workspace.settings_json, saved.user_id)
+    ):
+        raise HTTPException(403, "Workspace access changed; start authorization again")
+    custom, _, _, _ = _custom_role_context(workspace, saved.user_id)
+    principal = Principal(
+        user_id=saved.user_id,
+        tenant_id=saved.tenant_id,
+        role=tenant_member.role,
+        token_id=str(saved.connection_id),
+        workspace_id=saved.workspace_id,
+        workspace_role=membership.role,
+        permissions=TENANT_ROLE_PERMISSIONS[tenant_member.role]
+        | WORKSPACE_ROLE_PERMISSIONS[membership.role]
+        | custom,
+    )
+    if not principal.can("crm.manage") or not await email_is_verified(session, saved.user_id):
+        raise HTTPException(403, "CRM permissions changed; start authorization again")
+    if get_settings().requires_mfa and (not user.mfa_enabled or saved.credential_version is None):
+        raise HTTPException(403, "Authenticator sign-in is required; start authorization again")
+    if saved.credential_version is not None and saved.credential_version != await credential_version(
+        session, saved.user_id
+    ):
+        raise HTTPException(403, "Account security changed; start authorization again")
+    try:
+        await require_feature(session, tenant_id=saved.tenant_id, feature="crm")
+    except EntitlementError as exc:
+        raise HTTPException(exc.status_code, str(exc)) from None
     conditions = [
         CRMConnection.id == saved.connection_id,
         CRMConnection.tenant_id == saved.tenant_id,
         CRMConnection.provider == provider,
+        CRMConnection.status != CRMConnectionStatus.DISABLED.value,
         WorkspaceCRMConnection.tenant_id == saved.tenant_id,
     ]
     if saved.workspace_id is not None:
@@ -264,6 +331,9 @@ async def _callback_connection(
     ).first()
     if row is None:
         raise HTTPException(status_code=404, detail="CRM connection no longer exists")
+    attempt = (row[0].configuration_json or {}).get("oauthAttemptId")
+    if attempt and attempt != hashlib.sha256(saved.state.encode()).hexdigest():
+        raise HTTPException(400, "Authorization was restarted; use the newest authorization window")
     return row[0], row[1]
 
 
@@ -300,11 +370,16 @@ async def crm_oauth_callback(
         raise HTTPException(status_code=400, detail="OAuth provider does not match the authorization state")
 
     await set_tenant_context(session, saved.tenant_id)
-    connection, workspace_id = await _callback_connection(
-        session,
-        saved=saved,
-        provider=provider,
-    )
+    try:
+        connection, workspace_id = await _callback_connection(session, saved=saved, provider=provider)
+    except HTTPException as exc:
+        return _callback_failure(
+            request,
+            saved,
+            detail=str(exc.detail),
+            payload={"connectionId": str(saved.connection_id), "provider": provider},
+            status_code=exc.status_code,
+        )
     if error or not code:
         connection.status = CRMConnectionStatus.AUTH_REQUIRED.value
         connection.last_failure_at = datetime.now(UTC)

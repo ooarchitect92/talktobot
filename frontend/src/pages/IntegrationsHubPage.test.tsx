@@ -45,6 +45,24 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe('integration catalogue and real setup', () => {
+  it('keeps the OAuth popup and callback listener during catalogue refresh', async () => {
+    const provider = { id: 'zoho', mode: 'oauth', configured: false, supportsSandbox: true, oauthRedirectUri: 'http://localhost:8100/api/v1/crm/oauth/zoho/callback' };
+    mocks.providers.mockResolvedValueOnce([provider]).mockImplementation(() => new Promise(() => {}));
+    const popup = { closed: false, close: vi.fn(), location: { replace: vi.fn() } };
+    vi.spyOn(window, 'open').mockReturnValue(popup as unknown as Window);
+    mocks.start.mockResolvedValue({ connectionId: 'zoho-refresh', authorizationUrl: 'https://accounts.zoho.com/oauth/v2/auth' });
+    const dialog = await open('Zoho CRM');
+    await userEvent.type(within(dialog).getByLabelText('Client ID'), 'customer-app');
+    await userEvent.type(within(dialog).getByLabelText('Client secret'), 'customer-secret');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Authorize account' }));
+    await waitFor(() => expect(mocks.providers).toHaveBeenCalledTimes(2));
+    expect(popup.close).not.toHaveBeenCalled();
+    expect(within(dialog).getByLabelText('Client ID')).toBeInTheDocument();
+    act(() => window.dispatchEvent(new MessageEvent('message', { origin: 'http://localhost:8100', source: popup as unknown as Window,
+      data: { type: 'northstar:crm-oauth', success: false, connectionId: 'zoho-refresh', message: 'Authorization was declined' } })));
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('Authorization was declined');
+    expect(popup.close).toHaveBeenCalledTimes(1);
+  });
   it('opens Zoho credential setup without requiring a platform OAuth app', async () => {
     const dialog = await open('Zoho CRM');
     expect(within(dialog).getByLabelText('Client ID')).toBeInTheDocument();

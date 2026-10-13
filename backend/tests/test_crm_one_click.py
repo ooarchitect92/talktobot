@@ -366,3 +366,103 @@ async def test_generic_rest_provisioning_activates_mapping_route_autosync_and_ba
     )
     assert readiness.ready is True
     assert readiness.live_certified is False
+
+
+@pytest.mark.parametrize(
+    "change", ["disconnected", "inactive", "suspended", "credential_changed", "restarted"]
+)
+async def test_oauth_callback_rechecks_access_and_never_revives_invalid_connections(
+    client,
+    auth_headers,
+    customer_oauth_plan,
+    monkeypatch,
+    change,
+):
+    from unittest.mock import AsyncMock
+    from urllib.parse import parse_qs, urlparse
+
+    from northstar_api.database import SessionFactory
+    from northstar_api.lead_crm.oauth import OAuthState, OAuthStateError
+    from northstar_api.models import User
+    from northstar_api.routers import crm_oauth
+
+    states = {}
+
+    async def create(**kwargs):
+        state = OAuthState(
+            state="synthetic-state-" + uuid4().hex, code_verifier=uuid4().hex + uuid4().hex, **kwargs
+        )
+        states[state.state] = state
+        return state
+
+    async def consume(key):
+        if key not in states:
+            raise OAuthStateError("State consumed")
+        return states.pop(key)
+
+    monkeypatch.setenv("CRM_CREDENTIAL_ENCRYPTION_KEY", "synthetic-callback-guard-key")
+    monkeypatch.setattr(crm_oauth.oauth_state_store, "create", create)
+    monkeypatch.setattr(crm_oauth.oauth_state_store, "consume", consume)
+    response = await client.post(
+        "/api/v1/crm/one-click/zoho/start",
+        headers=auth_headers,
+        json={
+            "name": "Callback guard " + uuid4().hex,
+            "client_id": "synthetic-client",
+            "client_secret": "synthetic-secret",
+        },
+    )
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    key = parse_qs(urlparse(payload["authorizationUrl"]).query)["state"][0]
+    saved = states[key]
+    async with SessionFactory() as database:
+        connection = await database.get(CRMConnection, saved.connection_id)
+        user = await database.get(User, saved.user_id)
+        workspace = await database.get(Workspace, saved.workspace_id)
+        original_active = user.is_active
+        original_settings = dict(workspace.settings_json or {})
+        if change == "disconnected":
+            connection.status = "disabled"
+            connection.credentials_encrypted = None
+        elif change == "inactive":
+            user.is_active = False
+        elif change == "suspended":
+            workspace.settings_json = {
+                **original_settings,
+                "workspaceMemberStatusV1": {str(saved.user_id): "suspended"},
+            }
+        elif change == "credential_changed":
+            monkeypatch.setattr(
+                crm_oauth, "credential_version", AsyncMock(return_value=saved.credential_version + 1)
+            )
+        else:
+            connection.configuration_json = {
+                **connection.configuration_json,
+                "oauthAttemptId": "another-attempt",
+            }
+        await database.commit()
+    exchange = AsyncMock(side_effect=AssertionError("Token exchange must not run"))
+    connector = SimpleNamespace(exchange_authorization_code=exchange)
+    monkeypatch.setattr(crm_oauth.crm_registry, "get", lambda provider: connector)
+    try:
+        callback = await client.get(
+            "/api/v1/crm/oauth/zoho/callback", params={"state": key, "code": "synthetic-code"}
+        )
+        assert callback.status_code == 200, callback.text
+        assert "CRM connection needs attention" in callback.text
+        exchange.assert_not_called()
+        async with SessionFactory() as database:
+            connection = await database.get(CRMConnection, saved.connection_id)
+            assert connection.status == ("disabled" if change == "disconnected" else "connecting")
+        repeated = await client.get(
+            "/api/v1/crm/oauth/zoho/callback", params={"state": key, "code": "synthetic-code"}
+        )
+        assert repeated.status_code == 400
+    finally:
+        async with SessionFactory() as database:
+            user = await database.get(User, saved.user_id)
+            workspace = await database.get(Workspace, saved.workspace_id)
+            user.is_active = original_active
+            workspace.settings_json = original_settings
+            await database.commit()

@@ -18,7 +18,12 @@ interface Props {
   onChanged: () => void;
 }
 
-export function IntegrationSetupModal({ item, provider, crmConnections, channelConnections, canManage, onClose, onChanged }: Props) {
+export function IntegrationSetupModal({ item, provider: incomingProvider, crmConnections, channelConnections, canManage, onClose, onChanged }: Props) {
+  // Catalogue reloads briefly return no data. Keep metadata within this modal's
+  // workspace lifetime so a refresh cannot destroy an active OAuth popup.
+  const providerSnapshot = useRef(incomingProvider);
+  if (incomingProvider) providerSnapshot.current = incomingProvider;
+  const provider = providerSnapshot.current;
   const isChannel = item.category === 'Channels';
   const connections = (isChannel ? channelConnections : crmConnections).filter(value => value.provider === item.id);
   const [connectionId, setConnectionId] = useState(connections[0]?.id ?? '');
@@ -175,7 +180,7 @@ export function IntegrationSetupModal({ item, provider, crmConnections, channelC
         {!isChannel && <p className="catalog-notice">Connecting enables lead sync for this workspace and prepares default field mapping. Review mapping and routing after authorization.</p>}
         <p className="connection-security"><LockKeyhole size={16} />Credentials are encrypted and are never displayed after saving.</p>
       </form> : <div className="connection-manage">
-        {connections.length > 1 && <Field label="Connection" htmlFor="manage-connection"><select id="manage-connection" value={connectionId} onChange={event => { setConnectionId(event.target.value); const next = connections.find(value => value.id === event.target.value); if (next) setValues(previous => ({ ...previous, name: next.name, environment: 'environment' in next ? next.environment : 'production', region: 'region' in next ? next.region ?? 'us' : 'us' })); setMessage(''); setError(''); }}>{connections.map(value => <option key={value.id} value={value.id}>{value.name}</option>)}</select></Field>}
+        {connections.length > 1 && <Field label="Connection" htmlFor="manage-connection"><select id="manage-connection" disabled={busy || waiting} value={connectionId} onChange={event => { setConnectionId(event.target.value); const next = connections.find(value => value.id === event.target.value); if (next) setValues(previous => ({ ...previous, name: next.name, environment: 'environment' in next ? next.environment : 'production', region: 'region' in next ? next.region ?? 'us' : 'us' })); setMessage(''); setError(''); }}>{connections.map(value => <option key={value.id} value={value.id}>{value.name}</option>)}</select></Field>}
         <div className="connection-details"><span>Account</span><strong>{connection?.name ?? values.name}</strong><span>Status</span><strong>{connection?.status.replaceAll('_', ' ') ?? 'Saved'}</strong></div>
         {isChannel && webhookUrl && <div className="connection-app-fields"><h3>Finish message setup</h3><p>{item.id === 'slack' ? 'Enable Events in your Slack app, enter this Request URL and subscribe to the message events your agent should answer.' : item.id === 'telegram' ? 'Register this URL with Telegram setWebhook, using the webhook secret you provided as secret_token.' : 'Enter this callback URL in your Meta app webhook settings, use the verify token you provided, and subscribe your account to messaging events.'}</p><Field label="Webhook URL" htmlFor="connect-webhook"><input id="connect-webhook" value={webhookUrl} readOnly onFocus={event => event.target.select()} /></Field>{localWebhook && <p className="catalog-notice">Your app is running locally. Configure a public HTTPS address before the platform can deliver customer messages to this endpoint.</p>}<p>Send a message from the platform, then refresh the connection status to confirm messages are arriving.</p></div>}
         {!isChannel && <Link className="button button--secondary button--md" to={`/integrations/advanced?connection=${connectionId}`} onClick={onClose}>Review field mapping and routing</Link>}
