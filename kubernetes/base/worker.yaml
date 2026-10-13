@@ -13,7 +13,15 @@ spec:
       containers:
         - name: worker
           image: northstar/api:replace-with-immutable-tag
-          command: [celery, -A, northstar_api.workers.celery_app:celery_app, worker, --loglevel=INFO, --concurrency=2]
+          # RabbitMQ 4.3 rejects transient nonexclusive control/event queues.
+          command: [celery, -A, northstar_api.workers.celery_app:celery_app, worker, --loglevel=INFO, --concurrency=2, control_queue_exclusive=True, event_queue_exclusive=True]
+          readinessProbe:
+            exec:
+              command: [python, -c, 'import socket; from northstar_api.workers.celery_app import celery_app; celery_app.conf.control_queue_exclusive = True; assert celery_app.control.inspect(destination=["celery@" + socket.gethostname()], timeout=4).ping()']
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 3
           envFrom: [{configMapRef: {name: northstar-config}}, {secretRef: {name: northstar-secrets}}]
           env: [{name: DATABASE_APPLY_RUNTIME_ROLE, value: "false"}, {name: DATABASE_URL, valueFrom: {secretKeyRef: {name: northstar-worker-secrets, key: DATABASE_URL}}}]
           resources: {requests: {cpu: 250m, memory: 512Mi}, limits: {cpu: "2", memory: 2Gi}}
