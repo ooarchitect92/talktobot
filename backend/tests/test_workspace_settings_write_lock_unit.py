@@ -139,14 +139,16 @@ async def test_domain_creation_checks_fresh_hostnames_after_lock(
     effects: list[str] = []
 
     async def scoped_loader(_principal, _session):
-        return SimpleNamespace(plan="enterprise"), workspace
+        return SimpleNamespace(id=workspace.tenant_id, plan="enterprise"), workspace
 
     async def forbidden_persist(*_args, **_kwargs):
         effects.append("persist")
 
     monkeypatch.setattr(domains, "load_workspace", scoped_loader)
     monkeypatch.setattr(
-        domains, "entitlement_for_plan", lambda _plan: SimpleNamespace(custom_domain_enabled=True)
+        domains,
+        "effective_policy_for_tenant",
+        lambda _tenant_id, _plan: SimpleNamespace(custom_domain_enabled=True),
     )
     monkeypatch.setattr(domains, "persist_branding_document", forbidden_persist)
     with pytest.raises(HTTPException) as error:

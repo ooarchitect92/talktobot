@@ -25,7 +25,7 @@ async def test_runtime_dashboard_keeps_draft_appearance_private(monkeypatch: pyt
     document.branding_draft.appearance.sidebar_style = "minimal"
     document.branding_draft.appearance.border_radius = 31
     workspace = SimpleNamespace(id=uuid4(), tenant_id=uuid4())
-    tenant = SimpleNamespace(plan="starter")
+    tenant = SimpleNamespace(id=workspace.tenant_id, plan="starter")
 
     async def load_workspace(_principal, _session):
         return tenant, workspace
@@ -38,8 +38,8 @@ async def test_runtime_dashboard_keeps_draft_appearance_private(monkeypatch: pyt
     monkeypatch.setattr(dashboard_runtime, "resolve_published_workspace_brand", resolve_published_brand)
     monkeypatch.setattr(
         dashboard_runtime,
-        "entitlement_for_plan",
-        lambda _plan: SimpleNamespace(
+        "effective_policy_for_tenant",
+        lambda _tenant_id, _plan: SimpleNamespace(
             allowed_channels=[],
             crm_enabled=False,
             api_enabled=False,
@@ -70,7 +70,7 @@ async def test_runtime_dashboard_uses_published_appearance(monkeypatch: pytest.M
     workspace = SimpleNamespace(id=uuid4(), tenant_id=uuid4())
 
     async def load_workspace(_principal, _session):
-        return SimpleNamespace(plan="starter"), workspace
+        return SimpleNamespace(id=workspace.tenant_id, plan="starter"), workspace
 
     async def resolve_published_brand(_session, _workspace):
         return published, 2
@@ -80,8 +80,8 @@ async def test_runtime_dashboard_uses_published_appearance(monkeypatch: pytest.M
     monkeypatch.setattr(dashboard_runtime, "resolve_published_workspace_brand", resolve_published_brand)
     monkeypatch.setattr(
         dashboard_runtime,
-        "entitlement_for_plan",
-        lambda _plan: SimpleNamespace(
+        "effective_policy_for_tenant",
+        lambda _tenant_id, _plan: SimpleNamespace(
             allowed_channels=[],
             crm_enabled=False,
             api_enabled=False,

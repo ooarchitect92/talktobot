@@ -63,7 +63,7 @@ async def test_create_rejects_invalid_hostname_before_writes(
     writes: list[str] = []
 
     async def load_workspace(_principal: object, _session: object):
-        return SimpleNamespace(plan="custom-plan"), workspace
+        return SimpleNamespace(id=workspace.tenant_id, plan="custom-plan"), workspace
 
     async def persist(*_args: object, **_kwargs: object) -> None:
         writes.append("persist")
@@ -73,7 +73,9 @@ async def test_create_rejects_invalid_hostname_before_writes(
 
     monkeypatch.setattr(domains, "load_workspace", load_workspace)
     monkeypatch.setattr(
-        domains, "entitlement_for_plan", lambda _plan: SimpleNamespace(custom_domain_enabled=True)
+        domains,
+        "effective_policy_for_tenant",
+        lambda _tenant_id, _plan: SimpleNamespace(custom_domain_enabled=True),
     )
     monkeypatch.setattr(domains, "settings_document", lambda _workspace: document)
     monkeypatch.setattr(domains, "save_document", lambda *_args: writes.append("save"))
