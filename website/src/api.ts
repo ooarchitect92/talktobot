@@ -108,7 +108,8 @@ export async function api<T>(
     let detail = "Something went wrong. Please try again.";
     try {
       const value = await response.json();
-      if (typeof value.detail === "string") detail = value.detail;
+      if (typeof value?.error?.message === "string") detail = value.error.message;
+      else if (typeof value?.detail === "string") detail = value.detail;
       else if (response.status === 422)
         detail = "Check the required fields and file format.";
     } catch {

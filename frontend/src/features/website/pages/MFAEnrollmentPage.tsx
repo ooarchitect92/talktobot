@@ -87,7 +87,7 @@ export function MFAEnrollmentPage() {
     <Brand /><h1>Set up your authenticator</h1>
     <p>Add TalkToBot to Google Authenticator or Microsoft Authenticator. Set up once, then enter a code when you sign in.</p>
     <form className="login-form" onSubmit={event => void submit(event)}>
-      {!material ? <><Field label="Verify your sign-in password" htmlFor="enrollment-password"><input id="enrollment-password" type="password" autoComplete="current-password" required minLength={8} maxLength={256} value={password} onChange={event => setPassword(event.target.value)} /></Field><p>Enter the password you used to sign in. Your QR code appears after verification.</p></> : <>
+      {!material ? <><Field label="Verify your sign-in password" htmlFor="enrollment-password"><input id="enrollment-password" type="password" autoComplete="current-password" required maxLength={256} value={password} onChange={event => setPassword(event.target.value)} /></Field><p>Enter the full password you used to sign in. Your QR code appears after verification.</p></> : <>
         <p>In Google Authenticator, choose Add account → Scan a QR code. In Microsoft Authenticator, choose Add account → Other account → Scan a QR code.</p>
         {qr ? <img src={qr} alt="Scan to add TalkToBot to your authenticator" width={220} height={220} /> : <p role="status">Preparing your QR code. You can also use the manual setup key below.</p>}
         <p>Manual setup key: <code style={{ overflowWrap: 'anywhere' }}>{material.secret}</code></p>

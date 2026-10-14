@@ -102,6 +102,7 @@ export function Editor() {
   const [authenticated, setAuthenticated] = useState(false);
   const [checking, setChecking] = useState(import.meta.env.PROD || !!editorToken());
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
+  const [enrollmentPassword, setEnrollmentPassword] = useState('');
   const [roles, setRoles] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -308,6 +309,7 @@ export function Editor() {
     event.preventDefault();
     setBusy(true);
     setError("");
+    setEnrollmentPassword('');
     const data = new FormData(event.currentTarget);
     try {
       const response = await api<{
@@ -325,6 +327,7 @@ export function Editor() {
       });
       if (!response.accessToken) {
         if (response.mfaEnrollmentRequired && response.enrollmentToken && response.expiresAt) {
+          setEnrollmentPassword(String(data.get('password') || ''));
           setEnrollment({ enrollmentToken: response.enrollmentToken, expiresAt: response.expiresAt });
           return;
         }
@@ -560,10 +563,16 @@ export function Editor() {
             Sign in with an authorized website editor account to upload, edit,
             and publish articles.
           </p>
-          {enrollment ? <AuthenticatorEnrollment enrollment={enrollment} onCancel={() => setEnrollment(null)} onComplete={async (token) => {
-            setEditorToken(token);
-            await checkEditorAccess();
-            setEnrollment(null); setAuthenticated(true); await refresh();
+          {enrollment ? <AuthenticatorEnrollment enrollment={enrollment} initialPassword={enrollmentPassword} onPasswordConsumed={() => setEnrollmentPassword('')} onCancel={() => { setEnrollmentPassword(''); setEnrollment(null); }} onComplete={async (token) => {
+            setEnrollment(null); setEnrollmentPassword(''); setBusy(true);
+            try {
+              setEditorToken(token);
+              await checkEditorAccess();
+              setAuthenticated(true); await refresh();
+            } catch (reason) {
+              setEditorToken(null); setAuthenticated(false);
+              setError(`Authenticator connected. ${reason instanceof Error ? reason.message : 'Unable to open the editor.'} Use App login to finish account verification, then sign in again.`);
+            } finally { setBusy(false); }
           }} /> : <form
             onSubmit={
               mfaChallenge

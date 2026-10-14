@@ -16,9 +16,9 @@ data:
   APP_CORS_ORIGINS: '["https://staging.talktobot.com","https://app.staging.talktobot.com","https://api.staging.talktobot.com"]'
   MFA_REQUIRED: "true"
   HELP_CONTENT_SYNC_ON_STARTUP: "false"
-  WEBSITE_EDITOR_EMAILS: "tech@northstaracad.com,ooarchitect92@gmail.com,m.irfat@gmail.com"
-  STAGING_FULL_ACCESS_TENANT_IDS: '["afbd7eee-76fb-44ba-ba2f-dc8d8cc3c8a7"]'
-  WEBSITE_EDITOR_ROLES: '{"tech@northstaracad.com":["editor","publisher","lead_operator"],"ooarchitect92@gmail.com":["editor","publisher","lead_operator"],"m.irfat@gmail.com":["editor","publisher","lead_operator"]}'
+  WEBSITE_EDITOR_EMAILS: "tech@northstaracad.com,ooarchitect92@gmail.com,m.irfat@gmail.com,irfat.modassar@gmail.com"
+  STAGING_FULL_ACCESS_TENANT_IDS: "[\"afbd7eee-76fb-44ba-ba2f-dc8d8cc3c8a7\",\"b5037248-6094-4dda-a84b-a0020eb1041a\"]"
+  WEBSITE_EDITOR_ROLES: "{\"tech@northstaracad.com\":[\"editor\",\"publisher\",\"lead_operator\"],\"ooarchitect92@gmail.com\":[\"editor\",\"publisher\",\"lead_operator\"],\"m.irfat@gmail.com\":[\"editor\",\"publisher\",\"lead_operator\"],\"irfat.modassar@gmail.com\":[\"editor\",\"publisher\",\"lead_operator\"]}"
   PGSSLROOTCERT: /etc/northstar/rds-ca-bundle.crt
   PRODUCTION_VERIFIED_CAPABILITIES: '[]'
   ENABLED_INTEGRATION_PROVIDERS: '["telegram","zoho"]'

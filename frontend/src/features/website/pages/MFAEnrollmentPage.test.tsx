@@ -17,6 +17,15 @@ vi.mock('@/lib/mfa-enrollment-state', () => ({
 beforeEach(() => { vi.stubGlobal('fetch', mocks.fetch); mocks.fetch.mockReset(); mocks.qr.mockReset(); mocks.password = ''; });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
+it('explains a short password on the page instead of silently blocking setup with native validation', async () => {
+  const user = userEvent.setup();
+  render(<MemoryRouter><MFAEnrollmentPage /></MemoryRouter>);
+  await user.type(screen.getByLabelText('Verify your sign-in password'), '123456');
+  await user.click(screen.getByRole('button', { name: 'Show authenticator QR code' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Enter your full sign-in password, not an authenticator code');
+  expect(mocks.fetch).not.toHaveBeenCalled();
+});
+
 it('shows an actionable validation error without exposing request inputs', async () => {
   mocks.fetch.mockResolvedValue(new Response(JSON.stringify({ error: { message: 'Request validation failed' } }), { status: 422 }));
   const user = userEvent.setup();
