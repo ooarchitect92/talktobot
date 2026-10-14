@@ -119,6 +119,7 @@ export function Editor() {
   const [recover, setRecover] = useState<Draft | null>(null);
   const [dirty, setDirty] = useState(false);
   const [mfaChallenge, setMfaChallenge] = useState("");
+  const [mfaMode, setMfaMode] = useState<'totp' | 'recovery'>('totp');
   const [editorialReason, setEditorialReason] = useState("");
   const [publishTime, setPublishTime] = useState("");
   useEffect(() => {
@@ -332,6 +333,7 @@ export function Editor() {
           return;
         }
         if (response.challengeToken) {
+          setMfaMode('totp');
           setMfaChallenge(response.challengeToken);
           return;
         }
@@ -580,34 +582,48 @@ export function Editor() {
                     event.preventDefault();
                     const data = new FormData(event.currentTarget);
                     void run(async () => {
-                      const code = String(data.get("code") || "").trim();
+                      const value = String(data.get("code") || "").trim();
+                      const code = value.replace(/\s/g, '');
+                      if (mfaMode === 'totp' && !/^[0-9]{6}$/.test(code)) {
+                        throw new Error('Enter exactly six digits from Google Authenticator or Microsoft Authenticator. Use the recovery-code option only for an emailed recovery code.');
+                      }
+                      if (mfaMode === 'recovery' && value.replace(/[^a-z0-9]/gi, '').length < 8) {
+                        throw new Error('Enter an unused recovery code from your recovery email, or switch to the six-digit authenticator option.');
+                      }
                       const response = await api<{ accessToken: string }>(
                         "/auth/mfa/verify",
                         {
                           method: "POST",
                           body: JSON.stringify({
                             challengeToken: mfaChallenge,
-                            ...(/^\d{6}$/.test(code)
-                              ? { code }
-                              : { recoveryCode: code }),
+                            ...(mfaMode === 'totp' ? { code } : { recoveryCode: value }),
                           }),
                         },
                       );
                       setEditorToken(response.accessToken);
-                      await checkEditorAccess();
-                      setAuthenticated(true);
                       setMfaChallenge("");
-                      await refresh();
+                      try {
+                        await checkEditorAccess();
+                        setAuthenticated(true);
+                        await refresh();
+                      } catch (reason) { setEditorToken(null); throw reason; }
                     });
                   }
                 : login
             }
+            noValidate={!!mfaChallenge}
           >
             {mfaChallenge ? (
-              <label>
-                Authenticator or recovery code
-                <input name="code" required autoComplete="one-time-code" />
-              </label>
+              <>
+                <p>{mfaMode === 'totp' ? 'Enter the six-digit code from your authenticator. This is not your password.' : 'Enter one unused recovery code from your recovery email.'}</p>
+                <label>
+                  {mfaMode === 'totp' ? 'Six-digit authenticator code' : 'Recovery code'}
+                  <input key={mfaMode} name="code" required inputMode={mfaMode === 'totp' ? 'numeric' : 'text'} autoComplete={mfaMode === 'totp' ? 'one-time-code' : 'off'} maxLength={mfaMode === 'totp' ? 12 : 32} />
+                </label>
+                <button type="button" className="text-link" disabled={busy} onClick={() => { setMfaMode(mode => mode === 'totp' ? 'recovery' : 'totp'); setError(''); }}>
+                  {mfaMode === 'totp' ? 'Use a recovery code instead' : 'Use authenticator code instead'}
+                </button>
+              </>
             ) : (
               <>
                 <label>
@@ -636,7 +652,7 @@ export function Editor() {
               </p>
             )}
             <button className="button dark" disabled={busy}>
-              {busy ? "Signing in…" : "Sign in to the editor"}
+              {busy ? "Signing in…" : mfaChallenge ? "Verify and sign in" : "Sign in to the editor"}
               <ArrowUpRight size={17} />
             </button>
           </form>}

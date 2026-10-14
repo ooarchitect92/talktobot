@@ -33,7 +33,7 @@ environment = dict(
 password = "Synthetic-sign-in-only-2026!"
 secret = "JBSWY3DPEHPK3PXP"  # Public fixture, never a deployed factor.
 uri = f"otpauth://totp/TalkToBot:synthetic%40example.com?secret={secret}&issuer=TalkToBot"
-state = {"confirmed": False, "setupCalls": 0, "approvals": 0, "rejectSetup": False}
+state = {"confirmed": False, "setupCalls": 0, "approvals": 0, "rejectSetup": False, "denyAccess": False, "verifyCalls": []}
 post = dict(
     id="11111111-1111-4111-8111-111111111111", slug="synthetic-review",
     title="Synthetic review article", excerpt="Synthetic acceptance content", body="A synthetic article.",
@@ -70,9 +70,12 @@ def intercept(route):
         value = {"accessToken": "synthetic-session"}
     elif path == "/auth/mfa/verify":
         assert request.post_data_json["challengeToken"] == "synthetic-challenge"
+        state["verifyCalls"].append(request.post_data_json)
         value = {"accessToken": "synthetic-session"}
     elif path == "/platform-admin/website/access":
         value = {"allowed": True, "roles": ["editor", "publisher", "lead_operator"]}
+        if state["denyAccess"]:
+            status, value = 428, {"error": {"message": "Verify your email address before continuing"}}
     elif path == "/platform-admin/website/posts":
         value = [post]
     elif path.endswith("/actions") and request.post_data_json.get("action") == "approve":
@@ -134,8 +137,24 @@ with (report_dir / "website-mfa-local-server.log").open("wb") as output:
             expect(page.get_by_role("button", name="Publish", exact=True)).to_be_enabled()
             assert state["approvals"] == 1
             login(page)
-            expect(page.get_by_label("Authenticator or recovery code")).to_be_visible()
+            expect(page.get_by_label("Six-digit authenticator code")).to_be_visible()
             assert state["setupCalls"] == 1
+            page.get_by_label("Six-digit authenticator code").fill("1234")
+            page.get_by_role("button", name="Verify and sign in").click()
+            expect(page.get_by_role("alert")).to_contain_text("exactly six digits")
+            assert not state["verifyCalls"]
+            page.get_by_label("Six-digit authenticator code").fill("654 321")
+            page.get_by_role("button", name="Verify and sign in").click()
+            expect(page.get_by_text(post["title"], exact=True)).to_be_visible()
+            assert state["verifyCalls"][-1]["code"] == "654321"
+            assert "recoveryCode" not in state["verifyCalls"][-1]
+            login(page)
+            page.get_by_role("button", name="Use a recovery code instead").click()
+            page.get_by_label("Recovery code", exact=True).fill("synthetic-recovery-code")
+            page.get_by_role("button", name="Verify and sign in").click()
+            expect(page.get_by_text(post["title"], exact=True)).to_be_visible()
+            assert state["verifyCalls"][-1]["recoveryCode"] == "synthetic-recovery-code"
+            assert "code" not in state["verifyCalls"][-1]
             stored = page.evaluate("[...Object.values(localStorage), ...Object.values(sessionStorage)]")
             assert all(password not in value and secret not in value for value in stored)
             context.close()
@@ -147,14 +166,31 @@ with (report_dir / "website-mfa-local-server.log").open("wb") as output:
             expect(page.get_by_role("alert")).to_be_visible()
             expect(page.get_by_role("alert")).to_contain_text("Unable to email recovery codes")
             page.get_by_label("Verify your sign-in password").fill("123456")
-            page.get_by_role("button", name="Show authenticator QR code").click()
+            page.get_by_role("button", name="Verify password and show QR").click()
             expect(page.get_by_role("alert")).to_contain_text("full sign-in password")
             assert state["setupCalls"] == 2
             context.close()
+            state.update(confirmed=False, rejectSetup=False, denyAccess=True)
+            context = browser.new_context()
+            context.route("**/api/v1/**", intercept)
+            page = context.new_page()
+            login(page)
+            expect(page.get_by_alt_text("Scan to add TalkToBot to your authenticator")).to_be_visible()
+            page.get_by_label("I received my recovery codes by email.").check()
+            page.get_by_label("Six-digit code", exact=True).fill("123456")
+            page.get_by_role("button", name="Verify code and finish setup").click()
+            expect(page.get_by_role("alert")).to_contain_text("Authenticator connected")
+            expect(page.get_by_role("alert")).to_contain_text("Verify your email address")
+            expect(page.get_by_label("Password", exact=True)).to_be_visible()
+            login(page)
+            expect(page.get_by_label("Six-digit authenticator code")).to_be_visible()
+            assert state["setupCalls"] == 3
+            context.close()
             browser.close()
-        result = {"automaticQrVisible": True, "qrPngLoaded": True, "confirmationVisible": True,
+        result = {"automaticQrVisible": True, "qrPngLoaded": True, "confirmationVisible": True, "explicitCodeModesVerified": True,
                   "editorialApprovalVisibleAndWorking": True, "subsequentLoginUsesChallenge": True,
                   "shortPasswordErrorVisible": True, "credentialsNotPersisted": True,
+                  "confirmedFactorRetainedAfterAccessFailure": True,
                   "scope": "Built website; intercepted synthetic API, not live provider acceptance"}
         (report_dir / "website-mfa-browser.json").write_text(json.dumps(result, indent=2))
         print(json.dumps(result))

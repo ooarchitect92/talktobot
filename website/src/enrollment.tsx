@@ -66,7 +66,7 @@ export function AuthenticatorEnrollment({ enrollment, initialPassword = '', onPa
       <label>Six-digit code<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></label>
     </>}
     {error ? <p className="error-message" role="alert">{error}</p> : null}
-    <button className="button dark" disabled={busy || (!!material && !saved)}>{busy ? 'Please wait…' : material ? 'Verify code and finish setup' : 'Show authenticator QR code'}</button>
+    <button className="button dark" disabled={busy || (!!material && !saved)}>{busy ? 'Please wait…' : material ? 'Verify code and finish setup' : 'Verify password and show QR'}</button>
     <button type="button" className="text-link" disabled={busy} onClick={() => {
       setBusy(true);
       void api('/auth/mfa/enrollment/logout', { method: 'POST', headers: { Authorization: `Bearer ${enrollment.enrollmentToken}` } })

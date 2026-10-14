@@ -8,4 +8,6 @@ Local verification: production website client/SSR build; 11 website server tests
 
 The staging manifest retains the explicitly authorized Irfat owner/editor access and full-access tenant ID, so deploying this fix will not remove the new account's configuration. Production billing remains disabled; no broad SaaS/catalog/monitoring worktree changes are included.
 
-Review status: local candidate only. The user's production directive section 5 requires approval before merge/deployment. Exact-commit CI and release scanning remain required before staging rollout. A live synthetic browser check must follow rollout; users' factor material must not be inspected or reset.
+Review status: focused staging rollout approved by the user; revised candidate awaiting exact-commit checks. The user's production directive section 5 requires approval before merge/deployment. Exact-commit CI and release scanning remain required before staging rollout. A live synthetic browser check must follow rollout; users' factor material must not be inspected or reset.
+
+Authenticator challenges now use explicit authenticator/recovery modes, a visible Verify and sign in button, and six-digit validation. Whitespace-formatted authenticator codes are normalized rather than misclassified as recovery codes. Browser acceptance submits both modes and verifies their distinct API payloads, rejects short authenticator codes without a request, and verifies that a confirmed factor is retained after a downstream access failure.
