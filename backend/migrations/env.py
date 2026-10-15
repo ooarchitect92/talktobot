@@ -35,6 +35,7 @@ from northstar_api import (
     onboarding_models,  # noqa: F401
     password_reset,  # noqa: F401
     subscriptions,  # noqa: F401
+    saas_plan_models,  # noqa: F401
     website,  # noqa: F401
     website_operations,  # noqa: F401
     workspace_api_keys,  # noqa: F401
